@@ -79,7 +79,13 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 
 /* ===== Partie ===== */
 .score{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
-.team{background:var(--surface);border-radius:14px;padding:10px 12px;border:2px solid transparent;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.team{background:var(--surface);border-radius:14px;padding:10px 12px;border:2px solid transparent;display:grid;gap:6px;min-width:0}
+.team-top{display:flex;justify-content:space-between;align-items:center;gap:8px;min-width:0}
+.team .pts small{font-size:.8rem;font-weight:600;color:var(--mute)}
+.team-pos{display:flex;justify-content:space-between;gap:8px;font-size:.85rem;color:var(--mute);font-weight:600}
+.team-pos b{color:var(--ink);font-family:inherit;font-weight:700}
+.tbar{height:8px;border-radius:99px;background:var(--surface2);overflow:hidden}
+.tbar i{display:block;height:100%;width:0;border-radius:99px;background:currentColor;transition:width .35s ease}
 .team.on{border-color:currentColor;box-shadow:0 0 0 4px color-mix(in srgb,currentColor 22%,transparent)}
 .team b{font-family:"Fredoka",sans-serif;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .team .pts{font-size:1.6rem;font-weight:700;font-family:"Fredoka",sans-serif;color:var(--ink)}
@@ -979,7 +985,12 @@ function render(){
     const[x,y]=PTS[S.pos[t]],el=$("pawn"+t);
     el.style.transform=`translate(${x+(t?7:-7)}px,${y+11}px)`;
     el.classList.toggle("on",t===S.turn);
-    $("pts"+t).textContent=S.pts[t];
+    $("pts"+t).textContent=S.pts[t];$("pts"+t).nextElementSibling.textContent=S.pts[t]>1?" pts":" pt";
+    /* position et progression vers le jardin */
+    const p=S.pos[t],pct=Math.round(100*p/N);
+    $("cell"+t).innerHTML=p===0?"<b>Départ</b>":p===N?"<b>🌸 Jardin !</b>":`Case <b>${p}</b> / ${N}`+(S.skip[t]?` · ⏸ ${S.skip[t]} tour${S.skip[t]>1?"s":""}`:"");
+    $("pct"+t).textContent=pct+" %";
+    $("bar"+t).firstElementChild.style.width=pct+"%";$("bar"+t).setAttribute("aria-valuenow",p);
     $("team"+t).classList.toggle("on",t===S.turn);
   });
   const pa=$("pawn"+S.turn);if($("board").lastElementChild!==pa)$("board").appendChild(pa);
@@ -1196,7 +1207,11 @@ function ask(ty){
 /* ===== Lancement ===== */
 function init(){
   S.pos=[0,0];S.pts=[0,0];S.skip=[0,0];S.turn=0;S.busy=false;
-  $("score").innerHTML=[0,1].map(t=>`<div class="team t${t}" id="team${t}"><b>${esc(S.names[t])}</b><span class="pts" id="pts${t}">0</span></div>`).join("");
+  $("score").innerHTML=[0,1].map(t=>`<div class="team t${t}" id="team${t}">
+    <div class="team-top"><b>${esc(S.names[t])}</b><span class="pts"><span id="pts${t}">0</span><small> pt</small></span></div>
+    <div class="team-pos"><span id="cell${t}"></span><span id="pct${t}"></span></div>
+    <div class="tbar" id="bar${t}" role="progressbar" aria-label="Progression de ${esc(S.names[t])}" aria-valuemin="0" aria-valuemax="${N}"><i></i></div>
+  </div>`).join("");
   if(G3.ok){G3.tw=null;G3.view=null;G3.ctl.enabled=true;build3DBoard()}
   buildBoard();render();update3D(true);say("À "+S.names[0]+" de jouer.");$("dice").textContent="🎲";$("roll").disabled=false;
   setTimeout(()=>announce("C’est parti"),250);

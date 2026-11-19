@@ -3,45 +3,93 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Le Jeu de l’Oie des équipes</title>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&display=swap" rel="stylesheet">
+<title>Le Grand Jeu de l’Oie</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <style>
-:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
---bg:#eef3f1;--surface:#fff;--ink:#17262b;--mute:#5d7076;--line:#cfdad7;--t0:#e4572e;--t1:#1f7a8c;--q:#f2c14e}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#10191c;--surface:#1a272b;--ink:#eaf1ef;--mute:#9fb2b6;--line:#2e4046;--t0:#ff7a52;--t1:#3fb3c8}}
-:root[data-theme="dark"]{--bg:#10191c;--surface:#1a272b;--ink:#eaf1ef;--mute:#9fb2b6;--line:#2e4046;--t0:#ff7a52;--t1:#3fb3c8}
+:root{color-scheme:dark;
+--bg:#0b0e1c;--surface:#1a2133;--surface2:#121828;--line:#2b3450;--ink:#f1f3fa;--mute:#9aa3b8;
+--accent:#5b4fe9;--accent-soft:rgba(91,79,233,.22);--gold:#f5b72e;--t0:#f43f5e;--t1:#3b82f6;--q:#f5b72e;--ok:#22a35a;--ko:#e5484d}
 *{box-sizing:border-box}
-html{scroll-padding-top:env(safe-area-inset-top,0px)}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
-h1,h2,.display{font-family:"Bricolage Grotesque",system-ui,sans-serif;letter-spacing:-.01em;margin:0}
-main{max-width:640px;margin:0 auto;padding:16px}
-button{font:inherit;cursor:pointer;border:0;border-radius:12px;padding:12px 18px;font-weight:700;color:#fff;background:var(--ink)}
-button:focus-visible,input:focus-visible{outline:3px solid var(--q);outline-offset:2px}
-button:disabled{opacity:.5}
-button.ghost{background:transparent;color:var(--ink);border:2px solid var(--line)}
+html{scroll-padding-top:80px}
+body{margin:0;min-height:100vh;color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif;
+  background:radial-gradient(1100px 620px at 8% -8%,#2a1d66 0%,rgba(42,29,102,0) 62%),linear-gradient(180deg,#121430 0%,#0b0e1c 60%,#070912 100%) fixed;background-color:var(--bg)}
+h1,h2,.display{font-family:"Fredoka",system-ui,sans-serif;font-weight:700;letter-spacing:-.01em;margin:0}
+button{font:inherit;cursor:pointer;border:0;border-radius:12px;padding:12px 18px;font-weight:700;color:#fff;background:var(--accent)}
+button:focus-visible,input:focus-visible,.lenopt input:focus-visible+span{outline:3px solid var(--gold);outline-offset:2px}
+button:disabled{opacity:.5;cursor:default}
+button.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
 .hide{display:none!important}
-#setup{padding-top:24px;display:grid;gap:14px}
-#setup h1{font-size:2.4rem;line-height:1.05;font-weight:800}
-#setup p{color:var(--mute);margin:0}
-label{display:grid;gap:6px;font-weight:700}
-input{font:inherit;padding:12px;border-radius:12px;border:2px solid var(--line);background:var(--surface);color:var(--ink)}
+input[type=text],input:not([type]),input[type=search]{font:inherit;padding:12px 14px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface2);color:var(--ink);width:100%}
+.note{margin:0;font-size:.85rem;color:var(--mute)}
+
+/* ===== En-tête ===== */
+.top{position:sticky;top:0;z-index:15;background:rgba(14,18,34,.82);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.07);padding-top:env(safe-area-inset-top,0px)}
+.top-in{max-width:1180px;margin:0 auto;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.logo{width:42px;height:42px;flex:none;border-radius:12px;display:grid;place-items:center;font-size:24px;background:linear-gradient(135deg,#fbbf24,#f97316);box-shadow:0 6px 18px rgba(249,115,22,.35)}
+.brand-t{font-family:"Fredoka",sans-serif;font-weight:700;font-size:1.45rem;line-height:1.05;color:#fcd34d;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand-s{font-size:.8rem;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top-act{display:flex;gap:10px;align-items:center;flex:none}
+.top-act button{padding:9px 14px;font-weight:600;font-size:.95rem;display:inline-flex;gap:8px;align-items:center}
+.btn-manage{background:var(--accent-soft);border:1.5px solid rgba(124,112,255,.6)!important;color:#e6e3ff}
+.btn-plain{background:rgba(255,255,255,.04);border:1.5px solid var(--line)!important;color:var(--ink)}
+.btn-icon{width:44px;height:44px;padding:0!important;justify-content:center;background:rgba(255,255,255,.04);border:1.5px solid var(--line)!important;font-size:1.1rem}
+@media (max-width:640px){.top-act .lbl{display:none}.brand-s{display:none}.brand-t{font-size:1.15rem}.logo{width:36px;height:36px;font-size:20px}}
+
+main{max-width:680px;margin:0 auto;padding:16px 16px calc(24px + env(safe-area-inset-bottom,0px))}
+
+/* ===== Page de lancement ===== */
+#setup{padding-top:24px}
+.setup-card{background:rgba(30,38,58,.78);border:1px solid rgba(255,255,255,.1);border-radius:24px;padding:40px 40px 36px;display:grid;gap:22px;box-shadow:0 30px 80px rgba(0,0,0,.35)}
+.setup-head{text-align:center;display:grid;gap:12px;justify-items:center}
+.badge{display:inline-block;font-size:.78rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);background:rgba(245,183,46,.12);border:1.5px solid rgba(245,183,46,.5);border-radius:999px;padding:4px 12px}
+.setup-head h1{font-size:clamp(1.9rem,6vw,2.5rem);line-height:1.1}
+.lead{margin:0;color:#c3c9d8;max-width:52ch}
+.teams{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.teambox{display:grid;gap:10px;padding:16px;border-radius:16px;border:1.5px solid}
+.teambox .tl{display:flex;align-items:center;gap:8px;font-size:.82rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase}
+.teambox .tl i{width:11px;height:11px;border-radius:50%;background:currentColor}
+.teambox input{font-weight:700;font-size:1.05rem;background:rgba(10,14,28,.7)}
+.teambox.red{background:rgba(244,63,94,.1);border-color:rgba(244,63,94,.45);color:#fda4af}
+.teambox.red input{border-color:rgba(244,63,94,.45)}
+.teambox.blue{background:rgba(56,189,248,.08);border-color:rgba(56,189,248,.4);color:#7dd3fc}
+.teambox.blue input{border-color:rgba(56,189,248,.4)}
+fieldset{border:0;margin:0;padding:0;min-width:0}
+.lens legend{font-weight:700;margin-bottom:12px;padding:0}
+.lengrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.lenopt{position:relative;cursor:pointer}
+.lenopt input{position:absolute;opacity:0;pointer-events:none}
+.lenopt span{display:grid;gap:2px;text-align:center;padding:14px 8px;border-radius:14px;border:1.5px solid var(--line);background:rgba(255,255,255,.03);transition:background .2s,border-color .2s,box-shadow .2s}
+.lenopt b{font-family:"Fredoka",sans-serif;font-size:1.25rem}
+.lenopt small{color:var(--mute);font-size:.8rem}
+.lenopt:hover span{border-color:#46507a}
+.lenopt input:checked+span{background:var(--accent);border-color:#8b80ff;box-shadow:0 10px 26px rgba(91,79,233,.45)}
+.lenopt input:checked+span small{color:#e3e0ff}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.opt{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-radius:14px;border:1.5px solid var(--line);background:rgba(255,255,255,.03);cursor:pointer}
+.opt span{display:grid;gap:2px}
+.opt small{color:var(--mute);font-size:.82rem}
+.opt input{appearance:none;-webkit-appearance:none;flex:none;width:24px;height:24px;margin:0;border-radius:6px;border:2px solid #4b5578;background:transparent;cursor:pointer}
+.opt input:checked{background:var(--accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/18px no-repeat;border-color:#8b80ff}
+.launch{font-family:"Fredoka",sans-serif;font-size:1.3rem;padding:18px;border-radius:16px;background:linear-gradient(90deg,#f59e0b,#f97316 45%,#f43f5e);box-shadow:0 14px 36px rgba(244,63,94,.32);transition:transform .15s,box-shadow .15s}
+.launch:hover{transform:translateY(-1px);box-shadow:0 18px 42px rgba(244,63,94,.42)}
+@media (max-width:640px){.setup-card{padding:26px 18px}.teams,.opts{grid-template-columns:1fr}.lengrid{grid-template-columns:1fr 1fr}}
+
+/* ===== Partie ===== */
 .score{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
-.team{background:var(--surface);border-radius:14px;padding:10px 12px;border:3px solid transparent;display:flex;justify-content:space-between;align-items:center;gap:8px}
-.team.on{border-color:currentColor}
-.team b{font-family:"Bricolage Grotesque",sans-serif;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.team .pts{font-size:1.6rem;font-weight:800;font-family:"Bricolage Grotesque",sans-serif;color:var(--ink)}
+.team{background:var(--surface);border-radius:14px;padding:10px 12px;border:2px solid transparent;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.team.on{border-color:currentColor;box-shadow:0 0 0 4px color-mix(in srgb,currentColor 22%,transparent)}
+.team b{font-family:"Fredoka",sans-serif;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.team .pts{font-size:1.6rem;font-weight:700;font-family:"Fredoka",sans-serif;color:var(--ink)}
 .team.t0{color:var(--t0)}.team.t1{color:var(--t1)}
-/* plateau */
 #frame{position:relative;background:radial-gradient(circle at 50% 50%,#f6e7bf,#e8cf93);border:3px solid #6b4a2b;outline:3px solid #c9a15b;outline-offset:-9px;border-radius:14px;padding:10px;margin-bottom:14px;color:#2b1d10;overflow:hidden}
-/* annonce du tour */
 #banner{position:absolute;left:50%;top:50%;z-index:2;pointer-events:none;white-space:nowrap;max-width:92%;overflow:hidden;text-overflow:ellipsis;
-  font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:clamp(1.1rem,5vw,1.6rem);color:#fff;padding:10px 22px;border-radius:999px;
+  font-family:"Fredoka",sans-serif;font-weight:700;font-size:clamp(1.1rem,5vw,1.6rem);color:#fff;padding:10px 22px;border-radius:999px;
   border:3px solid #fff;box-shadow:0 6px 20px rgba(0,0,0,.3);opacity:0;transform:translate(-50%,-50%) scale(.6)}
 #banner.show{animation:banner 1.6s cubic-bezier(.2,.9,.3,1.3) forwards}
 @keyframes banner{0%{opacity:0;transform:translate(-50%,-50%) scale(.6) rotate(-4deg)}18%{opacity:1;transform:translate(-50%,-50%) scale(1.08) rotate(1deg)}30%{transform:translate(-50%,-50%) scale(1) rotate(0)}78%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-70%) scale(.95)}}
-.team.on{box-shadow:0 0 0 4px color-mix(in srgb,currentColor 22%,transparent)}
 .pop{animation:pop .6s ease}
 @keyframes pop{0%{transform:scale(1)}35%{transform:scale(1.07)}100%{transform:scale(1)}}
 #roll{transition:background .3s}
@@ -51,77 +99,171 @@ input{font:inherit;padding:12px;border-radius:12px;border:2px solid var(--line);
 #recenter{position:absolute;right:8px;bottom:8px;z-index:2;padding:6px 10px;font-size:.8rem;background:rgba(255,250,240,.85);color:#2b1d10;border:2px solid #6b4a2b}
 #hint3d{position:absolute;left:10px;bottom:10px;z-index:2;margin:0;font-size:.75rem;color:#6b4a2b;font-weight:700;pointer-events:none}
 #board{display:block;width:100%;height:auto;max-width:560px;margin:0 auto}
-#board text{font-family:"Bricolage Grotesque",system-ui,sans-serif;text-anchor:middle;dominant-baseline:central;pointer-events:none}
-#board .num{font-size:7px;font-weight:800;fill:#6b4a2b}
+#board text{font-family:"Fredoka",system-ui,sans-serif;font-weight:700;text-anchor:middle;dominant-baseline:central;pointer-events:none}
+#board .num{fill:#6b4a2b}
 #board .mort .num{fill:#ddd}
-#board .ico{font-size:13px}
-#board .depart .num{font-size:5.5px}
 .pawn{transition:transform .16s ease}
 .pawn .dot{stroke:#fff;stroke-width:2}
 .pawn .halo{fill:none;stroke-width:2.5;opacity:0;transform-box:fill-box;transform-origin:center}
 .pawn.on .halo{animation:halo 1.4s ease-out infinite}
 @keyframes halo{0%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(2.8)}}
 .t0.dot{fill:var(--t0)}.t1.dot{fill:var(--t1)}.t0.halo{stroke:var(--t0)}.t1.halo{stroke:var(--t1)}
-@media (prefers-reduced-motion:reduce){.pop,.pawn.on .halo{animation:none}.pawn.on .halo{opacity:.8;transform:scale(1.8)}#banner.show{animation:none;opacity:1;transform:translate(-50%,-50%)}}
 #action{display:grid;gap:10px;text-align:center}
 #roll{font-size:1.2rem;padding:16px}
 #dice{font-size:2.6rem;min-height:56px}
 #msg{color:var(--mute);min-height:1.5em}
 .legend{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:16px;font-size:.85rem;color:var(--mute)}
-#modal{position:fixed;inset:0;background:rgba(10,20,22,.6);display:flex;align-items:flex-end;justify-content:center;padding:12px;z-index:20}
-#card{background:var(--surface);width:100%;max-width:520px;border-radius:20px;padding:22px;display:grid;gap:14px;max-height:92%;overflow:auto}
-#card h2{font-size:1.5rem}
+.endrow{text-align:center;margin-top:16px}
+
+/* ===== Fenêtres ===== */
+.overlay{position:fixed;inset:0;background:rgba(4,6,14,.7);display:flex;align-items:center;justify-content:center;padding:12px;z-index:30}
+#modal{align-items:flex-end}
+@media (min-width:640px){#modal{align-items:center}}
+.sheet,#card{background:var(--surface);border:1px solid rgba(255,255,255,.08);width:100%;max-width:520px;border-radius:20px;padding:22px;display:grid;gap:14px;max-height:92vh;overflow:auto;box-shadow:0 30px 80px rgba(0,0,0,.5)}
+.sheet.wide{max-width:720px;align-content:start}
+.sheet-head{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.sheet-head button{padding:6px 12px}
+#card h2,.sheet h2{font-size:1.5rem}
+.who{color:var(--mute)}
 .big{font-size:1.35rem;font-weight:700}
-.ans{background:var(--bg);border-radius:12px;padding:14px;font-weight:700;font-size:1.2rem}
+.ans{background:var(--surface2);border-radius:12px;padding:14px;font-weight:700;font-size:1.2rem}
 .row{display:flex;gap:10px}.row>*{flex:1}
-.ok{background:#2e8b57}.ko{background:#c0392b}
-.bar{height:8px;background:var(--bg);border-radius:99px;overflow:hidden}
-.bar i{display:block;height:100%;width:0;background:var(--q);transition:width .25s linear}
-.note{margin:0;font-size:.85rem;color:var(--mute)}
-#timer{font-family:"Bricolage Grotesque",sans-serif;font-size:2rem;font-weight:800;text-align:center}
+.ok{background:var(--ok)}.ko{background:var(--ko)}
+.bar{height:8px;background:var(--surface2);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--gold);transition:width .25s linear}
+.timer{font-family:"Fredoka",sans-serif;font-size:2.2rem;font-weight:700;text-align:center;transition:color .2s}
+.timer.urgent{color:var(--ko);animation:pop .5s ease infinite}
+.qcm{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.choice{background:var(--surface2);border:1.5px solid var(--line);color:var(--ink);font-weight:600;text-align:left;min-height:56px}
+.choice:hover:not(:disabled){border-color:#8b80ff}
+.choice.right{background:var(--ok);border-color:var(--ok);color:#fff;opacity:1}
+.choice.wrong{background:var(--ko);border-color:var(--ko);color:#fff;opacity:1}
+@media (max-width:480px){.qcm{grid-template-columns:1fr}}
+.rules h3{font-family:"Fredoka",sans-serif;font-size:1.1rem;margin:6px 0 0}
+.rules ul{margin:0;padding-left:20px;display:grid;gap:4px;color:#d3d8e6}
+.rules p{margin:0;color:#d3d8e6}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.tabs button{padding:8px 14px;background:rgba(255,255,255,.04);border:1.5px solid var(--line);color:var(--ink);font-weight:600}
+.tabs button[aria-selected=true]{background:var(--accent);border-color:#8b80ff}
+.addform{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end;padding:14px;border-radius:14px;background:var(--surface2);border:1px solid var(--line)}
+.addform label{display:grid;gap:6px;font-size:.85rem;font-weight:700;color:var(--mute)}
+.addform.one{grid-template-columns:1fr auto}
+@media (max-width:560px){.addform,.addform.one{grid-template-columns:1fr}}
+.qlist{list-style:none;margin:0;padding:0;display:grid;gap:6px;max-height:46vh;overflow:auto}
+.qlist li{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:var(--surface2)}
+.qlist .txt{flex:1;min-width:0}
+.qlist .txt b{display:block;font-weight:600}
+.qlist .txt small{color:var(--mute)}
+.qlist .tag{font-size:.72rem;font-weight:800;color:var(--gold);text-transform:uppercase;letter-spacing:.04em}
+.qlist button{flex:none;padding:6px 10px;background:transparent;border:1.5px solid var(--line);color:var(--mute)}
+.qlist button:hover{color:#fff;border-color:var(--ko);background:var(--ko)}
+@media (prefers-reduced-motion:reduce){.pop,.pawn.on .halo,.timer.urgent{animation:none}.pawn.on .halo{opacity:.8;transform:scale(1.8)}#banner.show{animation:none;opacity:1;transform:translate(-50%,-50%)}.launch{transition:none}}
 </style>
 </head>
 <body>
+<header class="top">
+ <div class="top-in">
+  <div class="brand"><span class="logo" aria-hidden="true">🪿</span><div style="min-width:0"><div class="brand-t">Le Grand Jeu de l’Oie</div><div class="brand-s">Édition Quiz &amp; Blind Test Musical</div></div></div>
+  <nav class="top-act" aria-label="Menu">
+   <button class="btn-manage" id="openQm" type="button"><span aria-hidden="true">＋</span><span class="lbl">Gérer les questions</span></button>
+   <button class="btn-plain" id="openRules" type="button"><span aria-hidden="true">📜</span><span class="lbl">Règles</span></button>
+   <button class="btn-icon" id="snd" type="button" aria-label="Couper le son" title="Couper le son">🔊</button>
+  </nav>
+ </div>
+</header>
 <main>
 <section id="setup">
-<h1>Le Jeu de l’Oie<br>des équipes</h1>
-<p>Le plateau classique en spirale, 63 cases et un dé. Sur chaque case, une épreuve : quiz, blind test, emojis ou défi. La première équipe au jardin gagne.</p>
-<label>Équipe 1<input id="n0" value="Les Rouges" maxlength="18"></label>
-<label>Équipe 2<input id="n1" value="Les Bleus" maxlength="18"></label>
-<button id="start">Lancer la partie</button>
+ <div class="setup-card">
+  <div class="setup-head">
+   <span class="badge">Soirée quiz &amp; musique</span>
+   <h1>Préparez votre partie</h1>
+   <p class="lead">Affrontez-vous en équipe, relevez les épreuves et filez vers le jardin avant l’équipe adverse !</p>
+  </div>
+  <div class="teams">
+   <label class="teambox red"><span class="tl"><i></i>Équipe 1 (rouge)</span><input id="n0" value="Les Renards" maxlength="18" autocomplete="off"></label>
+   <label class="teambox blue"><span class="tl"><i></i>Équipe 2 (bleue)</span><input id="n1" value="Les Hiboux" maxlength="18" autocomplete="off"></label>
+  </div>
+  <fieldset class="lens"><legend>📏 Longueur du parcours</legend>
+   <div class="lengrid">
+    <label class="lenopt"><input type="radio" name="len" value="20"><span><b>20 cases</b><small>Rapide (~15 min)</small></span></label>
+    <label class="lenopt"><input type="radio" name="len" value="30" checked><span><b>30 cases</b><small>Classique (~25 min)</small></span></label>
+    <label class="lenopt"><input type="radio" name="len" value="40"><span><b>40 cases</b><small>Épique (~40 min)</small></span></label>
+    <label class="lenopt"><input type="radio" name="len" value="63"><span><b>63 cases</b><small>Traditionnel (~1 h)</small></span></label>
+   </div>
+  </fieldset>
+  <div class="opts">
+   <label class="opt"><span><b>⏱️ Chronomètre (25 s)</b><small>Ajoute de la pression sur les épreuves</small></span><input type="checkbox" id="optChrono" checked></label>
+   <label class="opt"><span><b>🎤 Mode animateur</b><small>Masque les QCM (révélation libre)</small></span><input type="checkbox" id="optHost" checked></label>
+  </div>
+  <button id="start" class="launch" type="button">🎲 Lancer la partie !</button>
+ </div>
 </section>
 
 <section id="game" class="hide">
 <div class="score" id="score"></div>
 <div id="frame">
 <div id="banner" aria-hidden="true"></div>
-<div id="stage" class="hide" role="img" aria-label="Plateau 3D du jeu de l’oie en spirale, 63 cases, jardin au centre. Glissez pour le faire tourner."><p id="hint3d">↻ Glissez pour tourner</p><button class="ghost" id="recenter" type="button">Recentrer</button></div>
-<svg id="board" viewBox="0 0 400 400" role="img" aria-label="Plateau du jeu de l’oie en spirale, 63 cases, jardin au centre"></svg>
+<div id="stage" class="hide" role="img" aria-label="Plateau 3D du jeu de l’oie en spirale, jardin au centre. Glissez pour le faire tourner."><p id="hint3d">↻ Glissez pour tourner</p><button class="ghost" id="recenter" type="button">Recentrer</button></div>
+<svg id="board" viewBox="0 0 400 400" role="img" aria-label="Plateau du jeu de l’oie en spirale, jardin au centre"></svg>
 </div>
 <div id="action">
 <div id="dice" aria-live="polite">🎲</div>
 <div id="msg"></div>
-<button id="roll">Lancer les dés</button>
+<button id="roll">Lancer le dé</button>
 </div>
-<div class="legend"><span>🌉 Pont (6) : cap sur 12</span><span>🏨 Auberge (19) : 1 tour</span><span>🪣 Puits (31) : 2 tours</span><span>🌀 Labyrinthe (42) : retour à 30</span><span>⛓️ Prison (52) : 2 tours</span><span>💀 Mort (58) : retour au départ</span><span>🌸 Jardin (63) : arrivée exacte</span></div>
-<p style="text-align:center;display:flex;gap:10px;justify-content:center;flex-wrap:wrap"><button class="ghost" id="snd" type="button">🔊 Son activé</button><button class="ghost" id="reset">Nouvelle partie</button></p>
+<div class="legend" id="legend"></div>
+<p class="endrow"><button class="ghost" id="reset">Nouvelle partie</button></p>
 </section>
 </main>
-<div id="modal" class="hide" role="dialog" aria-modal="true"><div id="card"></div></div>
+
+<div id="modal" class="overlay hide" role="dialog" aria-modal="true"><div id="card"></div></div>
+
+<div id="rules" class="overlay hide" role="dialog" aria-modal="true" aria-labelledby="rulesTitle">
+ <div class="sheet rules">
+  <div class="sheet-head"><h2 id="rulesTitle">📜 Règles du jeu</h2><button class="ghost" data-close type="button" aria-label="Fermer">✕</button></div>
+  <div id="rulesBody" class="rules" style="display:grid;gap:10px"></div>
+ </div>
+</div>
+
+<div id="qm" class="overlay hide" role="dialog" aria-modal="true" aria-labelledby="qmTitle">
+ <div class="sheet wide">
+  <div class="sheet-head"><h2 id="qmTitle">Gérer les questions</h2><button class="ghost" data-close type="button" aria-label="Fermer">✕</button></div>
+  <div class="tabs" role="tablist" id="qmTabs"></div>
+  <form id="qmForm" class="addform" autocomplete="off"></form>
+  <input id="qmSearch" type="search" placeholder="Rechercher…" aria-label="Rechercher">
+  <p class="note" id="qmCount"></p>
+  <ul class="qlist" id="qmList"></ul>
+  <div class="row" style="justify-content:space-between;align-items:center;flex-wrap:wrap">
+   <p class="note" style="flex:2">Vos ajouts et suppressions sont enregistrés dans ce navigateur uniquement.</p>
+   <button class="ghost" id="qmReset" type="button" style="flex:1">Rétablir la liste d’origine</button>
+  </div>
+ </div>
+</div>
 
 <script>
-const N=63;
-const SP={6:"pont",19:"auberge",31:"puits",42:"lab",52:"prison",58:"mort",63:"jardin"};
 const ICON={depart:"🚩",q:"❓",b:"🎵",e:"🎬",d:"🎭",pont:"🌉",auberge:"🏨",puits:"🪣",lab:"🌀",prison:"⛓️",mort:"💀",jardin:"🌸"};
 const FILL={depart:"#fffaf0",q:"#f0d28a",b:"#d7c0dc",e:"#c4dcae",d:"#f2c39a",pont:"#a9cdea",auberge:"#eeb1a8",puits:"#8fb4c4",lab:"#c9c4b8",prison:"#9b9a96",mort:"#3a3430",jardin:"#f6b6c8"};
 const cycle=["q","b","e","d"];
-const types=["depart"];
-for(let n=1;n<=N;n++)types.push(SP[n]||cycle[n%4]);
+const $=id=>document.getElementById(id);
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const store={get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){return null}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 
-/* Spirale d'Archimède : cases 1→62 réparties à distance égale le long de la courbe, de l'extérieur vers le centre ; 63 (jardin) au centre */
-const CX=200,CY=200,R_OUT=184,R_IN=52,TURNS=3,PHI0=Math.PI;
-function spiralPoints(){
-  const M=4000,TH=TURNS*2*Math.PI,pts=[];
+/* ===== Parcours : positions des cases spéciales selon la longueur choisie ===== */
+const SPEC={
+  20:{turns:1.6,cs:1.25,pont:[4,8],auberge:7,puits:11,lab:[14,9],mort:17},
+  30:{turns:2.1,cs:1.12,pont:[4,9],auberge:10,puits:15,lab:[20,14],prison:24,mort:27},
+  40:{turns:2.5,cs:1.05,pont:[5,10],auberge:13,puits:20,lab:[27,19],prison:33,mort:37},
+  63:{turns:3,cs:1,pont:[6,12],auberge:19,puits:31,lab:[42,30],prison:52,mort:58}
+};
+const SPDESC={pont:v=>`🌉 Pont (case ${v[0]}) : filez à la case ${v[1]}`,auberge:v=>`🏨 Auberge (case ${v}) : passez 1 tour`,puits:v=>`🪣 Puits (case ${v}) : passez 2 tours`,
+  lab:v=>`🌀 Labyrinthe (case ${v[0]}) : retour à la case ${v[1]}`,prison:v=>`⛓️ Prison (case ${v}) : passez 2 tours`,mort:v=>`💀 Mort (case ${v}) : retour au départ`};
+let N=30,SPC=SPEC[30],CS=1,types=[],SPI,PTS;
+const CX=200,CY=200,R_OUT=184,R_IN=52,PHI0=Math.PI;
+/* Spirale d'Archimède : cases réparties à distance égale le long de la courbe, de l'extérieur vers le centre ; le jardin au centre */
+function spiralPoints(turns){
+  const M=4000,TH=turns*2*Math.PI,pts=[];
   for(let i=0;i<=M;i++){const th=TH*i/M,r=R_OUT-(R_OUT-R_IN)*th/TH,a=PHI0+th;pts.push([CX+r*Math.cos(a),CY+r*Math.sin(a)])}
   const cum=[0];for(let i=1;i<=M;i++)cum.push(cum[i-1]+Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]));
   const L=cum[M],cells=[];let j=0;
@@ -129,9 +271,17 @@ function spiralPoints(){
   cells.push([CX,CY]);
   return{path:pts.filter((_,i)=>i%10===0||i===M),cells};
 }
-const SPI=spiralPoints(),PTS=SPI.cells;
+function setLength(n){
+  N=n;SPC=SPEC[n];CS=SPC.cs;
+  const at={};for(const k in SPDESC){const v=SPC[k];if(v!=null)at[Array.isArray(v)?v[0]:v]=k}
+  at[N]="jardin";
+  types=["depart"];for(let i=1;i<=N;i++)types.push(at[i]||cycle[i%4]);
+  SPI=spiralPoints(SPC.turns);PTS=SPI.cells;
+}
+function specialList(){const a=[];for(const k in SPDESC)if(SPC[k]!=null)a.push(SPDESC[k](SPC[k]));a.push(`🌸 Jardin (case ${N}) : il faut y tomber pile`);return a}
 
-const BANK={
+/* ===== Questions : liste d'origine + ajouts/suppressions enregistrés dans le navigateur ===== */
+const BASE={
  q:[
   ["Quelle est la capitale de l’Australie ?","Canberra"],
   ["Combien de joueurs une équipe de football aligne-t-elle sur le terrain ?","11"],
@@ -658,39 +808,42 @@ const BANK={
   "Pour chaque lettre du mot CHAT, citez un objet qui commence par cette lettre, en 15 secondes."
  ]
 };
-const deck={};
+const CATS=["q","b","e","d"];
+const CATMETA={q:{label:"Quiz",icon:"❓",f:["Question","Réponse"]},b:{label:"Blind test",icon:"🎵",f:["Titre","Artiste"]},e:{label:"Emojis",icon:"🎬",f:["Emojis","Film"]},d:{label:"Défis",icon:"🎭",f:["Défi"]}};
+const deck={},BANK={};
+let CUSTOM=store.get("oie-questions");
+if(!CUSTOM||!CUSTOM.added||!CUSTOM.removed)CUSTOM={added:{q:[],b:[],e:[],d:[]},removed:{q:[],b:[],e:[],d:[]}};
+const ikey=x=>JSON.stringify(x);
+function applyCustom(){
+  for(const k of CATS){const rm=new Set(CUSTOM.removed[k]||[]);BANK[k]=BASE[k].filter(x=>!rm.has(ikey(x))).concat(CUSTOM.added[k]||[]);deck[k]=null}
+}
+function saveCustom(){store.set("oie-questions",CUSTOM);applyCustom()}
+applyCustom();
 function draw(k){
-  if(!deck[k]||!deck[k].length){
-    const a=BANK[k].map((_,i)=>i);
-    for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}
-    deck[k]=a;
-  }
+  if(!deck[k]||!deck[k].length)deck[k]=shuffle(BANK[k].map((_,i)=>i));
   return BANK[k][deck[k].pop()];
 }
-const S={pos:[0,0],pts:[0,0],skip:[0,0],turn:0,names:[],busy:false};
-const $=id=>document.getElementById(id);
-const sleep=ms=>new Promise(r=>setTimeout(r,ms));
-const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const S={pos:[0,0],pts:[0,0],skip:[0,0],turn:0,names:[],busy:false,opts:{chrono:true,host:true}};
 
 function buildBoard(){
   const d=SPI.path.map((p,i)=>(i?"L":"M")+p[0].toFixed(1)+" "+p[1].toFixed(1)).join("");
-  let h=`<path d="${d}" fill="none" stroke="#6b4a2b" stroke-width="40" stroke-linecap="round" stroke-linejoin="round"/>
-<path d="${d}" fill="none" stroke="#e2c27f" stroke-width="36" stroke-linecap="round" stroke-linejoin="round"/>`;
+  let h=`<path d="${d}" fill="none" stroke="#6b4a2b" stroke-width="${40*CS}" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="${d}" fill="none" stroke="#e2c27f" stroke-width="${36*CS}" stroke-linecap="round" stroke-linejoin="round"/>`;
   for(let n=0;n<=N;n++){
-    const ty=types[n],[x,y]=PTS[n],jar=n===N,r=jar?27:16.5;
+    const ty=types[n],[x,y]=PTS[n],jar=n===N,r=jar?27:16.5*CS;
     h+=`<g class="${ty}"><circle cx="${x}" cy="${y}" r="${r}" fill="${FILL[ty]}" stroke="#6b4a2b" stroke-width="1.5"/>
-<text class="num" x="${x}" y="${y-(jar?16:9)}">${n||"DÉPART"}</text>
-<text class="ico" x="${x}" y="${y+(jar?4:3.5)}"${jar?' style="font-size:24px"':""}>${ICON[ty]}</text></g>`;
+<text class="num" x="${x}" y="${y-(jar?16:9*CS)}" style="font-size:${n?7*CS:5.5*CS}px">${n||"DÉPART"}</text>
+<text class="ico" x="${x}" y="${y+(jar?4:3.5*CS)}" style="font-size:${jar?24:13*CS}px">${ICON[ty]}</text></g>`;
   }
   h+=[0,1].map(t=>`<g id="pawn${t}" class="pawn" style="transform:translate(${PTS[0][0]+(t?7:-7)}px,${PTS[0][1]+11}px)"><circle class="halo t${t}" r="6"/><circle class="dot t${t}" r="6"/></g>`).join("");
   $("board").innerHTML=h;
-  /* la spirale n'est pas symétrique (départ à r=184 à gauche) : on cadre le viewBox sur son contenu réel */
-  const xs=SPI.path.map(p=>p[0]),ys=SPI.path.map(p=>p[1]),M=24;
+  const xs=SPI.path.map(p=>p[0]),ys=SPI.path.map(p=>p[1]),M=24*CS;
   const x0=Math.min(...xs)-M,y0=Math.min(...ys)-M,w=Math.max(...xs)+M-x0,hh=Math.max(...ys)+M-y0;
   $("board").setAttribute("viewBox",`${x0.toFixed(1)} ${y0.toFixed(1)} ${w.toFixed(1)} ${hh.toFixed(1)}`);
+  $("legend").innerHTML=specialList().map(s=>`<span>${s}</span>`).join("");
 }
 /* ===== Plateau 3D (Three.js). Coordonnées : x/z = coordonnées SVG recentrées sur (200,200) ===== */
-const G3={ok:false,tried:false,pawns:[],top:[]};
+const G3={ok:false,tried:false,pawns:[],top:[],group:null};
 const REDUCE=matchMedia("(prefers-reduced-motion: reduce)").matches;
 const cssVar=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 const lin=h=>new THREE.Color(h).convertSRGBToLinear();
@@ -702,7 +855,7 @@ function boardTex(){
   x.fillStyle=g;x.fillRect(0,0,W,W);
   const P=SPI.path.map(([a,b])=>[(a-200+220)*s,(b-200+220)*s]);
   const line=(w,col)=>{x.beginPath();P.forEach((p,i)=>i?x.lineTo(p[0],p[1]):x.moveTo(p[0],p[1]));x.lineWidth=w*s;x.strokeStyle=col;x.lineCap=x.lineJoin="round";x.stroke()};
-  line(40,"#6b4a2b");line(36,"#f6e7bf");
+  line(40*CS,"#6b4a2b");line(36*CS,"#f6e7bf");
   x.strokeStyle="#c9a15b";x.lineWidth=3*s;x.beginPath();x.arc(W/2,W/2,214*s,0,7);x.stroke();
   return canvasTex(c);
 }
@@ -711,7 +864,7 @@ function cellTex(n){
   x.fillStyle=FILL[ty];x.fillRect(0,0,256,256);
   x.strokeStyle="#6b4a2b";x.lineWidth=10;x.beginPath();x.arc(128,128,123,0,7);x.stroke();
   x.textAlign="center";x.textBaseline="middle";x.fillStyle=ty==="mort"?"#ddd":"#6b4a2b";
-  x.font=`800 ${n===0?34:n===N?36:54}px "Bricolage Grotesque",system-ui,sans-serif`;
+  x.font=`700 ${n===0?34:n===N?36:54}px "Fredoka",system-ui,sans-serif`;
   x.fillText(n===0?"DÉPART":String(n),128,n===N?58:64);
   x.font=`${n===N?118:100}px ${EMOJI_FONT}`;
   x.fillText(ICON[ty],128,n===N?152:160);
@@ -728,12 +881,29 @@ function pawnMesh(col){
   return g;
 }
 function target3(t){const p=S.pos[t],[x,y]=PTS[p];return new THREE.Vector3(x-200+(t?6.8:-6.8),G3.top[p],y-200+3)}
+/* le dessus du plateau et les cases dépendent de la longueur choisie : on les reconstruit à chaque partie */
+function build3DBoard(){
+  if(G3.group){G3.scene.remove(G3.group);G3.group.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material){if(o.material.map)o.material.map.dispose();o.material.dispose()}})}
+  const grp=new THREE.Group();
+  const top=new THREE.Mesh(new THREE.CircleGeometry(220,128),new THREE.MeshStandardMaterial({map:boardTex(),roughness:.9}));
+  top.rotation.x=-Math.PI/2;top.receiveShadow=true;grp.add(top);
+  G3.top=[];
+  for(let n=0;n<=N;n++){
+    const ty=types[n],[x,y]=PTS[n],jar=n===N,r=jar?27:15.5*CS,h=jar?9:5;
+    const cyl=new THREE.Mesh(new THREE.CylinderGeometry(r,r+.8,h,48),new THREE.MeshStandardMaterial({color:lin(FILL[ty]),roughness:.6}));
+    cyl.position.set(x-200,h/2,y-200);cyl.castShadow=cyl.receiveShadow=true;grp.add(cyl);
+    const cap=new THREE.Mesh(new THREE.CircleGeometry(r,48),new THREE.MeshStandardMaterial({map:cellTex(n),roughness:.55}));
+    cap.rotation.x=-Math.PI/2;cap.position.set(x-200,h+.05,y-200);cap.receiveShadow=true;grp.add(cap);
+    G3.top[n]=h+.05;
+  }
+  G3.group=grp;G3.scene.add(grp);
+}
 async function init3D(){
   if(!window.THREE||!THREE.OrbitControls)return false;
   let R;
   try{R=new THREE.WebGLRenderer({antialias:true,alpha:true})}catch(e){return false}
   if(!R.getContext())return false;
-  try{await Promise.race([document.fonts.load('800 54px "Bricolage Grotesque"'),sleep(1500)])}catch(e){}
+  try{await Promise.race([document.fonts.load('700 54px "Fredoka"'),sleep(1500)])}catch(e){}
   const el=$("stage");el.classList.remove("hide");el.prepend(R.domElement);
   R.setPixelRatio(Math.min(devicePixelRatio,2));R.outputEncoding=THREE.sRGBEncoding;
   R.shadowMap.enabled=true;R.shadowMap.type=THREE.PCFSoftShadowMap;
@@ -744,27 +914,16 @@ async function init3D(){
   ctl.target.copy(AIM);ctl.enableDamping=true;ctl.dampingFactor=.08;ctl.enablePan=false;ctl.enableZoom=false;ctl.minPolarAngle=.12;ctl.maxPolarAngle=1.2;ctl.rotateSpeed=.6;ctl.update();
   ctl.addEventListener("start",()=>$("hint3d").classList.add("hide"));
   $("recenter").onclick=()=>{G3.tw=null;G3.view=null;ctl.enabled=true;cam.position.copy(HOME);ctl.target.copy(AIM);ctl.update()};
-  G3.cam=cam;G3.ctl=ctl;
+  G3.cam=cam;G3.ctl=ctl;G3.scene=scene;
   scene.add(new THREE.HemisphereLight(0xfff4dc,0x5a3d22,.8));
   const sun=new THREE.DirectionalLight(0xffffff,.8);sun.position.set(-170,340,220);sun.castShadow=true;
   sun.shadow.mapSize.set(2048,2048);Object.assign(sun.shadow.camera,{left:-260,right:260,top:260,bottom:-260,near:10,far:1000});sun.shadow.bias=-.0006;
   scene.add(sun);
-  /* socle en bois, dessus imprimé avec la piste, filet doré */
   const rim=new THREE.Mesh(new THREE.CylinderGeometry(229,236,16,128),new THREE.MeshStandardMaterial({color:lin("#6b4a2b"),roughness:.65}));
   rim.position.y=-8.05;rim.receiveShadow=true;scene.add(rim);
-  const top=new THREE.Mesh(new THREE.CircleGeometry(220,128),new THREE.MeshStandardMaterial({map:boardTex(),roughness:.9}));
-  top.rotation.x=-Math.PI/2;top.receiveShadow=true;scene.add(top);
   const gold=new THREE.Mesh(new THREE.TorusGeometry(224.5,2.6,12,160),new THREE.MeshStandardMaterial({color:lin("#c9a15b"),metalness:.6,roughness:.35}));
   gold.rotation.x=Math.PI/2;gold.position.y=.4;scene.add(gold);
-  /* cases en relief : un cylindre + une pastille imprimée sur le dessus */
-  for(let n=0;n<=N;n++){
-    const ty=types[n],[x,y]=PTS[n],jar=n===N,r=jar?27:15.5,h=jar?9:5;
-    const cyl=new THREE.Mesh(new THREE.CylinderGeometry(r,r+.8,h,48),new THREE.MeshStandardMaterial({color:lin(FILL[ty]),roughness:.6}));
-    cyl.position.set(x-200,h/2,y-200);cyl.castShadow=cyl.receiveShadow=true;scene.add(cyl);
-    const cap=new THREE.Mesh(new THREE.CircleGeometry(r,48),new THREE.MeshStandardMaterial({map:cellTex(n),roughness:.55}));
-    cap.rotation.x=-Math.PI/2;cap.position.set(x-200,h+.05,y-200);cap.receiveShadow=true;scene.add(cap);
-    G3.top[n]=h+.05;
-  }
+  build3DBoard();
   G3.pawns=[0,1].map(t=>{const g=pawnMesh(cssVar("--t"+t));scene.add(g);return{g,from:new THREE.Vector3(),to:new THREE.Vector3(),t0:0,dur:0,hop:0}});
   const fit=()=>{const w=el.clientWidth,h=el.clientHeight;if(!w||!h)return;R.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()};
   new ResizeObserver(fit).observe(el);fit();
@@ -784,7 +943,6 @@ async function init3D(){
   })(performance.now());
   return true;
 }
-/* Zoom caméra : on garde l'orientation choisie par le joueur et on se rapproche de la case */
 function camTween(pos,tgt,dur){
   return new Promise(res=>{if(G3.tw)G3.tw.res();G3.tw={fp:G3.cam.position.clone(),ft:G3.ctl.target.clone(),tp:pos,tt:tgt,t0:performance.now(),dur:REDUCE?1:dur,res}});
 }
@@ -824,10 +982,9 @@ function render(){
     $("pts"+t).textContent=S.pts[t];
     $("team"+t).classList.toggle("on",t===S.turn);
   });
-  const pa=$("pawn"+S.turn);if($("board").lastElementChild!==pa)$("board").appendChild(pa); /* le pion actif passe au premier plan */
-  const r=$("roll");r.style.background=`var(--t${S.turn})`;r.textContent="🎲 "+S.names[S.turn]+", lancez les dés";
+  const pa=$("pawn"+S.turn);if($("board").lastElementChild!==pa)$("board").appendChild(pa);
+  const r=$("roll");r.style.background=`var(--t${S.turn})`;r.textContent="🎲 "+S.names[S.turn]+", lancez le dé";
 }
-/* annonce animée du tour : bandeau sur le plateau + carte d'équipe et bouton qui « sautent » */
 function announce(extra){
   const b=$("banner");
   b.textContent=(extra||"À vous de jouer")+" · "+S.names[S.turn];
@@ -836,12 +993,11 @@ function announce(extra){
 }
 function say(t){$("msg").textContent=t}
 function showCard(h){$("card").innerHTML=h;$("modal").classList.remove("hide")}
-/* ===== Blind test : extraits officiels de 30 s trouvés via l'API de recherche iTunes ===== */
-/* liens des extraits trouves a l'avance (la recherche en direct ne sert qu'en secours) */
+
+/* ===== Blind test : extraits officiels de 30 s (iTunes) ===== */
 const PREV_URLS={"Billie Jean":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/d0/fd/fa/d0fdfaca-785d-b877-f81f-7342dea82de0/mzaf_10830654895497666068.plus.aac.p.m4a","Alors on danse":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/87/84/ae/8784ae2b-8e39-0053-23ad-940bf2f69d87/mzaf_16356168226426243495.plus.aac.p.m4a","Dernière danse":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/a9/e8/a2/a9e8a200-80a0-41d2-5a55-ebcdfb55980d/mzaf_14817390791569895987.plus.aac.p.m4a","Bohemian Rhapsody":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/44/10/de/4410de9b-4b10-c763-baf8-c4911c032248/mzaf_3700911105004619705.plus.aac.p.m4a","Someone Like You":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/cc/7c/82/cc7c82b6-0f0c-a362-952f-6389dbc603ba/mzaf_15156534524546439842.plus.aac.p.m4a","Les Champs-Élysées":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/00/e4/32/00e4326a-a3d6-4c85-b7be-8a123f04f6cb/mzaf_10395904914225014080.plus.aac.p.m4a","Despacito":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/46/42/db/4642db8f-13f6-457d-bd3e-1d9c22654ace/mzaf_16062777735482664257.plus.aac.p.m4a","Je veux":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/87/10/83/871083b9-3f9a-5cd0-38ae-a3fc1a6bdf95/mzaf_9494055021183912606.plus.aac.p.m4a","Wonderwall":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/ab/16/93/ab16933c-6203-3db9-9da9-513ff1c8496d/mzaf_16993612140334549994.plus.aac.p.m4a","Respect":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/69/a4/fd/69a4fd25-dc51-b269-057d-42720d9c2ee5/mzaf_7895690065245675140.plus.aac.p.m4a","La Bohème":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/23/57/ca/2357cad1-c818-4ccc-2eb4-e09aab948083/mzaf_13264193577484048104.plus.aac.p.m4a","Ne me quitte pas":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/ee/79/bd/ee79bdf2-5046-942b-423b-02a3043f9561/mzaf_3924043332466799102.plus.aac.p.m4a","La Vie en rose":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/bd/c4/1c/bdc41c85-dfe7-e103-0be6-18a975075952/mzaf_9310320960485393387.plus.aac.p.m4a","Shape of You":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/44/c7/4f/44c74f0d-72dc-6143-d4d0-ba14d661ca0d/mzaf_9566898362556366703.plus.aac.p.m4a","Hey Jude":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/0b/79/29/0b79298a-62dd-0b35-b93e-8530f5a7711a/mzaf_7245259407320973793.plus.aac.p.m4a","Smells Like Teen Spirit":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/b0/36/9c/b0369c24-5047-1f93-a228-64ecec779cdc/mzaf_17479720470163953122.plus.aac.p.m4a","Uptown Funk":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/38/55/fe/3855feef-5884-9f0c-a1a5-5c1a9ff4e269/mzaf_16034847874510944537.plus.aac.p.m4a","Bad Guy":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/c3/87/1f/c3871f7e-3260-d615-1c66-5fdca2c3a48f/mzaf_10721331211699880949.plus.aac.p.m4a","Djadja":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/7b/f8/73/7bf87378-e84b-471a-3729-8d1d0546ee9a/mzaf_16949123873725847595.plus.aac.p.m4a","Get Lucky":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/57/a5/85/57a585aa-f1bc-7619-881b-f8a04a5541d5/mzaf_6906185026678279401.plus.aac.p.m4a","L’Aventurier":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/eb/79/b7/eb79b79e-6783-4225-4331-6e0fac2646cc/mzaf_17876168266679953206.plus.aac.p.m4a","Le Sud":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/ca/6f/1a/ca6f1ab4-2117-f61f-72e9-eb9e2c16d5dc/mzaf_6979040703021992983.plus.aac.p.m4a","Toxic":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/ae/c4/7f/aec47f56-842d-49b4-558b-7a7523fd6728/mzaf_6693111381462300599.plus.aac.p.m4a","Hotel California":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/17/30/06/1730066d-13fb-6803-0e52-46d4762b94e0/mzaf_8068080726527063383.plus.aac.p.m4a","Dancing Queen":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/9a/c1/a4/9ac1a457-6b2d-91f2-a74a-5e2ee7241d69/mzaf_15132640738584640960.plus.aac.p.m4a","Je te promets":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/56/61/31/566131c6-a15e-c4e6-64e8-4eae903b08f8/mzaf_14223993891827339865.plus.aac.p.m4a","Africa":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/bb/3d/07/bb3d07a3-b3af-2c99-5c9f-eb72796268c2/mzaf_11871467005041854011.plus.aac.p.m4a","Mistral gagnant":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/31/ac/f4/31acf4fa-4444-c8ea-38ac-2431e7e3b425/mzaf_14030217246881116896.plus.aac.p.m4a","Blinding Lights":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/0c/c5/03/0cc503b5-9299-b207-a13c-ba5358733c56/mzaf_18217607061023109918.plus.aac.p.m4a","Seven Nation Army":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/c7/41/bc/c741bcad-8bb1-4ccb-58c7-98f3a3fad85a/mzaf_9450515588724143475.plus.aac.p.m4a","Papaoutai":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/f5/74/17/f5741739-6e4a-22d1-7d1c-fb1d83cd48fa/mzaf_7090140597883469797.plus.aac.p.m4a","Tous les mêmes":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/e3/c1/e5/e3c1e5dd-a75c-3849-18b6-4de950c8509c/mzaf_18181150849100112232.plus.aac.p.m4a","Ta reine":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/a0/c7/1c/a0c71cc9-4795-fb36-d11c-2dc1dbc79634/mzaf_7786266794656092741.plus.aac.p.m4a","Balance ton quoi":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/d8/d2/0e/d8d20ea6-9555-aa33-ac00-582ab132663f/mzaf_1945413541248691973.plus.aac.p.m4a","Tourner dans le vide":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/e6/ec/bc/e6ecbc3a-270a-13fc-6602-826aa08161d5/mzaf_5787677703861880578.plus.aac.p.m4a","Moi... Lolita":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/34/73/b7/3473b7da-9986-d5f0-b2af-b936fad2d293/mzaf_1119262600276621424.plus.aac.p.m4a","Tout le bonheur du monde":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/fb/3c/97/fb3c97ba-e8b8-b2d5-64c2-85645ee3c40d/mzaf_3260737236237343887.plus.aac.p.m4a","Paris-Seychelles":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/29/ef/04/29ef046a-b1ab-a631-e76e-31e78ca1644c/mzaf_16336632717960971255.plus.aac.p.m4a","Jour 1":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/d9/0b/e4/d90be4a7-1c5f-4fbd-b1da-08ee32cb2eee/mzaf_9380436198352597086.plus.aac.p.m4a","Dommage":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/be/e3/ff/bee3ff7c-7215-ac92-4841-54e34e34dce9/mzaf_2426797672003624763.plus.aac.p.m4a","La grenade":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/e8/e5/58/e8e55826-a0cc-c6c6-d285-aa47800b21b5/mzaf_17151317782431571138.plus.aac.p.m4a","Pookie":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/c6/4d/d9/c64dd9d2-01ae-7b53-f193-89357799e158/mzaf_14094145926541262657.plus.aac.p.m4a","Basique":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/af/25/93/af2593fa-f4ca-73d5-bc0a-b36c36719497/mzaf_5677389276593843455.plus.aac.p.m4a","La Corrida":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/04/7a/86/047a86c7-1ae4-b40f-16ca-13bd10f03f9d/mzaf_3900014434788195179.plus.aac.p.m4a","Je l'aime à mourir":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/b3/70/d5/b370d571-cef4-a2ed-349f-e6a075198f94/mzaf_11683070719241899847.plus.aac.p.m4a","Aïcha":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/34/80/0a/34800ae0-9b4f-947d-6aa2-403a289edd66/mzaf_1040580676289059058.plus.aac.p.m4a","Les lacs du Connemara":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/4a/b6/04/4ab6046c-2b7b-d21d-011c-c29d2502af07/mzaf_14513821206575509039.plus.aac.p.m4a","Comme d'habitude":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/78/5d/08/785d08d4-b33a-9e6d-803a-639c4f263ef4/mzaf_1721041697156764407.plus.aac.p.m4a","Alexandrie Alexandra":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/69/49/ea/6949ea7b-7b12-ff36-c7d3-7abf2d9a6845/mzaf_15458461231193564857.plus.aac.p.m4a","Foule sentimentale":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/74/c6/63/74c66368-40b4-b6ce-2491-17c585d32c28/mzaf_3351410489118090394.plus.aac.p.m4a","Ella, elle l'a":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/aa/0c/80/aa0c80f0-52ae-cfb8-19da-c9fa6d01a589/mzaf_13887152387730535755.plus.aac.p.m4a","Résiste":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/23/6a/28/236a28f1-4185-56c1-34d3-4e423110518d/mzaf_13926164293073266279.plus.aac.p.m4a","Joe le taxi":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/61/d6/bc/61d6bc80-8515-f797-ffaa-345f326b61ae/mzaf_3283961918268616595.plus.aac.p.m4a","Désenchantée":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/5b/a5/35/5ba53553-5c05-34c8-ae74-8c146b16e397/mzaf_7700522453748768141.plus.aac.p.m4a","Allumer le feu":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/2b/e1/88/2be18866-e39e-bd12-a6c6-13c6aa98087a/mzaf_2713717880842748412.plus.aac.p.m4a","La Javanaise":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/9f/12/ee/9f12ee88-1860-fe2f-7063-b8233f990218/mzaf_3399724262759064359.plus.aac.p.m4a","Les copains d'abord":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/61/95/c8/6195c818-8e9b-60ca-5a15-fabf21b1d274/mzaf_14273420549176116181.plus.aac.p.m4a","La mer":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/f4/d0/f5/f4d0f5ef-8daf-e4ab-f6d9-e05710c194f1/mzaf_17618360063068674787.plus.aac.p.m4a","Non, je ne regrette rien":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/0e/8b/10/0e8b1064-7101-b1f7-3ebc-7b299972bfcf/mzaf_7042031199388582791.plus.aac.p.m4a","Emmenez-moi":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/01/f5/59/01f55933-888e-aba3-d034-c27823a4e376/mzaf_14781190522750350398.plus.aac.p.m4a","Les démons de minuit":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/3e/2f/43/3e2f43d0-71a3-c0cc-25fa-d9d6a9c2ed94/mzaf_13500331263683743525.plus.aac.p.m4a","Femme libérée":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/8b/f8/66/8bf86636-3a1c-bc44-9e6c-2723acde2f88/mzaf_5439447725888083280.plus.aac.p.m4a","Mademoiselle chante le blues":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/f2/a6/7b/f2a67ba9-049d-834e-a755-a08427fd2f56/mzaf_4019115320933772315.plus.aac.p.m4a","Pour que tu m'aimes encore":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/da/f2/d0/daf2d015-b867-b415-4e6f-e40194c60c26/mzaf_286533020212951886.plus.aac.p.m4a","My Heart Will Go On":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/f4/e9/69/f4e9695a-ab90-1946-abe0-77e8fa96ccfc/mzaf_10170763914731960323.plus.aac.p.m4a","Envole-moi":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/6e/0f/8e/6e0f8ebc-bfd7-c806-eb90-b3670e0ed6c6/mzaf_8673320073175772735.plus.aac.p.m4a","Quand la musique est bonne":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/96/22/41/962241f0-e62e-2b7f-6030-c7108ca33dc8/mzaf_7377471114079099101.plus.aac.p.m4a","Place des grands hommes":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/90/58/c4/9058c404-4d2b-eb12-b92f-71c619a8d4cc/mzaf_13982468595947468105.plus.aac.p.m4a","Le chanteur":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/ef/14/e3/ef14e398-a12a-efcc-ed02-5ebacfd949f5/mzaf_5690941348790962331.plus.aac.p.m4a","L'Aziza":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/a5/6f/9b/a56f9b9a-dd8d-77fd-8263-78656d66c444/mzaf_6255728570884117377.plus.aac.p.m4a","Tomber la chemise":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/b1/d0/c3/b1d0c3bc-d480-7c83-fbea-135a23cd10b1/mzaf_17397460139832771841.plus.aac.p.m4a","Ma philosophie":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/31/e3/d5/31e3d58c-bca1-39f8-89a4-3566f393510c/mzaf_3651206398904476894.plus.aac.p.m4a","Elle me dit":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/a9/68/c5/a968c531-5679-edff-4fe4-5ad97bf65bff/mzaf_11111696659551026370.plus.aac.p.m4a","Thriller":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/58/8c/cb/588ccb9a-ab79-4a38-43b5-d4c24ea42859/mzaf_2083607504726567992.plus.aac.p.m4a","Beat It":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/75/b8/83/75b8831b-faec-7e70-ecd4-17db64c20d86/mzaf_17724551560452474025.plus.aac.p.m4a","Like a Prayer":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/0b/23/82/0b238289-52e2-2107-5531-181836267ed2/mzaf_6726729811402686020.plus.aac.p.m4a","Rolling in the Deep":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/ab/e0/92/abe092f1-52b6-d879-42f9-750930d990cd/mzaf_13754686355964520216.plus.aac.p.m4a","Hello":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/0e/a2/a1/0ea2a17f-49b7-8d2c-6645-b27f320de20e/mzaf_14739704916677365626.plus.aac.p.m4a","Umbrella":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/7b/45/22/7b452241-882c-409b-3a9b-23306b14286a/mzaf_8588243939716013218.plus.aac.p.m4a","Crazy in Love":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/a4/a0/30/a4a03020-e7ba-e7b8-7044-6a803efaee93/mzaf_1257769505914969070.plus.aac.p.m4a","Bad Romance":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/7a/4e/76/7a4e76e5-cbf5-0339-f334-7f825331c994/mzaf_8280471211611925260.plus.aac.p.m4a","Shallow":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/0c/cc/ed/0ccced59-6e6f-f0a0-0c9a-d20bfd475052/mzaf_26600833784075363.plus.aac.p.m4a","Viva la Vida":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/a3/30/8e/a3308eed-d8b7-e0b3-f09d-5e1b0f4d660a/mzaf_8517946447501075134.plus.aac.p.m4a","I Will Survive":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/96/4e/43/964e43ce-ee49-aa99-7d27-5434c784d9a8/mzaf_5959778804469681533.plus.aac.p.m4a","Stayin' Alive":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/36/ed/d6/36edd6a5-2093-3aea-43f3-318f2b75373b/mzaf_14646237435212422067.plus.aac.p.m4a","Livin' on a Prayer":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/75/15/30/75153020-b7c4-7958-8907-4aa1b965dc24/mzaf_2377504467597068152.plus.aac.p.m4a","Girls Just Want to Have Fun":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/72/c1/d8/72c1d8b3-ea91-d192-f0f3-19635b8e23b9/mzaf_7659275070797279015.plus.aac.p.m4a","Take On Me":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/f2/03/4f/f2034f41-707f-7111-bc63-e5d3cf7f2240/mzaf_17215043934336702540.plus.aac.p.m4a","Sweet Dreams (Are Made of This)":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/65/eb/89/65eb89f3-63b5-51d1-84e9-362ddb0259e1/mzaf_13469396206931835946.plus.aac.p.m4a","Every Breath You Take":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/fe/e4/66/fee46681-9bbc-358a-ba0f-51d39feabf8b/mzaf_16980938720718099101.plus.aac.p.m4a","Imagine":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/7d/4e/8c/7d4e8ced-a37b-fab9-c66a-f3b4d6f043cb/mzaf_1566428042492234227.plus.aac.p.m4a","(I Can't Get No) Satisfaction":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/ee/4d/28/ee4d28cd-a465-1334-2863-efda9ea9669b/mzaf_8440807812349084607.plus.aac.p.m4a","Johnny B. Goode":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/e5/e3/7d/e5e37d79-825b-5412-c7d3-17e0c0858e97/mzaf_2407643628638675650.plus.aac.p.m4a","Stand by Me":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/f4/f8/ec/f4f8ec79-c7a5-0324-5fad-f8ab8c8b1fb3/mzaf_2576721935455542013.plus.aac.p.m4a","What a Wonderful World":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/f0/28/3e/f0283e36-b2b5-ae0d-5276-9b55535cbdf4/mzaf_12728860797817529355.plus.aac.p.m4a","Lose Yourself":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/67/71/06/677106d0-6405-b2a9-1428-a891a04ca6c5/mzaf_10546769302334222049.plus.aac.p.m4a","Hips Don't Lie":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/d5/e5/e7/d5e5e748-140a-141b-4b34-bc5ef547c284/mzaf_5404619224819236747.plus.aac.p.m4a","Macarena":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/87/de/8d/87de8d4c-5420-73f9-4ea4-86b8db743958/mzaf_5563419343591496736.plus.aac.p.m4a","...Baby One More Time":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/2a/ef/e5/2aefe5c7-e83b-07b1-227e-117347aa3006/mzaf_11333878250757508664.plus.aac.p.m4a","Believe":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/9c/52/d8/9c52d83d-242e-abc4-68fc-273eeb8f0358/mzaf_10714034642820090237.plus.aac.p.m4a","Shake It Off":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/25/b7/39/25b7398a-a120-3f2a-de52-c2719e047b80/mzaf_1911282677301986548.plus.aac.p.m4a","Firework":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/be/75/a9/be75a966-fd5e-458c-b922-4a59b95a7436/mzaf_16285337280774165818.plus.aac.p.m4a","Levitating":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/62/94/9b/62949b03-9781-6390-b92b-cc0b1028d4aa/mzaf_12215438708882988206.plus.aac.p.m4a","As It Was":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/67/10/16/67101606-3869-ca44-6c03-e13d6322cb51/mzaf_1135399237022217274.plus.aac.p.m4a","Flowers":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/68/9e/f7/689ef7fe-14fe-a846-c87f-7d3b2d6344b1/mzaf_4167137058064023087.plus.aac.p.m4a","Someone You Loved":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/05/71/a8/0571a843-d302-0a76-2459-4a1f2f9f71ea/mzaf_16289059875957340999.plus.aac.p.m4a","Rasputin":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/53/a6/24/53a6243c-f880-b608-da26-d66636ad3556/mzaf_14138691262938405373.plus.aac.p.m4a","Zombie":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/35/bb/65/35bb6532-1abe-59e4-9ced-8bee2742ea24/mzaf_15102830936602294569.plus.aac.p.m4a","Wind of Change":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/85/ce/21/85ce21e2-354a-fe6d-6c72-1ab88caef6af/mzaf_7467855603569521855.plus.aac.p.m4a","Mr. Brightside":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/b2/1a/e8/b21ae8eb-9d11-2aaf-cc48-0e8ca210c485/mzaf_18420207698003017244.plus.aac.p.m4a","Somebody That I Used to Know":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/2d/12/90/2d1290be-be19-6cbc-b486-cb714ff70038/mzaf_4273026402518369502.plus.aac.p.m4a","Barbie Girl":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/f9/c1/87/f9c1874a-1b21-f4ba-40d2-3cccfbab8103/mzaf_3562495998817016226.plus.aac.p.m4a","Blue (Da Ba Dee)":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/5c/2a/4f/5c2a4f09-ac01-be90-d6b2-a0b94bd82b7e/mzaf_3916619128344794117.plus.aac.p.m4a","Dragostea din tei":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/bd/7f/d3/bd7fd326-6c8a-12aa-bfa0-6e2ec6776936/mzaf_3974384541402231536.plus.aac.p.m4a","Bella":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/da/65/36/da653671-307d-2a5a-9a40-5fc39b06884c/mzaf_13624804469544949041.plus.aac.p.m4a","Happy":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/ed/a0/19/eda019cf-2794-66d1-208d-2e2e74c26c3d/mzaf_16469762943852039623.plus.aac.p.m4a","Y.M.C.A.":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview125/v4/56/cb/f5/56cbf514-c25a-40df-1a69-8cb7a88bbb61/mzaf_13609348927015709713.plus.aac.p.m4a","Back in Black":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/08/2e/ac/082eac8c-1d0e-f72f-7b37-b8e037ff1579/mzaf_7587164327744022409.plus.aac.p.m4a","Eye of the Tiger":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/fe/fa/9e/fefa9edd-c023-4d1c-1012-08bfb0ec69e6/mzaf_4651653238471209843.plus.aac.p.m4a","Let It Be":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/77/5d/ff/775dff57-bc15-a911-dc31-ac26aa67e9c5/mzaf_3111591556826142150.plus.aac.p.m4a","Gangnam Style":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/00/53/c6/0053c6f7-6342-7a3d-37c5-60b896948bdb/mzaf_10727579274479911915.plus.aac.p.m4a","Wannabe":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/db/cb/c6/dbcbc688-8277-b365-8deb-1da3c30da079/mzaf_7842872759474974048.plus.aac.p.m4a","Titanium":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/27/c2/c7/27c2c78c-318e-cd6c-deb4-ebcdfec2de24/mzaf_6964948339914536280.plus.aac.p.m4a","Est-ce que tu m'aimes ?":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/bd/4b/40/bd4b40ea-937e-3760-1135-633f82f45740/mzaf_5199992673608112731.plus.aac.p.m4a","We Will Rock You":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/52/dc/89/52dc8900-c933-f4dc-1926-dfa94e62096f/mzaf_8597611871935331007.plus.aac.p.m4a","Losing My Religion":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/4f/14/45/4f1445c7-c1e3-ef07-878c-f016839cef6b/mzaf_15501181977794875858.plus.aac.p.m4a","Sweet Child O' Mine":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/0d/cb/f3/0dcbf381-7cbf-78b8-7f74-d5789adf65a1/mzaf_17081805577020235844.plus.aac.p.m4a","One More Time":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/5d/93/d8/5d93d83f-ad1e-da4d-1d79-9937bdff24ec/mzaf_14396932211949300852.plus.aac.p.m4a","Partenaire particulier":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview221/v4/f2/8b/12/f28b126e-9bb1-f562-7020-e4053fdb62cf/mzaf_10933640955075976313.plus.aac.p.m4a","Mamma Mia":"https://audio-ssl.itunes.apple.com/itunes-assets/AudioPreview211/v4/59/c0/7a/59c07a69-4243-af5e-320a-ccb0495b870b/mzaf_8435063535972083873.plus.aac.p.m4a"};
-const PREV={};let AUD=null,BLOCKED="";
-addEventListener("securitypolicyviolation",e=>{BLOCKED=e.effectiveDirective+" : "+(e.blockedURI||"?")});
-const norm=s=>s.toLowerCase().normalize("NFD").replace(/[^a-z0-9]/g,"");
+const PREV={};let AUD=null;
+const norm=s=>String(s).toLowerCase().normalize("NFD").replace(/[^a-z0-9]/g,"");
 async function preview(ti,ar){
   if(PREV_URLS[ti])return PREV_URLS[ti];const k=ti+"|"+ar;if(PREV[k])return PREV[k];
   const u="https://itunes.apple.com/search?media=music&entity=song&limit=10&country=FR&term="+encodeURIComponent(ti+" "+ar);
@@ -853,15 +1009,15 @@ async function preview(ti,ar){
   return PREV[k]=best.previewUrl;
 }
 function audStop(){if(AUD){AUD.pause();AUD.removeAttribute("src");AUD.load();AUD=null}}
-async function setupAudio([ti,ar]){
+async function setupAudio([ti,ar],onFirstPlay){
   const b=$("play"),m=$("audMsg");
   const fail=()=>{if(!b.isConnected)return;b.disabled=true;b.textContent="Extrait indisponible";
-    m.textContent="Impossible de charger l’extrait ici : l’animateur peut le lancer sur son appareil."+(BLOCKED?" (bloqué : "+BLOCKED+")":"")};
+    m.textContent="Impossible de charger l’extrait ici : l’animateur peut le lancer sur son appareil.";if(onFirstPlay)onFirstPlay()};
   try{
     const url=await preview(ti,ar);if(!b.isConnected)return;
     const a=new Audio();a.preload="auto";a.src=url;AUD=a;
     a.ontimeupdate=()=>{const p=$("prog");if(p&&a.duration)p.style.width=(100*a.currentTime/a.duration)+"%"};
-    a.onplay=()=>b.textContent="⏸ Pause";
+    a.onplay=()=>{b.textContent="⏸ Pause";if(onFirstPlay){onFirstPlay();onFirstPlay=null}};
     a.onpause=()=>{if(!a.ended)b.textContent="▶ Reprendre"};
     a.onended=()=>b.textContent="↺ Réécouter";
     a.onerror=fail;
@@ -886,7 +1042,6 @@ function noise(c){
   if(!FX.nb){const b=c.createBuffer(1,Math.floor(c.sampleRate*.2),c.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;FX.nb=b}
   return FX.nb;
 }
-/* choc du dé qui roule : bruit filtré très court */
 function sfxClack(vol=.45,freq=2600){
   const c=fxCtx();if(!c)return;const t=c.currentTime;
   const s=c.createBufferSource(),bp=c.createBiquadFilter(),g=c.createGain();
@@ -894,24 +1049,23 @@ function sfxClack(vol=.45,freq=2600){
   g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+.05);
   s.connect(bp);bp.connect(g);g.connect(FX.out);s.start(t,Math.random()*.1);s.stop(t+.07);
 }
-/* le dé s'immobilise : coup sourd + petit choc */
 function sfxThud(){
   const c=fxCtx();if(!c)return;const t=c.currentTime,o=c.createOscillator(),g=c.createGain();
   o.type="sine";o.frequency.setValueAtTime(190,t);o.frequency.exponentialRampToValueAtTime(55,t+.16);
   g.gain.setValueAtTime(.8,t);g.gain.exponentialRampToValueAtTime(.001,t+.22);
   o.connect(g);g.connect(FX.out);o.start(t);o.stop(t+.25);sfxClack(.6,1700);
 }
-/* pion en bois posé sur une case : la note monte d'une case à l'autre (descend en cas de recul) */
 const PENTA=[0,2,4,7,9,12,14];
-function sfxStep(i,dir){
-  const c=fxCtx();if(!c)return;const t=c.currentTime,o=c.createOscillator(),o2=c.createOscillator(),g=c.createGain();
-  const semi=dir<0?-PENTA[i%PENTA.length]:PENTA[i%PENTA.length],f=523*Math.pow(2,semi/12);
-  o.type="triangle";o.frequency.value=f;o2.type="sine";o2.frequency.value=f*2.76;
-  g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.35,t+.004);g.gain.exponentialRampToValueAtTime(.001,t+.16);
-  o.connect(g);o2.connect(g);g.connect(FX.out);o.start(t);o2.start(t);o.stop(t+.18);o2.stop(t+.18);
-  sfxClack(.18,3200);
+function tone(f,t0,dur,type="triangle",vol=.3){
+  const c=FX.ctx,o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.value=f;
+  g.gain.setValueAtTime(0,t0);g.gain.linearRampToValueAtTime(vol,t0+.005);g.gain.exponentialRampToValueAtTime(.001,t0+dur);
+  o.connect(g);g.connect(FX.out);o.start(t0);o.stop(t0+dur+.02);
 }
-/* grand saut (pont, labyrinthe, mort) : glissando vers le haut ou vers le bas */
+function sfxStep(i,dir){
+  const c=fxCtx();if(!c)return;const t=c.currentTime;
+  const semi=dir<0?-PENTA[i%PENTA.length]:PENTA[i%PENTA.length],f=523*Math.pow(2,semi/12);
+  tone(f,t,.16,"triangle",.35);tone(f*2.76,t,.16,"sine",.35);sfxClack(.18,3200);
+}
 function sfxJump(up){
   const c=fxCtx();if(!c)return;const t=c.currentTime,o=c.createOscillator(),g=c.createGain(),lp=c.createBiquadFilter();
   o.type="sawtooth";lp.type="lowpass";lp.frequency.value=1800;
@@ -919,8 +1073,13 @@ function sfxJump(up){
   g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.22,t+.05);g.gain.exponentialRampToValueAtTime(.001,t+.55);
   o.connect(lp);lp.connect(g);g.connect(FX.out);o.start(t);o.stop(t+.6);
 }
-function soundLabel(){$("snd").textContent=FX.on?"🔊 Son activé":"🔇 Son coupé"}
+function sfxTick(){const c=fxCtx();if(!c)return;tone(1320,c.currentTime,.06,"square",.08)}
+function sfxBuzz(){const c=fxCtx();if(!c)return;const t=c.currentTime;tone(150,t,.5,"sawtooth",.18);tone(155,t,.5,"sawtooth",.12)}
+function sfxGood(){const c=fxCtx();if(!c)return;const t=c.currentTime;[523,659,784,1047].forEach((f,i)=>tone(f,t+i*.08,.25,"triangle",.28))}
+function sfxBad(){const c=fxCtx();if(!c)return;const t=c.currentTime;tone(330,t,.22,"square",.12);tone(247,t+.2,.35,"square",.12)}
+function soundLabel(){const b=$("snd");b.textContent=FX.on?"🔊":"🔇";const l=FX.on?"Couper le son":"Activer le son";b.setAttribute("aria-label",l);b.title=l}
 
+/* ===== Déroulement ===== */
 async function step(n){
   const t=S.turn;let d=1;
   for(let k=0;k<n;k++){
@@ -933,7 +1092,6 @@ async function jump(to){const up=to>S.pos[S.turn];S.pos[S.turn]=to;sfxJump(up);r
 async function next(){
   await zoomOut();
   S.busy=false;$("roll").disabled=false;
-  /* chaque tour sauté consomme une pénalité de l'équipe dont c'est le tour, même si les deux sont bloquées */
   let t=1-S.turn;const passed=[];
   for(let i=0;i<10&&S.skip[t]>0;i++){S.skip[t]--;if(!passed.includes(S.names[t]))passed.push(S.names[t]);t=1-t}
   S.turn=t;render();
@@ -941,10 +1099,11 @@ async function next(){
   announce();
 }
 function win(){
-  showCard(`<h2>🌸 ${name()} gagne !</h2><p>Score : ${S.pts[0]} – ${S.pts[1]}</p><button id="again">Rejouer</button>`);
+  sfxGood();
+  showCard(`<h2>🌸 ${name()} gagne !</h2><p>Score : ${S.pts[0]} – ${S.pts[1]}</p><button id="again">Rejouer</button><button class="ghost" id="toSetup">Changer les réglages</button>`);
   $("again").onclick=()=>{hideCard();init()};
+  $("toSetup").onclick=()=>{hideCard();showSetup()};
 }
-
 $("roll").onclick=async()=>{
   if(S.busy)return;S.busy=true;$("roll").disabled=true;
   const f=["⚀","⚁","⚂","⚃","⚄","⚅"];
@@ -955,69 +1114,178 @@ $("roll").onclick=async()=>{
   await step(v);
   resolve(v);
 };
-
 /* Résout la case d'arrivée. bonus=true : déplacement après une épreuve réussie (pas de nouvelle épreuve). */
 async function resolve(v,bonus=false){
   const t=S.turn,p=S.pos[t];
-  await sleep(200); /* laisser le pion finir son saut */
+  await sleep(200);
   await zoomTo(p);
   if(p===N)return win();
   const ty=types[p];
-  if(ty==="pont"){say("🌉 Le pont ! Cap sur la case 12.");await sleep(700);await jump(12);return next()}
+  if(ty==="pont"){const to=SPC.pont[1];say(`🌉 Le pont ! Filez à la case ${to}.`);await sleep(700);await jump(to);return next()}
   if(ty==="auberge"){S.skip[t]=1;say("🏨 Auberge : vous passez un tour.");await sleep(1000);return next()}
   if(ty==="puits"){S.skip[t]=2;say("🪣 Puits : vous passez deux tours.");await sleep(1000);return next()}
   if(ty==="prison"){S.skip[t]=2;say("⛓️ Prison : vous passez deux tours.");await sleep(1000);return next()}
-  if(ty==="lab"){say("🌀 Labyrinthe ! Retour à la case 30.");await sleep(700);await jump(30);return next()}
+  if(ty==="lab"){const to=SPC.lab[1];say(`🌀 Labyrinthe ! Retour à la case ${to}.`);await sleep(700);await jump(to);return next()}
   if(ty==="mort"){say("💀 La mort ! Retour au départ.");await sleep(700);await jump(0);return next()}
   if(bonus){await sleep(400);return next()}
   ask(ty);
 }
-
+/* QCM : 3 mauvaises réponses tirées parmi les autres réponses de la même catégorie (nombres avec nombres pour le quiz) */
+function choices(k,ans){
+  const isNum=s=>/^\d/.test(String(s).trim()),seen=new Set([norm(ans)]),pool=[];
+  for(const x of shuffle(BANK[k].slice())){const a=x[1],n=norm(a);if(seen.has(n))continue;if(k==="q"&&isNum(a)!==isNum(ans))continue;seen.add(n);pool.push(a);if(pool.length===3)break}
+  return shuffle([ans,...pool]);
+}
 function ask(ty){
+  if(!BANK[ty]||!BANK[ty].length){say("Aucune épreuve dans cette catégorie : tour suivant.");return next()}
+  const qcm=!S.opts.host&&ty!=="d",chrono=S.opts.chrono;
   let head,body,reveal=null,song=null;
-  if(ty==="d"){head="🎭 Défi";body=`<div class="big">${draw("d")}</div>`}
-  else if(ty==="q"){const[q,a]=draw("q");head="❓ Quiz";body=`<div class="big">${q}</div>`;reveal=a}
-  else if(ty==="e"){const[q,a]=draw("e");head="🎬 Devinez le film";body=`<div class="big" style="font-size:3rem">${q}</div>`;reveal=a}
+  if(ty==="d"){head="🎭 Défi";body=`<div class="big">${esc(draw("d"))}</div>`}
+  else if(ty==="q"){const[q,a]=draw("q");head="❓ Quiz";body=`<div class="big">${esc(q)}</div>`;reveal=a}
+  else if(ty==="e"){const[q,a]=draw("e");head="🎬 Devinez le film";body=`<div class="big" style="font-size:3rem">${esc(q)}</div>`;reveal=a}
   else{const[ti,ar]=draw("b");song=[ti,ar];head="🎵 Blind test";
     body=`<p style="margin:0">Écoutez l’extrait et trouvez l’artiste.</p>
       <button id="play" style="background:var(--t${S.turn})" disabled>⏳ Chargement de l’extrait…</button>
       <div class="bar" aria-hidden="true"><i id="prog"></i></div>
-      <p class="note" id="audMsg">Extrait officiel de 30 s, via iTunes</p>
-      <button class="ghost" id="host">Animateur : voir le morceau</button><div class="ans hide" id="hostInfo">${ti}</div>`;reveal=ar}
-  showCard(`<h2>${head}</h2><div>Au tour de <b>${name()}</b></div>${body}
-    <div id="timer">30</div>
-    <div class="row"><button class="ghost" id="tmr">Chrono 30 s</button>${reveal?'<button id="rev">Voir la réponse</button>':""}</div>
+      <p class="note" id="audMsg">Extrait officiel de 30 s, via iTunes${chrono?" · le chrono démarre avec la musique":""}</p>
+      ${qcm?"":`<button class="ghost" id="host">Animateur : voir le morceau</button><div class="ans hide" id="hostInfo">${esc(ti)}</div>`}`;reveal=ar}
+  const opts=qcm?choices(ty,reveal):[],good=opts.indexOf(reveal);
+  showCard(`<h2>${head}</h2><div class="who">Au tour de <b>${name()}</b></div>${body}
+    ${chrono?'<div id="timer" class="timer" aria-live="off">25</div>':""}
+    ${qcm?`<div class="qcm">${opts.map((o,i)=>`<button class="choice" data-i="${i}">${esc(o)}</button>`).join("")}</div>`:""}
+    ${!qcm&&reveal?'<button id="rev">Voir la réponse</button>':""}
     <div id="out"></div>
     <div class="row ${reveal?"hide":""}" id="verdict"><button class="ok" id="yes">Réussi (+1 pt, +2 cases)</button><button class="ko" id="no">Raté</button></div>`);
-  if($("host"))$("host").onclick=()=>$("hostInfo").classList.toggle("hide");
-  if(song)setupAudio(song);
-  let timer=null;
-  $("tmr").onclick=()=>{clearInterval(timer);let s=30;$("timer").textContent=s;
-    timer=setInterval(()=>{s--;$("timer").textContent=s;if(s<=0){clearInterval(timer);$("timer").textContent="⏰"}},1000)};
-  if(reveal)$("rev").onclick=()=>{$("out").innerHTML=`<div class="ans">${reveal}</div>`;$("verdict").classList.remove("hide");$("rev").classList.add("hide")};
-  $("yes").onclick=async()=>{
-    clearInterval(timer);hideCard();S.pts[S.turn]++;render();say("Bravo ! +2 cases.");
-    await step(2);
-    resolve(2,true);
+  let timer=null,done=false;
+  const stopTimer=()=>{clearInterval(timer);timer=null};
+  const startTimer=()=>{
+    if(!chrono||timer||done)return;let left=25;
+    timer=setInterval(()=>{
+      const el=$("timer");if(!el){stopTimer();return}
+      left--;el.textContent=left>0?left:"⏰ Temps écoulé";el.classList.toggle("urgent",left>0&&left<=5);
+      if(left>0&&left<=5)sfxTick();
+      if(left<=0){stopTimer();sfxBuzz();if(qcm)pick(-1)}
+    },1000);
   };
-  $("no").onclick=()=>{clearInterval(timer);hideCard();say("Raté… au tour de l’autre équipe.");next()};
+  const finish=async ok=>{
+    if(done)return;done=true;stopTimer();hideCard();
+    if(ok){sfxGood();S.pts[S.turn]++;render();say("Bravo ! +1 point et +2 cases.");await step(2);resolve(2,true)}
+    else{sfxBad();say("Raté… au tour de l’autre équipe.");next()}
+  };
+  const pick=i=>{
+    if(done)return;stopTimer();
+    document.querySelectorAll(".choice").forEach((b,j)=>{b.disabled=true;if(j===good)b.classList.add("right");else if(j===i)b.classList.add("wrong")});
+    $("out").innerHTML=i===good?`<div class="ans">✅ Bonne réponse !</div>`:`<div class="ans">${i<0?"⏰ Temps écoulé. ":"❌ "}Réponse : ${esc(reveal)}</div>`;
+    (i===good?sfxGood:sfxBad)();
+    setTimeout(()=>{done=false;finishQ(i===good)},1600);
+  };
+  const finishQ=ok=>{done=false;finish(ok)};
+  if($("host"))$("host").onclick=()=>$("hostInfo").classList.toggle("hide");
+  document.querySelectorAll(".choice").forEach(b=>b.onclick=()=>pick(+b.dataset.i));
+  if(song)setupAudio(song,startTimer);else startTimer();
+  if($("rev"))$("rev").onclick=()=>{$("out").innerHTML=`<div class="ans">${esc(reveal)}</div>`;$("verdict").classList.remove("hide");$("rev").classList.add("hide")};
+  $("yes").onclick=()=>finish(true);
+  $("no").onclick=()=>finish(false);
 }
 
+/* ===== Lancement ===== */
 function init(){
   S.pos=[0,0];S.pts=[0,0];S.skip=[0,0];S.turn=0;S.busy=false;
   $("score").innerHTML=[0,1].map(t=>`<div class="team t${t}" id="team${t}"><b>${esc(S.names[t])}</b><span class="pts" id="pts${t}">0</span></div>`).join("");
-  zoomOut();buildBoard();render();update3D(true);say("À "+S.names[0]+" de jouer.");$("dice").textContent="🎲";$("roll").disabled=false;
+  if(G3.ok){G3.tw=null;G3.view=null;G3.ctl.enabled=true;build3DBoard()}
+  buildBoard();render();update3D(true);say("À "+S.names[0]+" de jouer.");$("dice").textContent="🎲";$("roll").disabled=false;
   setTimeout(()=>announce("C’est parti"),250);
 }
+function showSetup(){$("game").classList.add("hide");$("setup").classList.remove("hide");scrollTo(0,0)}
+const saved=store.get("oie-reglages");
+if(saved){
+  if(saved.n0)$("n0").value=saved.n0;if(saved.n1)$("n1").value=saved.n1;
+  const r=document.querySelector(`input[name=len][value="${saved.len}"]`);if(r)r.checked=true;
+  if(typeof saved.chrono==="boolean")$("optChrono").checked=saved.chrono;
+  if(typeof saved.host==="boolean")$("optHost").checked=saved.host;
+}
 $("start").onclick=async()=>{
+  fxCtx();
   S.names=[$("n0").value.trim()||"Équipe 1",$("n1").value.trim()||"Équipe 2"];
-  $("setup").classList.add("hide");$("game").classList.remove("hide");
+  const len=+document.querySelector("input[name=len]:checked").value;
+  S.opts={chrono:$("optChrono").checked,host:$("optHost").checked};
+  store.set("oie-reglages",{n0:$("n0").value.trim(),n1:$("n1").value.trim(),len,...S.opts});
+  setLength(len);
+  $("setup").classList.add("hide");$("game").classList.remove("hide");scrollTo(0,0);
   if(!G3.tried){G3.tried=true;G3.ok=await init3D();$("board").classList.toggle("hide",G3.ok)}
   init();
 };
 $("snd").onclick=()=>{FX.on=!FX.on;try{localStorage.setItem("oie-son",FX.on?"on":"off")}catch(e){}soundLabel();if(FX.on)sfxStep(0,1)};
 soundLabel();
-$("reset").onclick=()=>{hideCard();$("game").classList.add("hide");$("setup").classList.remove("hide")};
+$("reset").onclick=()=>{hideCard();showSetup()};
+
+/* ===== Fenêtres Règles et Gérer les questions ===== */
+let lastFocus=null;
+function openSheet(id){lastFocus=document.activeElement;$(id).classList.remove("hide");$(id).querySelector("[data-close]").focus()}
+function closeSheet(id){$(id).classList.add("hide");if(lastFocus&&lastFocus.focus)lastFocus.focus()}
+document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>closeSheet(b.closest(".overlay").id));
+["rules","qm"].forEach(id=>$(id).addEventListener("click",e=>{if(e.target.id===id)closeSheet(id)}));
+addEventListener("keydown",e=>{if(e.key!=="Escape")return;for(const id of ["qm","rules"])if(!$(id).classList.contains("hide")){closeSheet(id);return}});
+
+$("openRules").onclick=()=>{
+  const playing=!$("game").classList.contains("hide");
+  if(!playing)setLength(+document.querySelector("input[name=len]:checked").value);
+  $("rulesBody").innerHTML=`
+    <p>Deux équipes s’affrontent sur un parcours en spirale de <b>${N} cases</b>. La première équipe qui arrive pile sur le jardin 🌸 gagne.</p>
+    <h3>À chaque tour</h3>
+    <ul><li>L’équipe lance le dé et avance d’autant de cases.</li>
+    <li>Si le dé fait dépasser le jardin, le pion recule des cases en trop.</li>
+    <li>La case d’arrivée propose une épreuve : ❓ quiz, 🎵 blind test (trouvez l’artiste), 🎬 film en emojis ou 🎭 défi.</li>
+    <li>Épreuve réussie : <b>+1 point et +2 cases</b>. Épreuve ratée : la main passe à l’autre équipe.</li></ul>
+    <h3>Cases spéciales</h3>
+    <ul>${specialList().map(s=>`<li>${s}</li>`).join("")}</ul>
+    <h3>Options</h3>
+    <ul><li><b>Chronomètre</b> : 25 secondes par épreuve (il démarre avec la musique au blind test).</li>
+    <li><b>Mode animateur</b> : un animateur révèle la réponse et décide si c’est réussi. Sans lui, le quiz, le blind test et les films deviennent des QCM à 4 choix, corrigés automatiquement.</li></ul>
+    <p class="note">Les points départagent les équipes à titre honorifique : c’est l’arrivée au jardin qui compte.</p>`;
+  openSheet("rules");
+};
+
+let QK="q";
+function itemText(k,x){return k==="d"?{main:x,sub:""}:{main:x[0],sub:x[1]}}
+function renderQm(){
+  const meta=CATMETA[QK];
+  $("qmTabs").innerHTML=CATS.map(k=>`<button type="button" role="tab" data-k="${k}" aria-selected="${k===QK}">${CATMETA[k].icon} ${CATMETA[k].label} (${BANK[k].length})</button>`).join("");
+  $("qmTabs").querySelectorAll("button").forEach(b=>b.onclick=()=>{QK=b.dataset.k;$("qmSearch").value="";renderQm()});
+  $("qmForm").className="addform"+(meta.f.length===1?" one":"");
+  $("qmForm").innerHTML=meta.f.map((f,i)=>`<label>${f}<input name="f${i}" required maxlength="${QK==="d"?220:140}"></label>`).join("")+`<button type="submit">Ajouter</button>`;
+  renderList();
+}
+function renderList(){
+  const q=norm($("qmSearch").value),added=new Set((CUSTOM.added[QK]||[]).map(ikey));
+  const items=BANK[QK].filter(x=>!q||norm(Array.isArray(x)?x.join(" "):x).includes(q));
+  $("qmCount").textContent=`${items.length} élément${items.length>1?"s":""}${q?" trouvé"+(items.length>1?"s":""):""} sur ${BANK[QK].length}`;
+  $("qmList").innerHTML=items.map(x=>{const t=itemText(QK,x),k=ikey(x);
+    return `<li><div class="txt">${added.has(k)?'<span class="tag">Ajouté</span>':""}<b>${esc(t.main)}</b>${t.sub?`<small>${esc(t.sub)}</small>`:""}</div><button type="button" data-key="${esc(k)}" aria-label="Supprimer">✕</button></li>`}).join("");
+  $("qmList").querySelectorAll("button").forEach(b=>b.onclick=()=>{
+    if(BANK[QK].length<=1){alert("Gardez au moins un élément dans chaque catégorie.");return}
+    const k=b.dataset.key,ai=(CUSTOM.added[QK]||[]).findIndex(x=>ikey(x)===k);
+    if(ai>=0)CUSTOM.added[QK].splice(ai,1);else (CUSTOM.removed[QK]=CUSTOM.removed[QK]||[]).push(k);
+    saveCustom();renderQm();
+  });
+}
+$("qmSearch").oninput=renderList;
+$("qmForm").onsubmit=e=>{
+  e.preventDefault();
+  const v=CATMETA[QK].f.map((_,i)=>e.target["f"+i].value.trim());if(v.some(s=>!s))return;
+  const item=QK==="d"?v[0]:v;
+  if(BANK[QK].some(x=>ikey(x)===ikey(item)))return;
+  (CUSTOM.added[QK]=CUSTOM.added[QK]||[]).push(item);
+  CUSTOM.removed[QK]=(CUSTOM.removed[QK]||[]).filter(k=>k!==ikey(item));
+  saveCustom();$("qmSearch").value="";renderQm();
+  $("qmList").lastElementChild&&$("qmList").lastElementChild.scrollIntoView({block:"nearest"});
+  $("qmForm").querySelector("input").focus();
+};
+$("qmReset").onclick=()=>{
+  if(!confirm("Supprimer vos ajouts et rétablir toutes les questions d’origine ?"))return;
+  CUSTOM={added:{q:[],b:[],e:[],d:[]},removed:{q:[],b:[],e:[],d:[]}};saveCustom();renderQm();
+};
+$("openQm").onclick=()=>{renderQm();openSheet("qm")};
 </script>
 </body>
 </html>

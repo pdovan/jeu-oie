@@ -208,6 +208,21 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 .qlist .tag{font-size:.72rem;font-weight:800;color:var(--gold);text-transform:uppercase;letter-spacing:.04em}
 .qlist button{flex:none;padding:6px 10px;background:transparent;border:1.5px solid var(--line);color:var(--mute)}
 .qlist button:hover{color:#fff;border-color:var(--ko);background:var(--ko)}
+/* ===== Cases surprise ===== */
+.gift{font-size:4.5rem;text-align:center;line-height:1.2;animation:shake .35s ease-in-out infinite}
+@keyframes shake{0%,100%{transform:rotate(0) scale(1)}25%{transform:rotate(-12deg) scale(1.08)}75%{transform:rotate(12deg) scale(1.08)}}
+.surp{display:grid;justify-items:center;gap:4px;text-align:center;padding:16px;border-radius:16px;background:linear-gradient(135deg,rgba(247,168,224,.18),rgba(91,79,233,.22));border:1.5px solid rgba(247,168,224,.45);animation:winin .45s cubic-bezier(.2,1.4,.4,1)}
+.surp span{font-size:3rem;line-height:1}
+.surp b{font-family:"Fredoka",sans-serif;font-size:1.5rem}
+.surp small{color:#d3d8e6;font-size:.92rem}
+.tpick{border-color:color-mix(in srgb,var(--tc) 60%,transparent)}
+.tpick:disabled{opacity:.4}
+.buzzers{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.buzzer{display:grid;gap:4px;padding:22px 10px;border-radius:999px;box-shadow:0 8px 0 rgba(0,0,0,.35);transition:transform .08s,box-shadow .08s}
+.buzzer b{font-family:"Fredoka",sans-serif;font-size:1.2rem;overflow-wrap:anywhere}
+.buzzer small{opacity:.85;font-weight:600}
+.buzzer:active{transform:translateY(6px);box-shadow:0 2px 0 rgba(0,0,0,.35)}
+@media (prefers-reduced-motion:reduce){.gift,.surp{animation:none}}
 /* ===== Écran de victoire ===== */
 #winScr{z-index:40;background:radial-gradient(ellipse at 50% 20%,rgba(91,79,233,.45),rgba(4,6,14,.88) 70%);overflow:auto;align-items:flex-start}
 #confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:41}
@@ -346,8 +361,8 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 </div>
 
 <script>
-const ICON={depart:"🚩",q:"❓",b:"🎵",e:"🎬",d:"🎭",c:"🎯",pont:"🌉",auberge:"🏨",puits:"🪣",lab:"🌀",prison:"⛓️",mort:"💀",jardin:"🌸"};
-const FILL={depart:"#fffaf0",q:"#f0d28a",b:"#d7c0dc",e:"#c4dcae",d:"#f2c39a",c:"#8fe0cc",pont:"#a9cdea",auberge:"#eeb1a8",puits:"#8fb4c4",lab:"#c9c4b8",prison:"#9b9a96",mort:"#3a3430",jardin:"#f6b6c8"};
+const ICON={depart:"🚩",q:"❓",b:"🎵",e:"🎬",d:"🎭",c:"🎯",s:"🎁",pont:"🌉",auberge:"🏨",puits:"🪣",lab:"🌀",prison:"⛓️",mort:"💀",jardin:"🌸"};
+const FILL={depart:"#fffaf0",q:"#f0d28a",b:"#d7c0dc",e:"#c4dcae",d:"#f2c39a",c:"#8fe0cc",s:"#f7a8e0",pont:"#a9cdea",auberge:"#eeb1a8",puits:"#8fb4c4",lab:"#c9c4b8",prison:"#9b9a96",mort:"#3a3430",jardin:"#f6b6c8"};
 const cycle=["q","b","e","d"];
 const $=id=>document.getElementById(id);
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
@@ -357,10 +372,10 @@ const store={get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){retu
 
 /* ===== Parcours : positions des cases spéciales selon la longueur choisie ===== */
 const SPEC={
-  20:{turns:1.6,cs:1.25,pont:[4,8],auberge:7,puits:11,lab:[14,9],mort:17,choix:[6,16]},
-  30:{turns:2.1,cs:1.12,pont:[4,9],auberge:10,puits:15,lab:[20,14],prison:24,mort:27,choix:[7,17,26]},
-  40:{turns:2.5,cs:1.05,pont:[5,10],auberge:13,puits:20,lab:[27,19],prison:33,mort:37,choix:[8,17,25,35]},
-  63:{turns:3,cs:1,pont:[6,12],auberge:19,puits:31,lab:[42,30],prison:52,mort:58,choix:[9,23,37,48,61]}
+  20:{turns:1.6,cs:1.25,pont:[4,8],auberge:7,puits:11,lab:[14,9],mort:17,choix:[6,16],surp:[3,10,13]},
+  30:{turns:2.1,cs:1.12,pont:[4,9],auberge:10,puits:15,lab:[20,14],prison:24,mort:27,choix:[7,17,26],surp:[5,12,19,22]},
+  40:{turns:2.5,cs:1.05,pont:[5,10],auberge:13,puits:20,lab:[27,19],prison:33,mort:37,choix:[8,17,25,35],surp:[3,11,22,30,38]},
+  63:{turns:3,cs:1,pont:[6,12],auberge:19,puits:31,lab:[42,30],prison:52,mort:58,choix:[9,23,37,48,61],surp:[4,14,27,34,45,55]}
 };
 const SPDESC={pont:v=>`🌉 Pont (case ${v[0]}) : filez à la case ${v[1]}`,auberge:v=>`🏨 Auberge (case ${v}) : passez 1 tour`,puits:v=>`🪣 Puits (case ${v}) : passez 2 tours`,
   lab:v=>`🌀 Labyrinthe (case ${v[0]}) : retour à la case ${v[1]}`,prison:v=>`⛓️ Prison (case ${v}) : passez 2 tours`,mort:v=>`💀 Mort (case ${v}) : retour au départ`};
@@ -378,12 +393,12 @@ function spiralPoints(turns){
 }
 function setLength(n){
   N=n;SPC=SPEC[n];CS=SPC.cs;
-  const at={};for(const p of SPC.choix||[])at[p]="c";for(const k in SPDESC){const v=SPC[k];if(v!=null)at[Array.isArray(v)?v[0]:v]=k}
+  const at={};for(const p of SPC.choix||[])at[p]="c";for(const p of SPC.surp||[])at[p]="s";for(const k in SPDESC){const v=SPC[k];if(v!=null)at[Array.isArray(v)?v[0]:v]=k}
   at[N]="jardin";
   types=["depart"];for(let i=1;i<=N;i++)types.push(at[i]||cycle[i%4]);
   SPI=spiralPoints(SPC.turns);PTS=SPI.cells;
 }
-function specialList(){const a=[];if(SPC.choix&&SPC.choix.length)a.push(`🎯 Au choix (cases ${SPC.choix.join(", ")}) : l’équipe choisit la catégorie de son épreuve`);for(const k in SPDESC)if(SPC[k]!=null)a.push(SPDESC[k](SPC[k]));a.push(`🌸 Jardin (case ${N}) : il faut y tomber pile`);return a}
+function specialList(){const a=[];if(SPC.choix&&SPC.choix.length)a.push(`🎯 Au choix (cases ${SPC.choix.join(", ")}) : l’équipe choisit la catégorie de son épreuve`);if(SPC.surp&&SPC.surp.length)a.push(`🎁 Surprise (cases ${SPC.surp.join(", ")}) : échangez vos places, volez 1 point, rejouez ou duel`);for(const k in SPDESC)if(SPC[k]!=null)a.push(SPDESC[k](SPC[k]));a.push(`🌸 Jardin (case ${N}) : il faut y tomber pile`);return a}
 
 /* ===== Questions : liste d'origine + ajouts/suppressions enregistrés dans le navigateur ===== */
 const BASE={
@@ -1673,6 +1688,8 @@ function win(){
   if(r=best(st=>st.sixes))recs.push(["🎲","Rois du six",who(r),r.v+" six au dé"]);
   if(r=best(st=>st.pont))recs.push(["🌉","Bonne étoile",who(r),"Le pont pris "+r.v+" fois"]);
   if(r=best(st=>st.back+st.traps))recs.push(["💀","Pas de chance",who(r),pl(r.v,"piège")+" (puits, prison, mort…)"]);
+  if(r=best(st=>st.duels))recs.push(["⚔️","Rois du duel",who(r),pl(r.v,"duel")+" gagné"+(r.v>1?"s":"")]);
+  if(r=best(st=>st.stolen))recs.push(["🦊","Voleurs de points",who(r),pl(r.v,"point")+" volé"+(r.v>1?"s":"")]);
   if(r=best(st=>st.spent))recs.push(["💸","Plus dépensiers",who(r),pl(r.v,"point")+" dépensé"+(r.v>1?"s":"")]);
   const all=TEAMS().reduce((s,t)=>s+tried(S.st[t]),0),okAll=TEAMS().reduce((s,t)=>s+tot(S.st[t]),0);
   const dur=Math.max(1,Math.round((Date.now()-S.t0)/60000));
@@ -1754,8 +1771,111 @@ async function resolve(v,bonus=false){
   if(ty==="lab"){const to=SPC.lab[1];say(`🌀 Labyrinthe ! Retour à la case ${to}.`);await sleep(700);await jump(to);return next()}
   if(ty==="mort"){say("💀 La mort ! Retour au départ.");await sleep(700);await jump(0);return next()}
   if(bonus){await sleep(400);return next()}
+  if(ty==="s")return surprise();
   if(ty==="c")return choose();
   ask(ty);
+}
+/* ===== Cases surprise : échange de places, vol d'un point, rejouer, duel ===== */
+const SURPRISES={
+  swap:["🔄","Échangez vos places","Choisissez une équipe et prenez sa place sur le plateau."],
+  steal:["🦊","Volez 1 point","Prenez un point à l’équipe de votre choix."],
+  again:["🎲","Rejouez","Relancez le dé tout de suite."],
+  duel:["⚔️","Duel","Défiez une équipe : même question pour les deux, la plus rapide à buzzer répond."]
+};
+const others=()=>TEAMS().filter(t=>t!==S.turn);
+const teamBtn=(t,sub,dis)=>`<button class="pick tpick" data-t="${t}" style="--tc:var(--t${t})"${dis?" disabled":""}><b style="color:var(--t${t})">${esc(S.names[t])}</b><small>${sub}</small></button>`;
+function pickTeam(sel){return new Promise(res=>document.querySelectorAll(sel||".tpick").forEach(b=>b.onclick=()=>{sfxStep(0,1);res(+b.dataset.t)}))}
+async function surprise(){
+  const t=S.turn,keys=Object.keys(SURPRISES),k=keys[Math.floor(Math.random()*keys.length)],[ic,ti,tx]=SURPRISES[k];
+  S.st[t].surp++;
+  showCard(`<h2>🎁 Case surprise !</h2><div class="who">Au tour de <b>${name()}</b></div><div class="gift" aria-hidden="true">🎁</div>`);
+  sfxTick();await sleep(REDUCE?200:1100);
+  showCard(`<h2>🎁 Case surprise !</h2><div class="who">Au tour de <b>${name()}</b></div>
+    <div class="surp"><span aria-hidden="true">${ic}</span><b>${ti}</b><small>${tx}</small></div><div id="surpAct"></div>`);
+  sfxGood();
+  const act=$("surpAct");
+  if(k==="again"){
+    act.innerHTML=`<button id="sGo" style="background:var(--t${t})">🎲 Relancer le dé</button>`;$("sGo").focus();
+    await new Promise(r=>$("sGo").onclick=r);hideCard();await zoomOut();
+    S.busy=false;$("roll").disabled=false;render();say("🎲 "+S.names[t]+" rejoue !");announce("Rejouez");return;
+  }
+  if(k==="swap"){
+    act.innerHTML=`<div class="picks">${others().map(o=>teamBtn(o,"case "+S.pos[o])).join("")}</div><button class="ghost" id="sKeep">Garder ma place (case ${S.pos[t]})</button>`;
+    const o=await Promise.race([pickTeam(),new Promise(r=>$("sKeep").onclick=()=>r(-1))]);hideCard();
+    if(o<0){say(S.names[t]+" garde sa place.");await sleep(900);return next()}
+    const a=S.pos[t],b=S.pos[o];S.pos[t]=b;S.pos[o]=a;S.st[t].swaps++;sfxJump(b>a);render();
+    say(`🔄 ${S.names[t]} (case ${b}) et ${S.names[o]} (case ${a}) échangent leurs places !`);await sleep(1400);return next();
+  }
+  if(k==="steal"){
+    const rich=others().filter(o=>S.pts[o]>0);
+    if(!rich.length){
+      act.innerHTML=`<p class="note" style="margin:0">Personne n’a de point à voler… la banque vous en offre un !</p><button id="sGo" style="background:var(--t${t})">+1 point</button>`;$("sGo").focus();
+      await new Promise(r=>$("sGo").onclick=r);hideCard();S.pts[t]++;render();sfxGood();say("💰 +1 point offert par la banque.");await sleep(900);return next();
+    }
+    act.innerHTML=`<div class="picks">${others().map(o=>teamBtn(o,S.pts[o]+" pt"+(S.pts[o]>1?"s":""),!S.pts[o])).join("")}</div>`;
+    const o=await pickTeam(".tpick:not(:disabled)");hideCard();
+    S.pts[o]--;S.pts[t]++;S.st[t].stolen++;render();sfxGood();say(`🦊 ${S.names[t]} vole 1 point à ${S.names[o]} !`);await sleep(1200);return next();
+  }
+  /* duel */
+  const os=others();
+  act.innerHTML=os.length>1?`<p class="note" style="margin:0">Quelle équipe défiez-vous ?</p><div class="picks">${os.map(o=>teamBtn(o,S.pts[o]+" pt"+(S.pts[o]>1?"s":"")+" · case "+S.pos[o])).join("")}</div>`
+    :`<button class="tpick" data-t="${os[0]}" style="background:var(--t${t})">⚔️ Défier ${esc(S.names[os[0]])}</button>`;
+  const o=await pickTeam();
+  return duel(t,o);
+}
+/* duel : même question pour les deux équipes ; la première qui buzze répond. Bonne réponse = elle gagne, mauvaise = l'adversaire gagne. */
+function duel(a,b){
+  const k=["q","e"].filter(x=>BANK[x]&&BANK[x].length);
+  if(!k.length){hideCard();say("Pas de question disponible pour le duel.");return next()}
+  const ty=k[Math.floor(Math.random()*k.length)],it=draw(ty),[q,ans]=it,qcm=!S.opts.host,n=lvlOf(ty,it);
+  const KEY={[a]:"A",[b]:"L"};
+  showCard(`<h2>⚔️ Duel</h2><div class="who"><b style="color:var(--t${a})">${esc(S.names[a])}</b> contre <b style="color:var(--t${b})">${esc(S.names[b])}</b></div>
+    <div class="note" style="margin:0">${ty==="q"?"❓ Quiz":"🎬 Devinez le film"}${n?` <span class="lvl l${n}">${"★".repeat(n)} ${LVLNAME[n]}</span>`:""}</div>
+    <div class="big"${ty==="e"?' style="font-size:3rem"':""}>${esc(q)}</div>
+    ${S.opts.chrono?'<div id="timer" class="timer">25</div>':""}
+    <div class="buzzers" id="buzz">${[a,b].map(t=>`<button class="buzzer" data-t="${t}" style="background:var(--t${t})"><b>🔔 ${esc(S.names[t])}</b><small>ou touche ${KEY[t]}</small></button>`).join("")}</div>
+    <div id="dAns"></div><div id="out"></div>`);
+  sfxTick();
+  return new Promise(done=>{
+    let timer=null,over=false,left=25;
+    const end=async w=>{
+      if(over)return;over=true;clearInterval(timer);removeEventListener("keydown",kb);
+      $("out").innerHTML=`<div class="ans">${w<0?"⏰ Personne n’a buzzé. ":""}Réponse : ${esc(ans)}</div>`+(w>=0?`<p class="big" style="text-align:center;margin:8px 0 0;color:var(--t${w})">🏆 ${esc(S.names[w])} remporte le duel : +1 point et +2 cases !</p>`:"");
+      w>=0?sfxGood():sfxBuzz();
+      await sleep(2600);hideCard();
+      if(w>=0){
+        S.pts[w]++;S.st[w].duels++;render();
+        const cur=S.turn;S.turn=w;await step(2);
+        if(S.pos[w]===N){render();return done(win())}
+        S.turn=cur;render();say(`⚔️ ${S.names[w]} gagne le duel : +1 point et +2 cases.`);await sleep(900);
+      }else say("⚔️ Duel sans vainqueur.");
+      done(next());
+    };
+    const buzz=t=>{
+      if(over||$("buzz").classList.contains("hide"))return;clearInterval(timer);sfxClack(.4,1600);
+      const other=t===a?b:a;$("buzz").classList.add("hide");removeEventListener("keydown",kb);
+      const head=`<p class="who" style="margin:0">🔔 <b style="color:var(--t${t})">${esc(S.names[t])}</b> a buzzé en premier : à vous de répondre !</p>`;
+      if(qcm){
+        const opts=choices(ty,ans),good=opts.indexOf(ans);
+        $("dAns").innerHTML=head+`<div class="qcm" style="margin-top:10px">${opts.map((o,i)=>`<button class="choice" data-i="${i}">${esc(o)}</button>`).join("")}</div>`;
+        document.querySelectorAll("#dAns .choice").forEach(btn=>btn.onclick=()=>{
+          const i=+btn.dataset.i;document.querySelectorAll("#dAns .choice").forEach((x,j)=>{x.disabled=true;if(j===good)x.classList.add("right");else if(j===i)x.classList.add("wrong")});
+          end(i===good?t:other);
+        });
+      }else{
+        $("dAns").innerHTML=head+`<p class="note">Animateur : la réponse est « ${esc(ans)} ».</p><div class="row"><button class="ok" id="dOk">Bonne réponse</button><button class="ko" id="dKo">Mauvaise réponse</button></div>`;
+        $("dOk").onclick=()=>end(t);$("dKo").onclick=()=>end(other);
+      }
+    };
+    const kb=e=>{const key=e.key.toUpperCase();if(key==="A")buzz(a);else if(key==="L")buzz(b)};
+    addEventListener("keydown",kb);
+    document.querySelectorAll(".buzzer").forEach(x=>x.onclick=()=>buzz(+x.dataset.t));
+    if(S.opts.chrono){clearInterval(CARD_TIMER);timer=CARD_TIMER=setInterval(()=>{
+      const el=$("timer");if(!el){clearInterval(timer);return}
+      left--;el.textContent=left>0?left:"⏰";el.classList.toggle("urgent",left>0&&left<=5);if(left>0&&left<=5)sfxTick();
+      if(left<=0){clearInterval(timer);$("buzz").classList.add("hide");end(-1)}
+    },1000)}
+  });
 }
 /* QCM : 3 mauvaises réponses tirées parmi les autres réponses de la même catégorie (nombres avec nombres pour le quiz) */
 function choices(k,ans){
@@ -1833,7 +1953,7 @@ function ask(ty){
 function init(){
   const z=v=>Array(S.T).fill(v);
   S.pos=z(0);S.pts=z(0);S.skip=z(0);S.why=z(null);S.turn=0;S.busy=false;
-  S.st=TEAMS().map(()=>({ok:{q:0,b:0,e:0,d:0},ko:{q:0,b:0,e:0,d:0},cur:0,best:0,rolls:0,sixes:0,rerolls:0,pont:0,back:0,traps:0,spent:0}));S.turns=0;S.t0=Date.now();
+  S.st=TEAMS().map(()=>({ok:{q:0,b:0,e:0,d:0},ko:{q:0,b:0,e:0,d:0},cur:0,best:0,rolls:0,sixes:0,rerolls:0,pont:0,back:0,traps:0,spent:0,surp:0,swaps:0,stolen:0,duels:0}));S.turns=0;S.t0=Date.now();
   $("score").style.setProperty("--nt",S.T===4?2:S.T);
   $("score").innerHTML=TEAMS().map(t=>`<div class="team t${t}" id="team${t}">
     <div class="team-top"><b>${esc(S.names[t])}</b><span class="pts"><span id="pts${t}">0</span><small> pt</small></span></div>
@@ -1895,6 +2015,11 @@ $("openRules").onclick=()=>{
     <li>Épreuve réussie : <b>+1 point et +2 cases</b>. Épreuve ratée : la main passe à l’équipe suivante.</li></ul>
     <h3>Cases spéciales</h3>
     <ul>${specialList().map(s=>`<li>${s}</li>`).join("")}</ul>
+    <h3>🎁 Cases surprise</h3>
+    <ul><li><b>🔄 Échangez vos places</b> : prenez la place de l’équipe de votre choix (ou gardez la vôtre).</li>
+    <li><b>🦊 Volez 1 point</b> à une autre équipe. Si personne n’a de point, la banque vous en offre un.</li>
+    <li><b>🎲 Rejouez</b> : relancez le dé tout de suite.</li>
+    <li><b>⚔️ Duel</b> : défiez une équipe. Même question pour les deux : la première qui buzze (bouton, ou touches A / L) répond. Bonne réponse, elle gagne ; mauvaise, c’est l’adversaire. Le vainqueur gagne <b>+1 point et +2 cases</b>.</li></ul>
     <h3>Options</h3>
     <ul><li><b>Niveau des questions</b> : facile, moyen, difficile ou tous mélangés, pour le quiz, le blind test et les films. Les défis conviennent à tous les niveaux.</li>
     <li><b>Chronomètre</b> : 25 secondes par épreuve (il démarre avec la musique au blind test).</li>

@@ -1141,7 +1141,7 @@ function ask(ty){
   if(!BANK[ty]||!BANK[ty].length){say("Aucune épreuve dans cette catégorie : tour suivant.");return next()}
   const qcm=!S.opts.host&&ty!=="d",chrono=S.opts.chrono;
   let head,body,reveal=null,song=null;
-  if(ty==="d"){head="🎭 Défi";body=`<div class="big">${esc(draw("d"))}</div>`}
+  if(ty==="d"){head="🎭 Défi";body=`<p class="note" id="defiHint">La consigne reste cachée jusqu’à ce que votre équipe soit prête.</p><div class="big hide" id="defiTxt">${esc(draw("d"))}</div>`}
   else if(ty==="q"){const[q,a]=draw("q");head="❓ Quiz";body=`<div class="big">${esc(q)}</div>`;reveal=a}
   else if(ty==="e"){const[q,a]=draw("e");head="🎬 Devinez le film";body=`<div class="big" style="font-size:3rem">${esc(q)}</div>`;reveal=a}
   else{const[ti,ar]=draw("b");song=[ti,ar];head="🎵 Blind test";
@@ -1186,7 +1186,7 @@ function ask(ty){
   if($("host"))$("host").onclick=()=>$("hostInfo").classList.toggle("hide");
   document.querySelectorAll(".choice").forEach(b=>b.onclick=()=>pick(+b.dataset.i));
   /* défi : l'équipe lit la consigne, se prépare, puis lance elle-même le chrono */
-  if(ty==="d")$("go").onclick=()=>{$("go").classList.add("hide");$("verdict").classList.remove("hide");sfxTick();startTimer()};
+  if(ty==="d")$("go").onclick=()=>{$("go").classList.add("hide");$("defiHint").classList.add("hide");$("defiTxt").classList.remove("hide");$("verdict").classList.remove("hide");sfxTick();startTimer()};
   else if(song)setupAudio(song,startTimer);else startTimer();
   if($("rev"))$("rev").onclick=()=>{$("out").innerHTML=`<div class="ans">${esc(reveal)}</div>`;$("verdict").classList.remove("hide");$("rev").classList.add("hide")};
   $("yes").onclick=()=>finish(true);

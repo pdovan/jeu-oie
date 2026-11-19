@@ -208,6 +208,40 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 .qlist .tag{font-size:.72rem;font-weight:800;color:var(--gold);text-transform:uppercase;letter-spacing:.04em}
 .qlist button{flex:none;padding:6px 10px;background:transparent;border:1.5px solid var(--line);color:var(--mute)}
 .qlist button:hover{color:#fff;border-color:var(--ko);background:var(--ko)}
+/* ===== Écran de victoire ===== */
+#winScr{z-index:40;background:radial-gradient(ellipse at 50% 20%,rgba(91,79,233,.45),rgba(4,6,14,.88) 70%);overflow:auto;align-items:flex-start}
+#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:41}
+.win{position:relative;z-index:42;margin:auto;max-width:760px;text-align:center;gap:18px;max-height:none;overflow:visible;animation:winin .6s cubic-bezier(.2,1.4,.4,1)}
+@keyframes winin{from{opacity:0;transform:scale(.85) translateY(20px)}to{opacity:1;transform:none}}
+.win h2{font-size:clamp(1.6rem,5vw,2.4rem)!important;margin:0}
+.win .crown{font-size:3.4rem;line-height:1;animation:bob 1.6s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-8px) rotate(-6deg)}}
+.win .sub{color:var(--mute);margin:-8px 0 0}
+.podium{display:flex;justify-content:center;align-items:flex-end;gap:10px;margin-top:6px}
+.pod{flex:0 1 170px;display:flex;flex-direction:column;align-items:center;gap:6px;min-width:0}
+.pod .pname{font-family:"Fredoka",sans-serif;font-weight:700;font-size:1.05rem;overflow-wrap:anywhere}
+.pod .pinfo{font-size:.8rem;color:var(--mute)}
+.pod .medal{font-size:2rem;line-height:1}
+.pod .step{width:100%;border-radius:14px 14px 4px 4px;display:flex;align-items:flex-start;justify-content:center;padding-top:10px;font-family:"Fredoka",sans-serif;font-size:2rem;font-weight:700;color:rgba(255,255,255,.92);box-shadow:inset 0 -12px 24px rgba(0,0,0,.25),inset 0 2px 0 rgba(255,255,255,.25);transform-origin:bottom;animation:rise .7s cubic-bezier(.2,1.3,.4,1) both}
+.pod.p1 .step{height:150px;animation-delay:.9s}.pod.p2 .step{height:105px;animation-delay:.5s}.pod.p3 .step{height:72px;animation-delay:.2s}
+@keyframes rise{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+.fourth{color:var(--mute);font-size:.9rem;margin:0}
+.wstats{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:10px}
+.wstat{background:var(--surface2);border:1px solid var(--line);border-radius:14px;padding:12px;display:grid;gap:2px;text-align:left}
+.wstat .ic{font-size:1.4rem}
+.wstat b{font-family:"Fredoka",sans-serif;font-size:1.05rem}
+.wstat small{color:var(--mute);font-size:.8rem}
+.wtable{width:100%;border-collapse:separate;border-spacing:0 6px;font-size:.92rem}
+.wtable th{color:var(--mute);font-weight:700;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;padding:0 6px}
+.wtable td{background:var(--surface2);padding:9px 6px;text-align:center}
+.wtable td:first-child{border-radius:10px 0 0 10px;text-align:left;font-weight:700;padding-left:12px}
+.wtable td:last-child{border-radius:0 10px 10px 0}
+.wtable .none{color:var(--line)}
+.wtable .rate{font-weight:800}
+.win h3{font-family:"Fredoka",sans-serif;font-size:1.15rem;margin:4px 0 -6px;text-align:left}
+.tscroll{overflow-x:auto}
+@media (max-width:480px){.pod .step{font-size:1.5rem}.pod.p1 .step{height:120px}.pod.p2 .step{height:84px}.pod.p3 .step{height:58px}.wtable{font-size:.82rem}}
+@media (prefers-reduced-motion:reduce){.win,.win .crown,.pod .step{animation:none}}
 @media (prefers-reduced-motion:reduce){.pop,.pawn.on .halo,.timer.urgent{animation:none}.pawn.on .halo{opacity:.8;transform:scale(1.8)}#banner.show{animation:none;opacity:1;transform:translate(-50%,-50%)}.launch{transition:none}}
 </style>
 </head>
@@ -286,6 +320,8 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 </main>
 
 <div id="modal" class="overlay hide" role="dialog" aria-modal="true"><div id="card"></div></div>
+
+<div id="winScr" class="overlay hide" role="dialog" aria-modal="true" aria-labelledby="winTitle"><canvas id="confetti" aria-hidden="true"></canvas><div class="sheet win" id="winBox"></div></div>
 
 <div id="rules" class="overlay hide" role="dialog" aria-modal="true" aria-labelledby="rulesTitle">
  <div class="sheet rules">
@@ -1568,7 +1604,7 @@ async function next(){
     if((S.why[t]==="puits"||S.why[t]==="prison")&&S.pts[t]>=ESCAPE_COST){
       S.turn=t;render();
       if(await offerEscape(t)){
-        S.pts[t]-=ESCAPE_COST;freed=`🔓 ${S.names[t]} : −${ESCAPE_COST} points, sortie ${S.why[t]==="puits"?"du puits":"de prison"} ! `;
+        S.pts[t]-=ESCAPE_COST;S.st[t].spent+=ESCAPE_COST;freed=`🔓 ${S.names[t]} : −${ESCAPE_COST} points, sortie ${S.why[t]==="puits"?"du puits":"de prison"} ! `;
         S.skip[t]=0;S.why[t]=null;sfxGood();break;
       }
     }
@@ -1579,19 +1615,92 @@ async function next(){
   say(freed+(passed.length?passed.join(" et ")+(passed.length>1?" passent leur tour. ":" passe son tour. "):"")+"À "+S.names[t]+" de jouer.",passed.length>0||!!freed);
   announce();
 }
+/* ===== Victoire : confettis, podium et statistiques ===== */
+const CATNAME={q:["❓","Quiz"],b:["🎵","Blind test"],e:["🎬","Films"],d:["🎭","Défis"]};
+function sfxFanfare(){const c=fxCtx();if(!c)return;const t=c.currentTime;
+  [[523,0,.14],[523,.15,.14],[523,.3,.14],[659,.45,.35],[587,.82,.14],[659,.97,.14],[784,1.12,.7]].forEach(([f,d,l])=>{tone(f,t+d,l,"triangle",.26);tone(f/2,t+d,l,"square",.06)});
+  [1047,1319,1568].forEach(f=>tone(f,t+1.12,.9,"sine",.08))}
+const CONF={raf:0};
+function confetti(){
+  cancelAnimationFrame(CONF.raf);
+  const cv=$("confetti"),ctx=cv.getContext("2d"),dpr=Math.min(devicePixelRatio||1,2);
+  const size=()=>{cv.width=innerWidth*dpr;cv.height=innerHeight*dpr;ctx.setTransform(dpr,0,0,dpr,0,0)};size();
+  const cols=TEAMS().map(t=>getComputedStyle(document.documentElement).getPropertyValue("--t"+t).trim()).concat(["#f5b72e","#ffffff","#a78bfa"]);
+  const P=[],W=()=>innerWidth,H=()=>innerHeight;
+  const add=(x,y,n,spread,up)=>{for(let i=0;i<n;i++){const ang=-Math.PI/2+(Math.random()-.5)*spread,sp=up*(.55+Math.random()*.6);
+    P.push({x,y,vx:Math.cos(ang)*sp,vy:Math.sin(ang)*sp,w:6+Math.random()*7,h:4+Math.random()*5,r:Math.random()*6,vr:(Math.random()-.5)*.35,c:cols[Math.random()*cols.length|0],s:Math.random()*6,round:Math.random()<.25})}};
+  if(REDUCE){for(let i=0;i<70;i++)P.push({x:Math.random()*W(),y:Math.random()*H(),w:8,h:5,r:Math.random()*6,c:cols[i%cols.length],s:0,vx:0,vy:0,vr:0,round:i%4===0});
+    P.forEach(p=>{ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.r);ctx.fillStyle=p.c;ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);ctx.restore()});return}
+  add(0,H(),110,1.1,17);add(W(),H(),110,1.1,17);
+  P.forEach((p,i)=>{if(i<110)p.vx=Math.abs(p.vx)+4;else p.vx=-Math.abs(p.vx)-4});
+  const t0=performance.now();let last=t0,waves=0;
+  const frame=now=>{
+    const dt=Math.min(2,(now-last)/16.7);last=now;
+    if(now-t0>700*(waves+1)&&waves<6){waves++;add(Math.random()*W(),-20,45,Math.PI*1.6,3)}
+    ctx.clearRect(0,0,W(),H());
+    for(let i=P.length-1;i>=0;i--){const p=P[i];
+      p.vy+=.32*dt;p.vx*=Math.pow(.985,dt);p.vy=Math.min(p.vy,4.2+p.w*.15);p.s+=.12*dt;
+      p.x+=(p.vx+Math.sin(p.s)*.9)*dt;p.y+=p.vy*dt;p.r+=p.vr*dt;
+      if(p.y>H()+30){P.splice(i,1);continue}
+      ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.r);ctx.scale(1,Math.cos(p.s));ctx.fillStyle=p.c;
+      if(p.round){ctx.beginPath();ctx.arc(0,0,p.h*.7,0,7);ctx.fill()}else ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);ctx.restore()}
+    if(P.length)CONF.raf=requestAnimationFrame(frame);else ctx.clearRect(0,0,W(),H());
+  };
+  CONF.raf=requestAnimationFrame(frame);
+  addEventListener("resize",size,{once:true});
+}
+function hideWin(){cancelAnimationFrame(CONF.raf);$("winScr").classList.add("hide")}
 function win(){
-  sfxGood();
-  showCard(`<h2>🌸 ${name()} gagne !</h2><ol class="rank">${TEAMS().sort((a,b)=>S.pos[b]-S.pos[a]||S.pts[b]-S.pts[a]).map(i=>`<li><b style="color:var(--t${i})">${esc(S.names[i])}</b> · case ${S.pos[i]} · ${S.pts[i]} pt${S.pts[i]>1?"s":""}</li>`).join("")}</ol><button id="again">Rejouer</button><button class="ghost" id="toSetup">Changer les réglages</button>`);
-  $("again").onclick=()=>{hideCard();init()};
-  $("toSetup").onclick=()=>{hideCard();showSetup()};
+  S.busy=true;$("roll").disabled=true;
+  const tot=st=>CATS.reduce((s,k)=>s+st.ok[k],0),tried=st=>CATS.reduce((s,k)=>s+st.ok[k]+st.ko[k],0);
+  const order=TEAMS().sort((a,b)=>(b===S.turn)-(a===S.turn)||S.pos[b]-S.pos[a]||S.pts[b]-S.pts[a]||tot(S.st[b])-tot(S.st[a]));
+  const nm=t=>`<b style="color:var(--t${t})">${esc(S.names[t])}</b>`,pl=(n,w)=>n+" "+w+(n>1?"s":"");
+  /* podium : 2e, 1er, 3e */
+  const MED=["🥇","🥈","🥉"],slots=[1,0,2].filter(r=>r<order.length);
+  const podium=slots.map(r=>{const t=order[r];return `<div class="pod p${r+1}"><span class="medal" aria-hidden="true">${MED[r]}</span>
+    <span class="pname" style="color:var(--t${t})">${esc(S.names[t])}</span>
+    <span class="pinfo">${r?"case "+S.pos[t]+" · ":""}${pl(S.pts[t],"pt")}</span>
+    <div class="step" style="background:var(--t${t});background:linear-gradient(180deg,var(--t${t}),color-mix(in srgb,var(--t${t}) 55%,#000))">${r+1}</div></div>`}).join("");
+  const fourth=order.length>3?`<p class="fourth">4ᵉ : ${nm(order[3])} · case ${S.pos[order[3]]} · ${pl(S.pts[order[3]],"pt")}</p>`:"";
+  /* records */
+  const best=(f,min=1)=>{const v=Math.max(...TEAMS().map(t=>f(S.st[t],t)));if(!(v>=min))return null;return{v,who:TEAMS().filter(t=>f(S.st[t],t)===v)}};
+  const who=r=>{const l=r.who.map(nm);return l.length>1?l.slice(0,-1).join(", ")+" et "+l[l.length-1]:l[0]};
+  const recs=[];
+  let r;
+  if(r=best(st=>st.best))recs.push(["🔥","Plus longue série",who(r),pl(r.v,"épreuve")+" réussie"+(r.v>1?"s":"")+" d’affilée"]);
+  if(r=best(st=>tried(st)?Math.round(100*tot(st)/tried(st)):-1,0))recs.push(["🎯","Meilleure précision",who(r),r.v+" % de réussite"]);
+  if(r=best(st=>tot(st)))recs.push(["🧠","Plus d’épreuves réussies",who(r),pl(r.v,"épreuve")]);
+  if(r=best(st=>st.sixes))recs.push(["🎲","Rois du six",who(r),r.v+" six au dé"]);
+  if(r=best(st=>st.pont))recs.push(["🌉","Bonne étoile",who(r),"Le pont pris "+r.v+" fois"]);
+  if(r=best(st=>st.back+st.traps))recs.push(["💀","Pas de chance",who(r),pl(r.v,"piège")+" (puits, prison, mort…)"]);
+  if(r=best(st=>st.spent))recs.push(["💸","Plus dépensiers",who(r),pl(r.v,"point")+" dépensé"+(r.v>1?"s":"")]);
+  const all=TEAMS().reduce((s,t)=>s+tried(S.st[t]),0),okAll=TEAMS().reduce((s,t)=>s+tot(S.st[t]),0);
+  const dur=Math.max(1,Math.round((Date.now()-S.t0)/60000));
+  recs.push(["⏱️","La partie",pl(S.turns,"lancer")+" de dé",(dur<60?dur+" min":Math.floor(dur/60)+" h "+String(dur%60).padStart(2,"0"))+" · "+okAll+"/"+all+" épreuves réussies"]);
+  /* tableau par catégorie */
+  const cell=(st,k)=>{const n=st.ok[k]+st.ko[k];return n?`${st.ok[k]}<span style="color:var(--mute)">/${n}</span>`:'<span class="none">—</span>'};
+  const table=`<div class="tscroll"><table class="wtable"><thead><tr><th style="text-align:left">Équipe</th>${CATS.map(k=>`<th scope="col"><span aria-hidden="true">${CATNAME[k][0]}</span> ${CATNAME[k][1]}</th>`).join("")}<th scope="col">Total</th></tr></thead>
+    <tbody>${order.map(t=>{const st=S.st[t],n=tried(st),p=n?Math.round(100*tot(st)/n):null;
+      return `<tr><td style="box-shadow:inset 4px 0 0 var(--t${t})">${esc(S.names[t])}</td>${CATS.map(k=>`<td>${cell(st,k)}</td>`).join("")}<td class="rate">${n?tot(st)+"/"+n+`<br><small style="color:var(--mute);font-weight:600">${p} %</small>`:'<span class="none">—</span>'}</td></tr>`}).join("")}</tbody></table></div>`;
+  $("winBox").innerHTML=`<div class="crown" aria-hidden="true">🏆</div>
+    <h2 id="winTitle"><span style="color:var(--t${order[0]})">${esc(S.names[order[0]])}</span> gagne&nbsp;!</h2>
+    <p class="sub">Arrivée à la case ${N} après ${pl(S.st[order[0]].rolls,"lancer")} de dé</p>
+    <div class="podium">${podium}</div>${fourth}
+    <h3>🏅 Les records</h3><div class="wstats">${recs.map(([ic,ti,w,d])=>`<div class="wstat"><span class="ic" aria-hidden="true">${ic}</span><small>${ti}</small><b>${w}</b><small>${d}</small></div>`).join("")}</div>
+    <h3>📊 Épreuves réussies par catégorie</h3>${table}
+    <div class="row"><button id="again">🔁 Rejouer</button><button class="ghost" id="toSetup">Changer les réglages</button></div>`;
+  $("winScr").classList.remove("hide");$("winScr").scrollTop=0;
+  sfxFanfare();confetti();$("again").focus({preventScroll:true});$("winScr").scrollTop=0;
+  $("again").onclick=()=>{hideWin();init()};
+  $("toSetup").onclick=()=>{hideWin();showSetup()};
 }
 $("roll").onclick=async()=>{
-  if(S.busy)return;S.busy=true;$("roll").disabled=true;
+  if(S.busy)return;S.busy=true;$("roll").disabled=true;S.turns++;
   let v=await throwDie();
   /* relance : 2 points, autant de fois que l'équipe peut payer */
   while(S.pts[S.turn]>=REROLL_COST){
     if(!await offerReroll(v))break;
-    S.pts[S.turn]-=REROLL_COST;render();sfxBad();say(`🔄 Relance ! −${REROLL_COST} points.`);
+    S.pts[S.turn]-=REROLL_COST;S.st[S.turn].rerolls++;S.st[S.turn].spent+=REROLL_COST;render();sfxBad();say(`🔄 Relance ! −${REROLL_COST} points.`);
     v=await throwDie();
   }
   if(G3.ok&&G3.die){await sleep(250);hideDie();await sleep(150)}
@@ -1605,6 +1714,7 @@ async function throwDie(){
   if(G3.ok&&G3.die){sfxClack(.35,1800);await roll3D(v);sfxThud();await sleep(250)}
   else{for(let i=0;i<10;i++){sfxClack(.3+Math.random()*.25);await sleep(55+i*9)}sfxThud();say(DIEF[v-1]+" Le dé fait "+v)}
   $("dice").textContent="Résultat du dé : "+v;
+  const st=S.st[S.turn];st.rolls++;if(v===6)st.sixes++;
   return v;
 }
 /* affiche un choix sur le plateau ; renvoie true si l'équipe dépense ses points */
@@ -1634,6 +1744,9 @@ async function resolve(v,bonus=false){
   await zoomTo(p);
   if(p===N)return win();
   const ty=types[p];
+  if(ty==="pont")S.st[t].pont++;
+  if(ty==="lab"||ty==="mort")S.st[t].back++;
+  if(ty==="auberge"||ty==="puits"||ty==="prison")S.st[t].traps++;
   if(ty==="pont"){const to=SPC.pont[1];say(`🌉 Le pont ! Filez à la case ${to}.`);await sleep(700);await jump(to);return next()}
   if(ty==="auberge"){S.skip[t]=1;S.why[t]="auberge";say("🏨 Auberge : vous passez un tour.");await sleep(1000);return next()}
   if(ty==="puits"){S.skip[t]=2;S.why[t]="puits";say("🪣 Puits : vous passez deux tours"+(S.pts[t]>=3?" (ou payez 3 points pour en sortir).":"."));await sleep(1000);return next()}
@@ -1694,6 +1807,7 @@ function ask(ty){
   };
   const finish=async ok=>{
     if(done)return;done=true;stopTimer();hideCard();
+    const st=S.st[S.turn];if(ok){st.ok[ty]++;st.cur++;st.best=Math.max(st.best,st.cur)}else{st.ko[ty]++;st.cur=0}
     if(ok){sfxGood();S.pts[S.turn]++;render();say("Bravo ! +1 point et +2 cases.");await step(2);resolve(2,true)}
     else{sfxBad();say("Raté… au tour de l’équipe suivante.");next()}
   };
@@ -1719,6 +1833,7 @@ function ask(ty){
 function init(){
   const z=v=>Array(S.T).fill(v);
   S.pos=z(0);S.pts=z(0);S.skip=z(0);S.why=z(null);S.turn=0;S.busy=false;
+  S.st=TEAMS().map(()=>({ok:{q:0,b:0,e:0,d:0},ko:{q:0,b:0,e:0,d:0},cur:0,best:0,rolls:0,sixes:0,rerolls:0,pont:0,back:0,traps:0,spent:0}));S.turns=0;S.t0=Date.now();
   $("score").style.setProperty("--nt",S.T===4?2:S.T);
   $("score").innerHTML=TEAMS().map(t=>`<div class="team t${t}" id="team${t}">
     <div class="team-top"><b>${esc(S.names[t])}</b><span class="pts"><span id="pts${t}">0</span><small> pt</small></span></div>
@@ -1758,7 +1873,7 @@ $("start").onclick=async()=>{
 };
 $("snd").onclick=()=>{FX.on=!FX.on;try{localStorage.setItem("oie-son",FX.on?"on":"off")}catch(e){}soundLabel();if(FX.on)sfxStep(0,1)};
 soundLabel();
-$("reset").onclick=()=>{hideCard();showSetup()};
+$("reset").onclick=()=>{hideCard();hideWin();showSetup()};
 
 /* ===== Fenêtres Règles et Gérer les questions ===== */
 let lastFocus=null;

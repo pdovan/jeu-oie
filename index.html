@@ -161,6 +161,11 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 .sheet-head button{padding:6px 12px}
 #card h2,.sheet h2{font-size:1.5rem}
 .who{color:var(--mute)}
+.lvl{display:inline-block;vertical-align:middle;margin-left:8px;font-family:system-ui,sans-serif;font-size:.72rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:3px 9px;border-radius:999px;border:1.5px solid}
+.lvl.l1{color:#86efac;border-color:rgba(34,197,94,.5);background:rgba(34,197,94,.12)}
+.lvl.l2{color:#fcd34d;border-color:rgba(245,158,11,.5);background:rgba(245,158,11,.12)}
+.lvl.l3{color:#fda4af;border-color:rgba(244,63,94,.5);background:rgba(244,63,94,.12)}
+.seg.small span{padding:6px 10px;font-size:.9rem}
 .rank{margin:0;padding-left:22px;display:grid;gap:4px}
 .big{font-size:1.35rem;font-weight:700}
 .ans{background:var(--surface2);border-radius:12px;padding:14px;font-weight:700;font-size:1.2rem}
@@ -191,6 +196,9 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 .addform{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end;padding:14px;border-radius:14px;background:var(--surface2);border:1px solid var(--line)}
 .addform label{display:grid;gap:6px;font-size:.85rem;font-weight:700;color:var(--mute)}
 .addform.one{grid-template-columns:1fr auto}
+.addform.lv3{grid-template-columns:1fr 1fr auto auto}
+.addform select{font:inherit;padding:12px 10px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink)}
+@media (max-width:560px){.addform.lv3{grid-template-columns:1fr}}
 @media (max-width:560px){.addform,.addform.one{grid-template-columns:1fr}}
 .qlist{list-style:none;margin:0;padding:0;display:grid;gap:6px;max-height:46vh;overflow:auto}
 .qlist li{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:var(--surface2)}
@@ -243,6 +251,14 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
     <label class="lenopt"><input type="radio" name="len" value="63"><span><b>63 cases</b><small>Traditionnel (~1 h)</small></span></label>
    </div>
   </fieldset>
+  <div class="ntrow"><b id="lvLbl">🎚️ Niveau des questions</b>
+   <div class="seg" role="radiogroup" aria-labelledby="lvLbl">
+    <label><input type="radio" name="lv" value="1"><span>Facile</span></label>
+    <label><input type="radio" name="lv" value="2"><span>Moyen</span></label>
+    <label><input type="radio" name="lv" value="3"><span>Difficile</span></label>
+    <label><input type="radio" name="lv" value="all" checked><span>Tous</span></label>
+   </div>
+  </div>
   <div class="opts">
    <label class="opt"><span><b>⏱️ Chronomètre (25 s)</b><small>Ajoute de la pression sur les épreuves</small></span><input type="checkbox" id="optChrono" checked></label>
    <label class="opt"><span><b>🎤 Mode animateur</b><small>Masque les QCM (révélation libre)</small></span><input type="checkbox" id="optHost" checked></label>
@@ -862,21 +878,35 @@ const BASE={
  ]
 };
 const CATS=["q","b","e","d"];
+/* niveau de chaque élément d'origine (1 facile, 2 moyen, 3 difficile), dans l'ordre de BASE ; les défis conviennent à tous les niveaux */
+const LEVELS={"q":"2111111211121222212222222122111121122223311122321133112122331133321332313221231121222123112311123212322111111323111211322222121211","b":"1121111222211112221123121232221321222332232222321211322222232123332123333322121211212122122122222321123312112111112222222233331222","e":"111112122122211121222111223221221122122211222222321221122213333332232332322323222323222332132223233332333212332333322122223333222213"};
+const LVLNAME={1:"Facile",2:"Moyen",3:"Difficile"};
 const CATMETA={q:{label:"Quiz",icon:"❓",f:["Question","Réponse"]},b:{label:"Blind test",icon:"🎵",f:["Titre","Artiste"]},e:{label:"Emojis",icon:"🎬",f:["Emojis","Film"]},d:{label:"Défis",icon:"🎭",f:["Défi"]}};
 const deck={},BANK={};
 let CUSTOM=store.get("oie-questions");
 if(!CUSTOM||!CUSTOM.added||!CUSTOM.removed)CUSTOM={added:{q:[],b:[],e:[],d:[]},removed:{q:[],b:[],e:[],d:[]}};
 const ikey=x=>JSON.stringify(x);
+const BASEIDX={};for(const k of ["q","b","e"]){BASEIDX[k]=new Map(BASE[k].map((x,i)=>[ikey(x),i]))}
+function lvlOf(k,x){
+  if(k==="d")return 0;
+  const c=CUSTOM.lvl&&CUSTOM.lvl[k]&&CUSTOM.lvl[k][ikey(x)];if(c)return c;
+  const i=BASEIDX[k].get(ikey(x));return i==null?2:+LEVELS[k][i];
+}
 function applyCustom(){
   for(const k of CATS){const rm=new Set(CUSTOM.removed[k]||[]);BANK[k]=BASE[k].filter(x=>!rm.has(ikey(x))).concat(CUSTOM.added[k]||[]);deck[k]=null}
 }
 function saveCustom(){store.set("oie-questions",CUSTOM);applyCustom()}
 applyCustom();
+/* tire un élément au hasard, sans répétition, parmi ceux du niveau choisi (tous si le niveau n'en a aucun) */
 function draw(k){
-  if(!deck[k]||!deck[k].length)deck[k]=shuffle(BANK[k].map((_,i)=>i));
+  if(!deck[k]||!deck[k].length){
+    const lv=S.opts.level,all=BANK[k].map((_,i)=>i);
+    let pool=lv==="all"||k==="d"?all:all.filter(i=>lvlOf(k,BANK[k][i])===lv);
+    deck[k]=shuffle(pool.length?pool:all);
+  }
   return BANK[k][deck[k].pop()];
 }
-const S={T:2,pos:[0,0],pts:[0,0],skip:[0,0],why:[null,null],turn:0,names:[],busy:false,opts:{chrono:true,host:true}};
+const S={T:2,pos:[0,0],pts:[0,0],skip:[0,0],why:[null,null],turn:0,names:[],busy:false,opts:{chrono:true,host:true,level:"all"}};
 
 function buildBoard(){
   const d=SPI.path.map((p,i)=>(i?"L":"M")+p[0].toFixed(1)+" "+p[1].toFixed(1)).join("");
@@ -1336,10 +1366,11 @@ function ask(ty){
   if(!BANK[ty]||!BANK[ty].length){say("Aucune épreuve dans cette catégorie : tour suivant.");return next()}
   const qcm=!S.opts.host&&ty!=="d",chrono=S.opts.chrono;
   let head,body,reveal=null,song=null;
+  const badge=x=>{const n=lvlOf(ty,x);return n?` <span class="lvl l${n}">${"★".repeat(n)} ${LVLNAME[n]}</span>`:""};
   if(ty==="d"){head="🎭 Défi";body=`<p class="note" id="defiHint">La consigne reste cachée jusqu’à ce que votre équipe soit prête.</p><div class="big hide" id="defiTxt">${esc(draw("d"))}</div>`}
-  else if(ty==="q"){const[q,a]=draw("q");head="❓ Quiz";body=`<div class="big">${esc(q)}</div>`;reveal=a}
-  else if(ty==="e"){const[q,a]=draw("e");head="🎬 Devinez le film";body=`<div class="big" style="font-size:3rem">${esc(q)}</div>`;reveal=a}
-  else{const[ti,ar]=draw("b");song=[ti,ar];head="🎵 Blind test";
+  else if(ty==="q"){const it=draw("q"),[q,a]=it;head="❓ Quiz"+badge(it);body=`<div class="big">${esc(q)}</div>`;reveal=a}
+  else if(ty==="e"){const it=draw("e"),[q,a]=it;head="🎬 Devinez le film"+badge(it);body=`<div class="big" style="font-size:3rem">${esc(q)}</div>`;reveal=a}
+  else{const it=draw("b"),[ti,ar]=it;song=[ti,ar];head="🎵 Blind test"+badge(it);
     body=`<p style="margin:0">Écoutez l’extrait et trouvez l’artiste.</p>
       <button id="play" style="background:var(--t${S.turn})" disabled>⏳ Chargement de l’extrait…</button>
       <div class="bar" aria-hidden="true"><i id="prog"></i></div>
@@ -1410,6 +1441,7 @@ if(saved){
   const r=document.querySelector(`input[name=len][value="${saved.len}"]`);if(r)r.checked=true;
   if(typeof saved.chrono==="boolean")$("optChrono").checked=saved.chrono;
   if(typeof saved.host==="boolean")$("optHost").checked=saved.host;
+  const lvr=document.querySelector(`input[name=lv][value="${saved.level}"]`);if(lvr)lvr.checked=true;
 }
 /* affiche autant de cases de noms que d'équipes choisies */
 function syncTeams(){const n=+document.querySelector("input[name=nt]:checked").value;for(let i=0;i<4;i++)$("box"+i).classList.toggle("hide",i>=n)}
@@ -1419,7 +1451,9 @@ $("start").onclick=async()=>{
   S.T=+document.querySelector("input[name=nt]:checked").value;
   S.names=TEAMS().map(i=>$("n"+i).value.trim()||"Équipe "+(i+1));
   const len=+document.querySelector("input[name=len]:checked").value;
-  S.opts={chrono:$("optChrono").checked,host:$("optHost").checked};
+  const lvv=document.querySelector("input[name=lv]:checked").value;
+  S.opts={chrono:$("optChrono").checked,host:$("optHost").checked,level:lvv==="all"?"all":+lvv};
+  for(const k of CATS)deck[k]=null;
   store.set("oie-reglages",{names:[0,1,2,3].map(i=>$("n"+i).value.trim()),nt:S.T,len,...S.opts});
   setLength(len);
   $("setup").classList.add("hide");$("game").classList.remove("hide");scrollTo(0,0);
@@ -1451,7 +1485,8 @@ $("openRules").onclick=()=>{
     <h3>Cases spéciales</h3>
     <ul>${specialList().map(s=>`<li>${s}</li>`).join("")}</ul>
     <h3>Options</h3>
-    <ul><li><b>Chronomètre</b> : 25 secondes par épreuve (il démarre avec la musique au blind test).</li>
+    <ul><li><b>Niveau des questions</b> : facile, moyen, difficile ou tous mélangés, pour le quiz, le blind test et les films. Les défis conviennent à tous les niveaux.</li>
+    <li><b>Chronomètre</b> : 25 secondes par épreuve (il démarre avec la musique au blind test).</li>
     <li><b>Mode animateur</b> : un animateur révèle la réponse et décide si c’est réussi. Sans lui, le quiz, le blind test et les films deviennent des QCM à 4 choix, corrigés automatiquement.</li></ul>
     <h3>Dépenser ses points</h3>
     <ul><li><b>2 points</b> : relancer le dé, une fois le résultat connu (autant de fois que vous pouvez payer).</li>
@@ -1467,7 +1502,10 @@ function renderQm(){
   $("qmTabs").innerHTML=CATS.map(k=>`<button type="button" role="tab" data-k="${k}" aria-selected="${k===QK}">${CATMETA[k].icon} ${CATMETA[k].label} (${BANK[k].length})</button>`).join("");
   $("qmTabs").querySelectorAll("button").forEach(b=>b.onclick=()=>{QK=b.dataset.k;$("qmSearch").value="";renderQm()});
   $("qmForm").className="addform"+(meta.f.length===1?" one":"");
-  $("qmForm").innerHTML=meta.f.map((f,i)=>`<label>${f}<input name="f${i}" required maxlength="${QK==="d"?220:140}"></label>`).join("")+`<button type="submit">Ajouter</button>`;
+  $("qmForm").innerHTML=meta.f.map((f,i)=>`<label>${f}<input name="f${i}" required maxlength="${QK==="d"?220:140}"></label>`).join("")
+    +(QK==="d"?"":`<label>Niveau<select name="lv"><option value="1">Facile</option><option value="2" selected>Moyen</option><option value="3">Difficile</option></select></label>`)
+    +`<button type="submit">Ajouter</button>`;
+  $("qmForm").classList.toggle("lv3",QK!=="d");
   renderList();
 }
 function renderList(){
@@ -1475,7 +1513,7 @@ function renderList(){
   const items=BANK[QK].filter(x=>!q||norm(Array.isArray(x)?x.join(" "):x).includes(q));
   $("qmCount").textContent=`${items.length} élément${items.length>1?"s":""}${q?" trouvé"+(items.length>1?"s":""):""} sur ${BANK[QK].length}`;
   $("qmList").innerHTML=items.map(x=>{const t=itemText(QK,x),k=ikey(x);
-    return `<li><div class="txt">${added.has(k)?'<span class="tag">Ajouté</span>':""}<b>${esc(t.main)}</b>${t.sub?`<small>${esc(t.sub)}</small>`:""}</div><button type="button" data-key="${esc(k)}" aria-label="Supprimer">✕</button></li>`}).join("");
+    const n=lvlOf(QK,x);return `<li><div class="txt">${added.has(k)?'<span class="tag">Ajouté</span> ':""}${n?`<span class="lvl l${n}" style="margin:0 0 4px">${LVLNAME[n]}</span>`:""}<b>${esc(t.main)}</b>${t.sub?`<small>${esc(t.sub)}</small>`:""}</div><button type="button" data-key="${esc(k)}" aria-label="Supprimer">✕</button></li>`}).join("");
   $("qmList").querySelectorAll("button").forEach(b=>b.onclick=()=>{
     if(BANK[QK].length<=1){alert("Gardez au moins un élément dans chaque catégorie.");return}
     const k=b.dataset.key,ai=(CUSTOM.added[QK]||[]).findIndex(x=>ikey(x)===k);
@@ -1490,6 +1528,7 @@ $("qmForm").onsubmit=e=>{
   const item=QK==="d"?v[0]:v;
   if(BANK[QK].some(x=>ikey(x)===ikey(item)))return;
   (CUSTOM.added[QK]=CUSTOM.added[QK]||[]).push(item);
+  if(QK!=="d"){CUSTOM.lvl=CUSTOM.lvl||{};(CUSTOM.lvl[QK]=CUSTOM.lvl[QK]||{})[ikey(item)]=+e.target.lv.value}
   CUSTOM.removed[QK]=(CUSTOM.removed[QK]||[]).filter(k=>k!==ikey(item));
   saveCustom();$("qmSearch").value="";renderQm();
   $("qmList").lastElementChild&&$("qmList").lastElementChild.scrollIntoView({block:"nearest"});

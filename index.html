@@ -91,7 +91,7 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 .team .pts{font-size:1.6rem;font-weight:700;font-family:"Fredoka",sans-serif;color:var(--ink)}
 .team.t0{color:var(--t0)}.team.t1{color:var(--t1)}
 #frame{position:relative;background:radial-gradient(circle at 50% 50%,#f6e7bf,#e8cf93);border:3px solid #6b4a2b;outline:3px solid #c9a15b;outline-offset:-9px;border-radius:14px;padding:10px;margin-bottom:14px;color:#2b1d10;overflow:hidden}
-#banner{position:absolute;left:50%;top:50%;z-index:2;pointer-events:none;white-space:nowrap;max-width:92%;overflow:hidden;text-overflow:ellipsis;
+#banner{position:absolute;left:50%;top:24%;z-index:2;pointer-events:none;white-space:nowrap;max-width:92%;overflow:hidden;text-overflow:ellipsis;
   font-family:"Fredoka",sans-serif;font-weight:700;font-size:clamp(1.1rem,5vw,1.6rem);color:#fff;padding:10px 22px;border-radius:999px;
   border:3px solid #fff;box-shadow:0 6px 20px rgba(0,0,0,.3);opacity:0;transform:translate(-50%,-50%) scale(.6)}
 #banner.show{animation:banner 1.6s cubic-bezier(.2,.9,.3,1.3) forwards}
@@ -114,10 +114,19 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 .pawn.on .halo{animation:halo 1.4s ease-out infinite}
 @keyframes halo{0%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(2.8)}}
 .t0.dot{fill:var(--t0)}.t1.dot{fill:var(--t1)}.t0.halo{stroke:var(--t0)}.t1.halo{stroke:var(--t1)}
-#action{display:grid;gap:10px;text-align:center}
-#roll{font-size:1.2rem;padding:16px}
-#dice{font-size:2.6rem;min-height:56px}
-#msg{color:var(--mute);min-height:1.5em}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+/* bouton du dé posé au centre du plateau */
+#roll{position:absolute;left:50%;top:50%;z-index:3;transform:translate(-50%,-50%);display:grid;justify-items:center;gap:2px;
+  padding:14px 26px;border-radius:999px;border:3px solid #fff;font-family:"Fredoka",sans-serif;font-size:clamp(1.05rem,4vw,1.35rem);
+  box-shadow:0 10px 28px rgba(0,0,0,.35),0 0 0 6px rgba(255,255,255,.25);transition:background .3s,opacity .25s,transform .25s;animation:rollpulse 2.2s ease-in-out infinite}
+#roll small{font-family:system-ui,sans-serif;font-size:.78rem;font-weight:600;opacity:.9;max-width:44vw;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#roll:hover{transform:translate(-50%,-50%) scale(1.05)}
+#roll:disabled{opacity:0;pointer-events:none;transform:translate(-50%,-50%) scale(.7);animation:none}
+@keyframes rollpulse{0%,100%{box-shadow:0 10px 28px rgba(0,0,0,.35),0 0 0 6px rgba(255,255,255,.25)}50%{box-shadow:0 10px 28px rgba(0,0,0,.35),0 0 0 12px rgba(255,255,255,.12)}}
+/* message de jeu affiché brièvement en haut du plateau */
+#toast{position:absolute;left:50%;top:12px;z-index:3;transform:translate(-50%,-8px);max-width:92%;padding:8px 16px;border-radius:999px;
+  background:rgba(20,24,40,.85);color:#fff;font-weight:700;font-size:.95rem;text-align:center;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s}
+#toast.show{opacity:1;transform:translate(-50%,0)}
 .legend{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:16px;font-size:.85rem;color:var(--mute)}
 .endrow{text-align:center;margin-top:16px}
 
@@ -211,12 +220,12 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 <div id="banner" aria-hidden="true"></div>
 <div id="stage" class="hide" role="img" aria-label="Plateau 3D du jeu de l’oie en spirale, jardin au centre. Glissez pour le faire tourner."><p id="hint3d">↻ Glissez pour tourner</p><button class="ghost" id="recenter" type="button">Recentrer</button></div>
 <svg id="board" viewBox="0 0 400 400" role="img" aria-label="Plateau du jeu de l’oie en spirale, jardin au centre"></svg>
+<div id="toast" aria-hidden="true"></div>
+<button id="roll" type="button"><span class="rl">🎲 Lancer le dé</span><small id="rollWho"></small></button>
 </div>
-<div id="action">
-<div id="dice" aria-live="polite">🎲</div>
-<div id="msg"></div>
-<button id="roll">Lancer le dé</button>
-</div>
+<!-- annonces pour les lecteurs d'écran uniquement (résultat du dé, messages de jeu) -->
+<div id="dice" class="sr-only" aria-live="polite"></div>
+<div id="msg" class="sr-only" aria-live="polite"></div>
 <div class="legend" id="legend"></div>
 <p class="endrow"><button class="ghost" id="reset">Nouvelle partie</button></p>
 </section>
@@ -1066,7 +1075,7 @@ function render(){
     $("team"+t).classList.toggle("on",t===S.turn);
   });
   const pa=$("pawn"+S.turn);if($("board").lastElementChild!==pa)$("board").appendChild(pa);
-  const r=$("roll");r.style.background=`var(--t${S.turn})`;r.textContent="🎲 "+S.names[S.turn]+", lancez le dé";
+  const r=$("roll");r.style.background=`var(--t${S.turn})`;$("rollWho").textContent=S.names[S.turn];r.setAttribute("aria-label",S.names[S.turn]+", lancez le dé");
 }
 function announce(extra){
   const b=$("banner");
@@ -1074,7 +1083,12 @@ function announce(extra){
   b.style.background=`var(--t${S.turn})`;
   [b,$("team"+S.turn),$("roll")].forEach(el=>{const c=el===b?"show":"pop";el.classList.remove(c);void el.offsetWidth;el.classList.add(c)});
 }
-function say(t){$("msg").textContent=t}
+/* message de jeu : lu par les lecteurs d'écran, et affiché quelques secondes en haut du plateau si show */
+let toastT=0;
+function say(t,show=true){
+  $("msg").textContent=t;if(!show)return;
+  const el=$("toast");el.textContent=t;el.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove("show"),2600);
+}
 function showCard(h){$("card").innerHTML=h;$("modal").classList.remove("hide")}
 
 /* ===== Blind test : extraits officiels de 30 s (iTunes) ===== */
@@ -1179,7 +1193,7 @@ async function next(){
   let t=1-S.turn;const passed=[];
   for(let i=0;i<10&&S.skip[t]>0;i++){S.skip[t]--;if(!passed.includes(S.names[t]))passed.push(S.names[t]);t=1-t}
   S.turn=t;render();
-  say((passed.length?passed.join(" et ")+(passed.length>1?" passent leur tour. ":" passe son tour. "):"")+"À "+S.names[t]+" de jouer.");
+  say((passed.length?passed.join(" et ")+(passed.length>1?" passent leur tour. ":" passe son tour. "):"")+"À "+S.names[t]+" de jouer.",passed.length>0);
   announce();
 }
 function win(){
@@ -1194,13 +1208,13 @@ $("roll").onclick=async()=>{
   const v=1+Math.floor(Math.random()*6);
   if(G3.ok&&G3.die){
     /* dé 3D lancé au milieu du plateau */
-    $("dice").textContent="🎲 …";sfxClack(.35,1800);
+    sfxClack(.35,1800);
     await roll3D(v);sfxThud();
-    $("dice").textContent=f[v-1]+" "+v;
+    $("dice").textContent="Résultat du dé : "+v;
     await sleep(700);hideDie();await sleep(150);
   }else{
-    for(let i=0;i<10;i++){$("dice").textContent=f[Math.floor(Math.random()*6)];sfxClack(.3+Math.random()*.25);await sleep(55+i*9)}
-    sfxThud();$("dice").textContent=f[v-1]+" "+v;
+    for(let i=0;i<10;i++){sfxClack(.3+Math.random()*.25);await sleep(55+i*9)}
+    sfxThud();$("dice").textContent="Résultat du dé : "+v;say(f[v-1]+" Le dé fait "+v);
     await sleep(350);
   }
   await step(v);
@@ -1293,7 +1307,7 @@ function init(){
     <div class="tbar" id="bar${t}" role="progressbar" aria-label="Progression de ${esc(S.names[t])}" aria-valuemin="0" aria-valuemax="${N}"><i></i></div>
   </div>`).join("");
   if(G3.ok){G3.tw=null;G3.view=null;G3.ctl.enabled=true;build3DBoard();if(G3.die){G3.die.anim=null;G3.die.hideT0=0;G3.die.mesh.visible=false}}
-  buildBoard();render();update3D(true);say("À "+S.names[0]+" de jouer.");$("dice").textContent="🎲";$("roll").disabled=false;
+  buildBoard();render();update3D(true);say("À "+S.names[0]+" de jouer.",false);$("dice").textContent="";$("roll").disabled=false;
   setTimeout(()=>announce("C’est parti"),250);
 }
 function showSetup(){$("game").classList.add("hide");$("setup").classList.remove("hide");scrollTo(0,0)}

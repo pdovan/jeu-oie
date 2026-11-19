@@ -209,6 +209,39 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 .qlist .tag{font-size:.72rem;font-weight:800;color:var(--gold);text-transform:uppercase;letter-spacing:.04em}
 .qlist button{flex:none;padding:6px 10px;background:transparent;border:1.5px solid var(--line);color:var(--mute)}
 .qlist button:hover{color:#fff;border-color:var(--ko);background:var(--ko)}
+/* ===== Mode télévision et télécommande ===== */
+.opt.wide{grid-column:1/-1}
+#tvBtn.on{border-color:var(--ok)!important;box-shadow:0 0 0 3px rgba(34,163,90,.3)}
+body.tv main{max-width:min(1280px,96vw)}
+body.tv .score{max-width:none}
+.pair{max-width:440px;text-align:center;justify-items:center}
+#qr{background:#fff;padding:12px;border-radius:16px;line-height:0;min-height:244px;min-width:244px;display:grid;place-items:center}
+#qr img,#qr canvas{display:block}
+.pcode{margin:0;font-size:1.1rem}.pcode b{font-family:"Fredoka",sans-serif;font-size:1.8rem;letter-spacing:.18em;color:var(--gold)}
+.purl{color:var(--mute);font-size:.82rem;word-break:break-all}
+.pstat{margin:0;font-weight:700}
+body.remote-mode>header,body.remote-mode>main{display:none!important}
+#remote{max-width:520px;margin:0 auto;padding:max(14px,env(safe-area-inset-top)) 16px calc(24px + env(safe-area-inset-bottom,0px));display:grid;gap:14px}
+.rmhead{display:flex;gap:12px;align-items:center}
+.rmhead .logo{font-size:1.8rem}
+.rmhead b{display:block;font-family:"Fredoka",sans-serif;font-size:1.15rem}
+.rmhead small{color:var(--mute)}
+#rmStat.ok{color:#86efac;font-weight:700}
+.rmcode{display:flex;gap:8px}.rmcode input{flex:1;min-width:0;font:inherit;padding:12px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface2);color:var(--ink);text-transform:uppercase}
+.rmteams{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.rmteam{padding:8px 10px;border-radius:12px;background:var(--surface2);border:1.5px solid var(--line);box-shadow:inset 4px 0 0 var(--c);display:grid;gap:2px;min-width:0}
+.rmteam b{color:var(--c);overflow-wrap:anywhere}.rmteam span{color:var(--mute);font-size:.82rem}
+.rmteam.cur{border-color:var(--c);background:color-mix(in srgb,var(--c) 14%,var(--surface2))}
+.rmcard{background:var(--surface);border:1px solid rgba(255,255,255,.08);border-radius:20px;padding:18px;display:grid;gap:12px}
+.rmcard h2{font-family:"Fredoka",sans-serif;font-size:1.35rem;margin:0}
+#rmLines p{margin:0 0 6px}
+.rmtimer{font-family:"Fredoka",sans-serif;font-size:1.6rem;font-weight:700;text-align:center}.rmtimer:empty{display:none}
+.rmsecret{display:grid;gap:4px;padding:14px;border-radius:14px;background:rgba(245,183,46,.12);border:1.5px dashed var(--gold)}
+.rmsecret small{color:var(--gold);font-weight:700;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em}
+.rmsecret b{font-size:1.25rem}
+.rmbtns{display:grid;gap:10px}
+.rmbtns button{min-height:58px;font-size:1.05rem;border:0}
+.rmwait{color:var(--mute);text-align:center;margin:8px 0}
 /* ===== Cases surprise ===== */
 .gift{font-size:4.5rem;text-align:center;line-height:1;padding:14px 0;overflow:hidden}
 .gift span{display:inline-block;animation:shake .35s ease-in-out infinite}
@@ -270,6 +303,8 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
   <nav class="top-act" aria-label="Menu">
    <button class="btn-manage" id="openQm" type="button"><span aria-hidden="true">＋</span><span class="lbl">Gérer les questions</span></button>
    <button class="btn-plain" id="openRules" type="button"><span aria-hidden="true">📜</span><span class="lbl">Règles</span></button>
+   <button class="btn-icon hide" id="tvBtn" type="button" aria-label="Connecter le téléphone de l’animateur" title="Connecter le téléphone de l’animateur">📱</button>
+   <button class="btn-icon hide" id="fsBtn" type="button" aria-label="Plein écran" title="Plein écran">⛶</button>
    <button class="btn-icon" id="snd" type="button" aria-label="Couper le son" title="Couper le son">🔊</button>
   </nav>
  </div>
@@ -314,6 +349,7 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
   <div class="opts">
    <label class="opt"><span><b>⏱️ Chronomètre (25 s)</b><small>Ajoute de la pression sur les épreuves</small></span><input type="checkbox" id="optChrono" checked></label>
    <label class="opt"><span><b>🎤 Mode animateur</b><small>Masque les QCM (révélation libre)</small></span><input type="checkbox" id="optHost" checked></label>
+   <label class="opt wide"><span><b>📺 Mode télévision</b><small>Le plateau sur grand écran, l’animateur pilote depuis son téléphone et voit seul les réponses</small></span><input type="checkbox" id="optTv"></label>
   </div>
   <button id="start" class="launch" type="button">🎲 Lancer la partie !</button>
  </div>
@@ -338,6 +374,31 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 </main>
 
 <div id="modal" class="overlay hide" role="dialog" aria-modal="true"><div id="card"></div></div>
+
+<div id="tvPair" class="overlay hide" role="dialog" aria-modal="true" aria-labelledby="pairTitle">
+ <div class="sheet pair">
+  <h2 id="pairTitle">📱 Connectez le téléphone de l’animateur</h2>
+  <p class="note" style="margin:0">Scannez le QR code avec l’appareil photo du téléphone. Les réponses s’afficheront uniquement sur le téléphone.</p>
+  <div id="qr" aria-hidden="true"></div>
+  <p class="pcode">Code : <b id="pairCode">…</b></p>
+  <a id="pairUrl" class="purl" target="_blank" rel="noopener"></a>
+  <p id="pairStat" class="pstat" aria-live="polite"></p>
+  <button class="ghost" id="pairClose" type="button">Continuer sans téléphone</button>
+ </div>
+</div>
+
+<div id="remote" class="hide">
+ <div class="rmhead"><span class="logo" aria-hidden="true">🪿</span><div><b>Télécommande de l’animateur</b><small>Partie <span id="rmCode"></span> · <span id="rmStat" aria-live="polite">Connexion…</span></small></div></div>
+ <form id="rmCodeForm" class="rmcode hide"><input id="rmCodeIn" placeholder="Code affiché sur la TV" maxlength="8" autocapitalize="characters" autocomplete="off" aria-label="Code de la partie"><button type="submit">Rejoindre</button></form>
+ <div id="rmTeams" class="rmteams"></div>
+ <section class="rmcard" aria-live="polite">
+  <h2 id="rmTitle">Connexion…</h2>
+  <div id="rmLines"></div>
+  <div id="rmTimer" class="rmtimer"></div>
+  <div id="rmSecret" class="rmsecret hide"><small>🔒 Visible uniquement sur ce téléphone</small><b id="rmSecretTxt"></b></div>
+  <div id="rmBtns" class="rmbtns"></div>
+ </section>
+</div>
 
 <div id="winScr" class="overlay hide" role="dialog" aria-modal="true" aria-labelledby="winTitle"><canvas id="confetti" aria-hidden="true"></canvas><div class="sheet win" id="winBox"></div></div>
 
@@ -1551,7 +1612,7 @@ async function setupAudio([ti,ar],onFirstPlay){
   }catch(e){fail()}
 }
 let CARD_TIMER=null;
-function hideCard(){audStop();clearInterval(CARD_TIMER);$("modal").classList.add("hide")}
+function hideCard(){REMOTE.secret=null;audStop();clearInterval(CARD_TIMER);$("modal").classList.add("hide")}
 function name(){return esc(S.names[S.turn])}
 
 /* ===== Bruitages (Web Audio, générés à la volée) ===== */
@@ -1830,7 +1891,7 @@ async function surprise(){
 function duel(a,b){
   const k=["q","e"].filter(x=>BANK[x]&&BANK[x].length);
   if(!k.length){hideCard();say("Pas de question disponible pour le duel.");return next()}
-  const ty=k[Math.floor(Math.random()*k.length)],it=draw(ty),[q,ans]=it,qcm=!S.opts.host,n=lvlOf(ty,it);
+  const ty=k[Math.floor(Math.random()*k.length)],it=draw(ty),[q,ans]=it,qcm=!S.opts.host,n=lvlOf(ty,it);REMOTE.secret="Réponse : "+ans;
   const KEY={[a]:"A",[b]:"L"};
   showCard(`<h2>⚔️ Duel</h2><div class="who"><b style="color:var(--t${a})">${esc(S.names[a])}</b> contre <b style="color:var(--t${b})">${esc(S.names[b])}</b></div>
     <div class="note" style="margin:0">${ty==="q"?"❓ Quiz":"🎬 Devinez le film"}${n?` <span class="lvl l${n}">${"★".repeat(n)} ${LVLNAME[n]}</span>`:""}</div>
@@ -1866,7 +1927,7 @@ function duel(a,b){
           end(i===good?t:other);
         });
       }else{
-        $("dAns").innerHTML=head+`<p class="note">Animateur : la réponse est « ${esc(ans)} ».</p><div class="row"><button class="ok" id="dOk">Bonne réponse</button><button class="ko" id="dKo">Mauvaise réponse</button></div>`;
+        $("dAns").innerHTML=head+`<p class="note">${S.opts.tv?"L’animateur valide la réponse depuis son téléphone.":"Animateur : la réponse est « "+esc(ans)+" »."}</p><div class="row"><button class="ok" id="dOk">Bonne réponse</button><button class="ko" id="dKo">Mauvaise réponse</button></div>`;
         $("dOk").onclick=()=>end(t);$("dKo").onclick=()=>end(other);
       }
     };
@@ -1899,15 +1960,16 @@ function ask(ty){
   const qcm=!S.opts.host&&ty!=="d",chrono=S.opts.chrono;
   let head,body,reveal=null,song=null;
   const badge=x=>{const n=lvlOf(ty,x);return n?` <span class="lvl l${n}">${"★".repeat(n)} ${LVLNAME[n]}</span>`:""};
-  if(ty==="d"){head="🎭 Défi";body=`<p class="note" id="defiHint">La consigne reste cachée jusqu’à ce que votre équipe soit prête.</p><div class="big hide" id="defiTxt">${esc(draw("d"))}</div>`}
-  else if(ty==="q"){const it=draw("q"),[q,a]=it;head="❓ Quiz"+badge(it);body=`<div class="big">${esc(q)}</div>`;reveal=a}
-  else if(ty==="e"){const it=draw("e"),[q,a]=it;head="🎬 Devinez le film"+badge(it);body=`<div class="big" style="font-size:3rem">${esc(q)}</div>`;reveal=a}
-  else{const it=draw("b"),[ti,ar]=it;song=[ti,ar];head="🎵 Blind test"+badge(it);
+  REMOTE.secret=null;
+  if(ty==="d"){const dt=draw("d");REMOTE.secret="Consigne : "+dt;head="🎭 Défi";body=`<p class="note" id="defiHint">La consigne reste cachée jusqu’à ce que votre équipe soit prête.</p><div class="big hide" id="defiTxt">${esc(dt)}</div>`}
+  else if(ty==="q"){const it=draw("q"),[q,a]=it;REMOTE.secret="Réponse : "+a;head="❓ Quiz"+badge(it);body=`<div class="big">${esc(q)}</div>`;reveal=a}
+  else if(ty==="e"){const it=draw("e"),[q,a]=it;REMOTE.secret="Réponse : "+a;head="🎬 Devinez le film"+badge(it);body=`<div class="big" style="font-size:3rem">${esc(q)}</div>`;reveal=a}
+  else{const it=draw("b"),[ti,ar]=it;REMOTE.secret="🎵 « "+ti+" » de "+ar;song=[ti,ar];head="🎵 Blind test"+badge(it);
     body=`<p style="margin:0">Écoutez l’extrait et trouvez l’artiste.</p>
       <button id="play" style="background:var(--t${S.turn})" disabled>⏳ Chargement de l’extrait…</button>
       <div class="bar" aria-hidden="true"><i id="prog"></i></div>
       <p class="note" id="audMsg">Extrait officiel de 30 s, via iTunes${chrono?" · le chrono démarre avec la musique":""}</p>
-      ${qcm?"":`<button class="ghost" id="host">Animateur : voir le morceau</button><div class="ans hide" id="hostInfo">${esc(ti)}</div>`}`;reveal=ar}
+      ${qcm||S.opts.tv?"":`<button class="ghost" id="host">Animateur : voir le morceau</button><div class="ans hide" id="hostInfo">${esc(ti)}</div>`}`;reveal=ar}
   const opts=qcm?choices(ty,reveal):[],good=opts.indexOf(reveal);
   showCard(`<h2>${head}</h2><div class="who">Au tour de <b>${name()}</b></div>${body}
     ${chrono?'<div id="timer" class="timer" aria-live="off">25</div>':""}
@@ -1975,6 +2037,7 @@ if(saved){
   const r=document.querySelector(`input[name=len][value="${saved.len}"]`);if(r)r.checked=true;
   if(typeof saved.chrono==="boolean")$("optChrono").checked=saved.chrono;
   if(typeof saved.host==="boolean")$("optHost").checked=saved.host;
+  if(typeof saved.tv==="boolean")$("optTv").checked=saved.tv;
   const lvr=document.querySelector(`input[name=lv][value="${saved.level}"]`);if(lvr)lvr.checked=true;
 }
 /* affiche autant de cases de noms que d'équipes choisies */
@@ -1986,13 +2049,16 @@ $("start").onclick=async()=>{
   S.names=TEAMS().map(i=>$("n"+i).value.trim()||"Équipe "+(i+1));
   const len=+document.querySelector("input[name=len]:checked").value;
   const lvv=document.querySelector("input[name=lv]:checked").value;
-  S.opts={chrono:$("optChrono").checked,host:$("optHost").checked,level:lvv==="all"?"all":+lvv};
+  const tv=$("optTv").checked;
+  S.opts={chrono:$("optChrono").checked,host:$("optHost").checked||tv,tv,level:lvv==="all"?"all":+lvv};
   for(const k of CATS)deck[k]=null;
-  store.set("oie-reglages",{names:[0,1,2,3].map(i=>$("n"+i).value.trim()),nt:S.T,len,...S.opts});
+  store.set("oie-reglages",{names:[0,1,2,3].map(i=>$("n"+i).value.trim()),nt:S.T,len,...S.opts,host:$("optHost").checked});
+  document.body.classList.toggle("tv",tv);$("fsBtn").classList.toggle("hide",!tv);$("tvBtn").classList.toggle("hide",!tv);
   setLength(len);
   $("setup").classList.add("hide");$("game").classList.remove("hide");scrollTo(0,0);
   if(!G3.tried){G3.tried=true;G3.ok=await init3D();$("board").classList.toggle("hide",G3.ok)}
   init();
+  if(S.opts.tv)tvStart();
 };
 $("snd").onclick=()=>{FX.on=!FX.on;try{localStorage.setItem("oie-son",FX.on?"on":"off")}catch(e){}soundLabel();if(FX.on)sfxStep(0,1)};
 soundLabel();
@@ -2078,6 +2144,137 @@ $("qmReset").onclick=()=>{
   CUSTOM={added:{q:[],b:[],e:[],d:[]},removed:{q:[],b:[],e:[],d:[]}};saveCustom();renderQm();
 };
 $("openQm").onclick=()=>{renderQm();openSheet("qm")};
+
+/* ===== Mode télévision : le plateau sur la TV, l'animateur pilote depuis son téléphone =====
+   Liaison directe entre les deux appareils (WebRTC via PeerJS). Le serveur public de PeerJS ne sert qu'à la mise en relation.
+   La TV envoie au téléphone l'état de l'écran (équipes, carte affichée, boutons disponibles) et la réponse, qui n'est jamais affichée sur la TV.
+   Le téléphone renvoie les boutons touchés, que la TV « clique » elle-même. */
+const PEER_JS="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js",QR_JS="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js";
+const REMOTE={peer:null,conns:[],code:null,secret:null,btns:[],last:"",timer:0,wake:null};
+const TEL=new URLSearchParams(location.search).get("tel");
+function loadScript(src){return new Promise((res,rej)=>{const s=document.createElement("script");s.src=src;s.onload=res;s.onerror=rej;document.head.appendChild(s)})}
+async function keepAwake(){try{if(navigator.wakeLock&&!REMOTE.wake){REMOTE.wake=await navigator.wakeLock.request("screen");REMOTE.wake.addEventListener("release",()=>REMOTE.wake=null)}}catch(e){}}
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&(TEL||S.opts&&S.opts.tv))keepAwake()});
+const isShown=el=>!!el&&el.isConnected&&!el.closest(".hide")&&el.getClientRects().length>0;
+const txt=el=>(el.innerText||el.textContent||"").replace(/\s+/g," ").trim();
+
+/* --- côté TV --- */
+function tvLink(){return location.origin+location.pathname+"?tel="+REMOTE.code}
+function tvStatus(){
+  const n=REMOTE.conns.length,b=$("tvBtn");
+  if(b){b.classList.toggle("hide",!(S.opts&&S.opts.tv));b.classList.toggle("on",n>0);b.title=b.ariaLabel=n?"Télécommande connectée":"Connecter le téléphone de l’animateur"}
+  const st=$("pairStat");if(!st)return;
+  st.textContent=!REMOTE.peer?"Préparation…":REMOTE.peer.open?(n?"✅ Téléphone connecté !":"⏳ En attente du téléphone…"):"Connexion au service de mise en relation…";
+}
+async function tvStart(){
+  document.body.classList.add("tv");dispatchEvent(new Event("resize"));keepAwake();
+  try{if(!window.Peer)await loadScript(PEER_JS);if(!window.QRCode)await loadScript(QR_JS)}
+  catch(e){say("📺 Impossible de charger la liaison avec le téléphone (pas d’internet ?). Vous pouvez jouer depuis cet écran.");return}
+  if(REMOTE.peer&&!REMOTE.peer.destroyed){if(!REMOTE.conns.length)showPair();tvStatus();return}
+  const A="ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+  REMOTE.code=Array.from({length:5},()=>A[Math.floor(Math.random()*A.length)]).join("");
+  const peer=REMOTE.peer=new Peer("jeu-oie-"+REMOTE.code);
+  peer.on("open",()=>{tvStatus()});
+  peer.on("connection",c=>{
+    c.on("open",()=>{REMOTE.conns.push(c);REMOTE.last="";remoteSync();tvStatus();
+      if(!$("tvPair").classList.contains("hide")){$("tvPair").classList.add("hide")}
+      say("📱 Télécommande connectée : l’animateur pilote le jeu.");sfxGood()});
+    c.on("data",d=>{
+      if(!d||d.t!=="click")return;
+      const b=REMOTE.btns[d.id];
+      if(b&&isShown(b)&&!b.disabled&&txt(b)===d.label)b.click();
+      else remoteSync(true);
+    });
+    const drop=()=>{const had=REMOTE.conns.includes(c);REMOTE.conns=REMOTE.conns.filter(x=>x!==c);tvStatus();if(had&&!REMOTE.conns.length)say("📱 Télécommande déconnectée. Rouvrez le lien sur le téléphone, ou jouez depuis cet écran.")};
+    c.on("close",drop);c.on("error",drop);
+  });
+  peer.on("disconnected",()=>{tvStatus();setTimeout(()=>{if(!peer.destroyed)peer.reconnect()},1500)});
+  peer.on("error",e=>{
+    if(e.type==="unavailable-id"){peer.destroy();REMOTE.peer=null;tvStart();return}
+    if(e.type==="network"||e.type==="server-error"||e.type==="socket-error"){const st=$("pairStat");if(st)st.textContent="⚠️ Service de mise en relation injoignable, nouvel essai…"}
+  });
+  showPair();
+}
+function showPair(){
+  $("pairCode").textContent=REMOTE.code||"…";
+  const url=REMOTE.code?tvLink():"";$("pairUrl").textContent=url;$("pairUrl").href=url;
+  const q=$("qr");q.innerHTML="";
+  if(window.QRCode&&url)new QRCode(q,{text:url,width:220,height:220,colorDark:"#0b0e1c",colorLight:"#ffffff",correctLevel:QRCode.CorrectLevel.M});
+  tvStatus();$("tvPair").classList.remove("hide");
+}
+/* état envoyé au téléphone : ce qui est à l'écran et les boutons utilisables */
+function remoteState(){
+  const st={t:"state",names:S.names,pts:S.pts,pos:S.pos,turn:S.turn,N,T:S.T,msg:$("msg").textContent,ctx:"board",title:"",lines:[],timer:"",secret:null,btns:[]};
+  let root=null,btns=[];
+  if(!$("setup").classList.contains("hide")){st.ctx="setup";btns=[$("start")]}
+  else if(!$("winScr").classList.contains("hide")){st.ctx="win";root=$("winBox");st.title=txt($("winTitle"))+" 🏆"}
+  else if(!$("modal").classList.contains("hide")){st.ctx="card";root=$("card");st.secret=REMOTE.secret;
+    const h=root.querySelector("h2");st.title=h?txt(h):"";
+    st.lines=[...root.querySelectorAll(".who,.big,.surp,#out .ans,#dAns>p,.note:not(#audMsg)")].filter(isShown).map(txt).filter(Boolean);
+    const tm=root.querySelector("#timer");if(tm)st.timer=txt(tm)}
+  else if(!$("offer").classList.contains("hide")){st.ctx="offer";root=$("offer");st.lines=[...root.querySelectorAll("p,small")].map(txt)}
+  else if(isShown($("roll"))&&!$("roll").disabled)btns=[$("roll")];
+  if(root)btns=[...root.querySelectorAll("button")];
+  btns=btns.filter(b=>isShown(b)&&!b.disabled);
+  REMOTE.btns=btns;
+  st.btns=btns.map((b,i)=>{const cs=getComputedStyle(b);return{id:i,label:txt(b),bg:b.id==="roll"?getComputedStyle(document.documentElement).getPropertyValue("--t"+S.turn).trim():cs.backgroundColor,fg:b.id==="roll"?"#fff":cs.color}});
+  if(st.ctx==="board"&&!btns.length)st.lines=[$("msg").textContent];
+  return st;
+}
+function remoteSync(force){
+  if(!REMOTE.conns.length)return;
+  clearTimeout(REMOTE.timer);
+  REMOTE.timer=setTimeout(()=>{
+    const st=remoteState(),s=JSON.stringify(st);
+    if(!force&&s===REMOTE.last)return;REMOTE.last=s;
+    for(const c of REMOTE.conns)try{c.send(st)}catch(e){}
+  },force?0:70);
+}
+new MutationObserver(()=>remoteSync()).observe(document.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:["class","disabled"]});
+$("tvBtn").onclick=()=>{if(REMOTE.peer&&!REMOTE.peer.destroyed)showPair();else tvStart()};
+$("pairClose").onclick=()=>$("tvPair").classList.add("hide");
+$("fsBtn").onclick=()=>{try{document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}catch(e){}};
+
+/* --- côté téléphone (lien ?tel=CODE) --- */
+async function remoteBoot(){
+  document.body.classList.add("remote-mode");$("remote").classList.remove("hide");
+  const code=TEL.toUpperCase().replace(/[^A-Z0-9]/g,"");$("rmCode").textContent=code;
+  const stat=(t,ok)=>{$("rmStat").textContent=t;$("rmStat").className=ok?"ok":""};
+  $("rmCodeForm").onsubmit=e=>{e.preventDefault();const v=$("rmCodeIn").value.trim().toUpperCase();if(v)location.search="?tel="+encodeURIComponent(v)};
+  try{await loadScript(PEER_JS)}catch(e){stat("⚠️ Pas de connexion internet");return}
+  keepAwake();
+  let conn=null,retry=0;
+  const peer=new Peer();
+  const connect=()=>{
+    stat("Connexion à la TV…");
+    conn=peer.connect("jeu-oie-"+code,{reliable:true});
+    conn.on("open",()=>{retry=0;stat("Connecté à la TV",true);$("rmCodeForm").classList.add("hide")});
+    conn.on("data",renderRemote);
+    conn.on("close",()=>{stat("Connexion perdue, nouvel essai…");setTimeout(connect,2000)});
+  };
+  peer.on("open",connect);
+  peer.on("disconnected",()=>setTimeout(()=>{if(!peer.destroyed)peer.reconnect()},1500));
+  peer.on("error",e=>{
+    if(e.type==="peer-unavailable"){retry++;stat("Partie introuvable : lancez la partie en mode télévision et vérifiez le code.");$("rmCodeForm").classList.remove("hide");setTimeout(connect,Math.min(8000,2000*retry))}
+    else stat("⚠️ "+(e.type==="network"?"Réseau indisponible":"Erreur de connexion")+", nouvel essai…");
+  });
+  $("rmBtns").onclick=e=>{const b=e.target.closest("button[data-id]");if(!b||!conn||!conn.open)return;
+    b.disabled=true;if(navigator.vibrate)navigator.vibrate(25);conn.send({t:"click",id:+b.dataset.id,label:b.dataset.label})};
+}
+function renderRemote(st){
+  if(!st||st.t!=="state")return;
+  const col=t=>`var(--t${t})`;
+  $("rmTeams").innerHTML=(st.names||[]).map((n,t)=>`<div class="rmteam${t===st.turn&&st.ctx!=="setup"?" cur":""}" style="--c:${col(t)}"><b>${esc(n)}</b><span>${st.pts[t]} pt${st.pts[t]>1?"s":""} · case ${st.pos[t]}/${st.N}</span></div>`).join("");
+  const ctxTitle={setup:"Réglages en cours sur la TV",board:"Plateau",offer:"Choix",win:"Fin de partie"};
+  $("rmTitle").textContent=st.title||(st.ctx==="board"&&st.names?"🎲 À "+st.names[st.turn]+" de jouer":ctxTitle[st.ctx]||"");
+  $("rmLines").innerHTML=(st.lines||[]).map(l=>`<p>${esc(l)}</p>`).join("");
+  $("rmTimer").textContent=st.timer?"⏱ "+st.timer:"";
+  $("rmSecret").classList.toggle("hide",!st.secret);
+  $("rmSecretTxt").textContent=st.secret||"";
+  $("rmBtns").innerHTML=st.btns.length?st.btns.map(b=>`<button data-id="${b.id}" data-label="${esc(b.label)}" style="background:${b.bg};color:${b.fg}">${esc(b.label)}</button>`).join("")
+    :`<p class="rmwait">${st.ctx==="setup"?"La TV prépare la partie…":"Patientez…"}</p>`;
+}
+if(TEL)remoteBoot();
 </script>
 </body>
 </html>

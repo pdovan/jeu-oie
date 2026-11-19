@@ -214,6 +214,8 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 #tvBtn.on{border-color:var(--ok)!important;box-shadow:0 0 0 3px rgba(34,163,90,.3)}
 body.tv main{max-width:min(1280px,96vw)}
 body.tv .score{max-width:none}
+body.lite *{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+body.lite .overlay{background:rgba(4,6,14,.9)}
 body.tv .top{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(14,18,34,.96)}
 .pair{max-width:440px;text-align:center;justify-items:center}
 #qr{background:#fff;padding:12px;border-radius:16px;line-height:0;min-height:244px;min-width:244px;display:grid;place-items:center}
@@ -351,6 +353,7 @@ body.remote-mode>header,body.remote-mode>main{display:none!important}
    <label class="opt"><span><b>⏱️ Chronomètre (25 s)</b><small>Ajoute de la pression sur les épreuves</small></span><input type="checkbox" id="optChrono" checked></label>
    <label class="opt"><span><b>🎤 Mode animateur</b><small>Masque les QCM (révélation libre)</small></span><input type="checkbox" id="optHost" checked></label>
    <label class="opt wide"><span><b>📺 Mode télévision</b><small>Le plateau sur grand écran, l’animateur pilote depuis son téléphone et voit seul les réponses</small></span><input type="checkbox" id="optTv"></label>
+   <label class="opt wide"><span><b>🪶 Graphismes allégés</b><small>Pour les TV connectées et appareils peu puissants : animations plus fluides, sans ombres (activé automatiquement sur les TV)</small></span><input type="checkbox" id="optLite"></label>
   </div>
   <button id="start" class="launch" type="button">🎲 Lancer la partie !</button>
  </div>
@@ -1341,6 +1344,9 @@ function buildBoard(){
 /* ===== Plateau 3D (Three.js). Coordonnées : x/z = coordonnées SVG recentrées sur (200,200) ===== */
 const G3={ok:false,tried:false,pawns:[],top:[],group:null};
 const REDUCE=matchMedia("(prefers-reduced-motion: reduce)").matches;
+/* navigateurs de TV connectées (Samsung Tizen, LG webOS, Sony, Fire TV…) : graphismes allégés par défaut */
+const SMART_TV=/Tizen|SMART-TV|SmartTV|Web0S|webOS|NetCast|HbbTV|BRAVIA|AFT[A-Z]|CrKey|GoogleTV|Android TV/i.test(navigator.userAgent);
+const LITE=()=>!!(S.opts&&S.opts.lite);
 const cssVar=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 const lin=h=>new THREE.Color(h).convertSRGBToLinear();
 const EMOJI_FONT='"Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif';
@@ -1476,7 +1482,7 @@ function animDie(now){
 async function init3D(){
   if(!window.THREE||!THREE.OrbitControls)return false;
   let R;
-  try{R=new THREE.WebGLRenderer({antialias:true,alpha:true})}catch(e){return false}
+  try{R=new THREE.WebGLRenderer({antialias:!LITE(),alpha:true,powerPreference:"high-performance"})}catch(e){return false}
   if(!R.getContext())return false;
   try{await Promise.race([document.fonts.load('700 54px "Fredoka"'),sleep(1500)])}catch(e){}
   const el=$("stage");el.classList.remove("hide");el.prepend(R.domElement);
@@ -1503,10 +1509,18 @@ async function init3D(){
   G3.pawns=[];build3DPawns();
   /* budget de pixels : sur grand écran (mode TV, plein écran) on baisse la densité pour garder une animation fluide */
   const fit=()=>{const w=el.clientWidth,h=el.clientHeight;if(!w||!h)return;
-    R.setPixelRatio(Math.max(1,Math.min(devicePixelRatio,2,Math.sqrt(1.6e6/(w*h)))));R.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()};
-  new ResizeObserver(fit).observe(el);fit();
+    const budget=LITE()?.7e6:1.6e6,floor=LITE()?.6:1;
+    R.setPixelRatio(Math.max(floor,Math.min(devicePixelRatio,2,Math.sqrt(budget/(w*h)))));R.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()};
+  new ResizeObserver(fit).observe(el);
+  /* graphismes allégés : sans ombres, moins de pixels, 30 images/s régulières */
+  G3.quality=()=>{const sh=!LITE();
+    if(R.shadowMap.enabled!==sh){R.shadowMap.enabled=sh;scene.traverse(o=>{if(o.material)[].concat(o.material).forEach(m=>m.needsUpdate=true)})}
+    fit()};
+  G3.quality();
+  let lastF=0;
   (function loop(now){
     requestAnimationFrame(loop);
+    if(LITE()){if(now-lastF<31)return;lastF=now}
     G3.pawns.forEach((P,t)=>{
       const k=P.dur?Math.min(1,(now-P.t0)/P.dur):1,e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
       P.g.position.lerpVectors(P.from,P.to,e);P.g.position.y+=Math.sin(Math.PI*k)*P.hop;
@@ -1705,7 +1719,7 @@ function sfxFanfare(){const c=fxCtx();if(!c)return;const t=c.currentTime;
 const CONF={raf:0};
 function confetti(){
   cancelAnimationFrame(CONF.raf);
-  const cv=$("confetti"),ctx=cv.getContext("2d"),dpr=Math.min(devicePixelRatio||1,2);
+  const cv=$("confetti"),ctx=cv.getContext("2d"),dpr=LITE()?1:Math.min(devicePixelRatio||1,2);
   const size=()=>{cv.width=innerWidth*dpr;cv.height=innerHeight*dpr;ctx.setTransform(dpr,0,0,dpr,0,0)};size();
   const cols=TEAMS().map(t=>getComputedStyle(document.documentElement).getPropertyValue("--t"+t).trim()).concat(["#f5b72e","#ffffff","#a78bfa"]);
   const P=[],W=()=>innerWidth,H=()=>innerHeight;
@@ -1713,12 +1727,13 @@ function confetti(){
     P.push({x,y,vx:Math.cos(ang)*sp,vy:Math.sin(ang)*sp,w:6+Math.random()*7,h:4+Math.random()*5,r:Math.random()*6,vr:(Math.random()-.5)*.35,c:cols[Math.random()*cols.length|0],s:Math.random()*6,round:Math.random()<.25})}};
   if(REDUCE){for(let i=0;i<70;i++)P.push({x:Math.random()*W(),y:Math.random()*H(),w:8,h:5,r:Math.random()*6,c:cols[i%cols.length],s:0,vx:0,vy:0,vr:0,round:i%4===0});
     P.forEach(p=>{ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.r);ctx.fillStyle=p.c;ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);ctx.restore()});return}
-  add(0,H(),110,1.1,17);add(W(),H(),110,1.1,17);
-  P.forEach((p,i)=>{if(i<110)p.vx=Math.abs(p.vx)+4;else p.vx=-Math.abs(p.vx)-4});
+  const L=LITE(),side=L?50:110;
+  add(0,H(),side,1.1,17);add(W(),H(),side,1.1,17);
+  P.forEach((p,i)=>{if(i<side)p.vx=Math.abs(p.vx)+4;else p.vx=-Math.abs(p.vx)-4});
   const t0=performance.now();let last=t0,waves=0;
   const frame=now=>{
-    const dt=Math.min(2,(now-last)/16.7);last=now;
-    if(now-t0>700*(waves+1)&&waves<6){waves++;add(Math.random()*W(),-20,45,Math.PI*1.6,3)}
+    const dt=Math.min(3,(now-last)/16.7);last=now;
+    if(now-t0>700*(waves+1)&&waves<(L?4:6)){waves++;add(Math.random()*W(),-20,L?20:45,Math.PI*1.6,3)}
     ctx.clearRect(0,0,W(),H());
     for(let i=P.length-1;i>=0;i--){const p=P[i];
       p.vy+=.32*dt;p.vx*=Math.pow(.985,dt);p.vy=Math.min(p.vy,4.2+p.w*.15);p.s+=.12*dt;
@@ -2036,6 +2051,7 @@ function init(){
 }
 function showSetup(){$("game").classList.add("hide");$("setup").classList.remove("hide");scrollTo(0,0)}
 const saved=store.get("oie-reglages");
+$("optLite").checked=SMART_TV;
 if(saved){
   (saved.names||[saved.n0,saved.n1]).forEach((n,i)=>{if(n&&$("n"+i))$("n"+i).value=n});
   const nt=document.querySelector(`input[name=nt][value="${saved.nt}"]`);if(nt)nt.checked=true;
@@ -2043,6 +2059,7 @@ if(saved){
   if(typeof saved.chrono==="boolean")$("optChrono").checked=saved.chrono;
   if(typeof saved.host==="boolean")$("optHost").checked=saved.host;
   if(typeof saved.tv==="boolean")$("optTv").checked=saved.tv;
+  if(typeof saved.lite==="boolean")$("optLite").checked=saved.lite;
   const lvr=document.querySelector(`input[name=lv][value="${saved.level}"]`);if(lvr)lvr.checked=true;
 }
 /* affiche autant de cases de noms que d'équipes choisies */
@@ -2055,7 +2072,8 @@ $("start").onclick=async()=>{
   const len=+document.querySelector("input[name=len]:checked").value;
   const lvv=document.querySelector("input[name=lv]:checked").value;
   const tv=$("optTv").checked;
-  S.opts={chrono:$("optChrono").checked,host:$("optHost").checked||tv,tv,level:lvv==="all"?"all":+lvv};
+  S.opts={chrono:$("optChrono").checked,host:$("optHost").checked||tv,tv,lite:$("optLite").checked,level:lvv==="all"?"all":+lvv};
+  document.body.classList.toggle("lite",S.opts.lite);if(G3.quality)G3.quality();
   for(const k of CATS)deck[k]=null;
   store.set("oie-reglages",{names:[0,1,2,3].map(i=>$("n"+i).value.trim()),nt:S.T,len,...S.opts,host:$("optHost").checked});
   document.body.classList.toggle("tv",tv);$("fsBtn").classList.toggle("hide",!tv);$("tvBtn").classList.toggle("hide",!tv);

@@ -1025,7 +1025,8 @@ async function setupAudio([ti,ar],onFirstPlay){
     b.onclick=()=>{if(a.paused){if(a.ended)a.currentTime=0;a.play().catch(e=>{if(e.name!=="AbortError")fail()})}else a.pause()};
   }catch(e){fail()}
 }
-function hideCard(){audStop();$("modal").classList.add("hide")}
+let CARD_TIMER=null;
+function hideCard(){audStop();clearInterval(CARD_TIMER);$("modal").classList.add("hide")}
 function name(){return esc(S.names[S.turn])}
 
 /* ===== Bruitages (Web Audio, générés à la volée) ===== */
@@ -1155,12 +1156,14 @@ function ask(ty){
     ${qcm?`<div class="qcm">${opts.map((o,i)=>`<button class="choice" data-i="${i}">${esc(o)}</button>`).join("")}</div>`:""}
     ${!qcm&&reveal?'<button id="rev">Voir la réponse</button>':""}
     <div id="out"></div>
-    <div class="row ${reveal?"hide":""}" id="verdict"><button class="ok" id="yes">Réussi (+1 pt, +2 cases)</button><button class="ko" id="no">Raté</button></div>`);
+    ${ty==="d"?`<button id="go" style="background:var(--t${S.turn})">▶ Prêts ? Démarrer le défi</button>`:""}
+    <div class="row ${reveal||ty==="d"?"hide":""}" id="verdict"><button class="ok" id="yes">Réussi (+1 pt, +2 cases)</button><button class="ko" id="no">Raté</button></div>`);
   let timer=null,done=false;
   const stopTimer=()=>{clearInterval(timer);timer=null};
   const startTimer=()=>{
     if(!chrono||timer||done)return;let left=25;
-    timer=setInterval(()=>{
+    clearInterval(CARD_TIMER);
+    timer=CARD_TIMER=setInterval(()=>{
       const el=$("timer");if(!el){stopTimer();return}
       left--;el.textContent=left>0?left:"⏰ Temps écoulé";el.classList.toggle("urgent",left>0&&left<=5);
       if(left>0&&left<=5)sfxTick();
@@ -1182,7 +1185,9 @@ function ask(ty){
   const finishQ=ok=>{done=false;finish(ok)};
   if($("host"))$("host").onclick=()=>$("hostInfo").classList.toggle("hide");
   document.querySelectorAll(".choice").forEach(b=>b.onclick=()=>pick(+b.dataset.i));
-  if(song)setupAudio(song,startTimer);else startTimer();
+  /* défi : l'équipe lit la consigne, se prépare, puis lance elle-même le chrono */
+  if(ty==="d")$("go").onclick=()=>{$("go").classList.add("hide");$("verdict").classList.remove("hide");sfxTick();startTimer()};
+  else if(song)setupAudio(song,startTimer);else startTimer();
   if($("rev"))$("rev").onclick=()=>{$("out").innerHTML=`<div class="ans">${esc(reveal)}</div>`;$("verdict").classList.remove("hide");$("rev").classList.add("hide")};
   $("yes").onclick=()=>finish(true);
   $("no").onclick=()=>finish(false);

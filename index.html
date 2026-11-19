@@ -127,6 +127,14 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 #toast{position:absolute;left:50%;top:12px;z-index:3;transform:translate(-50%,-8px);max-width:92%;padding:8px 16px;border-radius:999px;
   background:rgba(20,24,40,.85);color:#fff;font-weight:700;font-size:.95rem;text-align:center;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s}
 #toast.show{opacity:1;transform:translate(-50%,0)}
+/* proposition de dépenser des points, affichée sur le plateau */
+#offer{position:absolute;left:50%;bottom:14px;z-index:4;transform:translateX(-50%);width:min(440px,94%);display:grid;gap:10px;padding:14px;border-radius:18px;
+  background:rgba(20,24,40,.92);color:#fff;box-shadow:0 14px 34px rgba(0,0,0,.4);text-align:center;animation:offerin .25s ease}
+#offer p{margin:0;font-weight:700}
+#offer small{color:#c3c9d8;font-weight:600}
+#offer .row button{padding:11px 10px}
+#offer .spend{background:var(--gold);color:#2b1d10}
+@keyframes offerin{from{opacity:0;transform:translate(-50%,10px)}to{opacity:1;transform:translateX(-50%)}}
 .legend{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:16px;font-size:.85rem;color:var(--mute)}
 .endrow{text-align:center;margin-top:16px}
 
@@ -227,6 +235,7 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 <div id="stage" class="hide" role="img" aria-label="Plateau 3D du jeu de l’oie en spirale, jardin au centre. Glissez pour le faire tourner."><p id="hint3d">↻ Glissez pour tourner</p><button class="ghost" id="recenter" type="button">Recentrer</button></div>
 <svg id="board" viewBox="0 0 400 400" role="img" aria-label="Plateau du jeu de l’oie en spirale, jardin au centre"></svg>
 <div id="toast" aria-hidden="true"></div>
+<div id="offer" class="hide" role="group" aria-label="Choix"></div>
 <button id="roll" type="button"><span class="rl">🎲 Lancer le dé</span><small id="rollWho"></small></button>
 </div>
 <!-- annonces pour les lecteurs d'écran uniquement (résultat du dé, messages de jeu) -->
@@ -844,7 +853,7 @@ function draw(k){
   if(!deck[k]||!deck[k].length)deck[k]=shuffle(BANK[k].map((_,i)=>i));
   return BANK[k][deck[k].pop()];
 }
-const S={pos:[0,0],pts:[0,0],skip:[0,0],turn:0,names:[],busy:false,opts:{chrono:true,host:true}};
+const S={pos:[0,0],pts:[0,0],skip:[0,0],why:[null,null],turn:0,names:[],busy:false,opts:{chrono:true,host:true}};
 
 function buildBoard(){
   const d=SPI.path.map((p,i)=>(i?"L":"M")+p[0].toFixed(1)+" "+p[1].toFixed(1)).join("");
@@ -1195,11 +1204,20 @@ async function step(n){
 async function jump(to){const up=to>S.pos[S.turn];S.pos[S.turn]=to;sfxJump(up);render();await sleep(600)}
 async function next(){
   await zoomOut();
-  S.busy=false;$("roll").disabled=false;
-  let t=1-S.turn;const passed=[];
-  for(let i=0;i<10&&S.skip[t]>0;i++){S.skip[t]--;if(!passed.includes(S.names[t]))passed.push(S.names[t]);t=1-t}
-  S.turn=t;render();
-  say((passed.length?passed.join(" et ")+(passed.length>1?" passent leur tour. ":" passe son tour. "):"")+"À "+S.names[t]+" de jouer.",passed.length>0);
+  let t=1-S.turn;const passed=[];let freed="";
+  for(let i=0;i<10&&S.skip[t]>0;i++){
+    if((S.why[t]==="puits"||S.why[t]==="prison")&&S.pts[t]>=ESCAPE_COST){
+      S.turn=t;render();
+      if(await offerEscape(t)){
+        S.pts[t]-=ESCAPE_COST;freed=`🔓 ${S.names[t]} : −${ESCAPE_COST} points, sortie ${S.why[t]==="puits"?"du puits":"de prison"} ! `;
+        S.skip[t]=0;S.why[t]=null;sfxGood();break;
+      }
+    }
+    S.skip[t]--;if(!S.skip[t])S.why[t]=null;
+    if(!passed.includes(S.names[t]))passed.push(S.names[t]);t=1-t;
+  }
+  S.turn=t;S.busy=false;$("roll").disabled=false;render();
+  say(freed+(passed.length?passed.join(" et ")+(passed.length>1?" passent leur tour. ":" passe son tour. "):"")+"À "+S.names[t]+" de jouer.",passed.length>0||!!freed);
   announce();
 }
 function win(){
@@ -1210,22 +1228,46 @@ function win(){
 }
 $("roll").onclick=async()=>{
   if(S.busy)return;S.busy=true;$("roll").disabled=true;
-  const f=["⚀","⚁","⚂","⚃","⚄","⚅"];
-  const v=1+Math.floor(Math.random()*6);
-  if(G3.ok&&G3.die){
-    /* dé 3D lancé au milieu du plateau */
-    sfxClack(.35,1800);
-    await roll3D(v);sfxThud();
-    $("dice").textContent="Résultat du dé : "+v;
-    await sleep(700);hideDie();await sleep(150);
-  }else{
-    for(let i=0;i<10;i++){sfxClack(.3+Math.random()*.25);await sleep(55+i*9)}
-    sfxThud();$("dice").textContent="Résultat du dé : "+v;say(f[v-1]+" Le dé fait "+v);
-    await sleep(350);
+  let v=await throwDie();
+  /* relance : 2 points, autant de fois que l'équipe peut payer */
+  while(S.pts[S.turn]>=REROLL_COST){
+    if(!await offerReroll(v))break;
+    S.pts[S.turn]-=REROLL_COST;render();sfxBad();say(`🔄 Relance ! −${REROLL_COST} points.`);
+    v=await throwDie();
   }
+  if(G3.ok&&G3.die){await sleep(250);hideDie();await sleep(150)}
   await step(v);
   resolve(v);
 };
+const REROLL_COST=2,ESCAPE_COST=3,DIEF=["⚀","⚁","⚂","⚃","⚄","⚅"];
+/* lance le dé (3D au centre du plateau, ou simple animation en 2D) et renvoie le résultat */
+async function throwDie(){
+  const v=1+Math.floor(Math.random()*6);
+  if(G3.ok&&G3.die){sfxClack(.35,1800);await roll3D(v);sfxThud();await sleep(250)}
+  else{for(let i=0;i<10;i++){sfxClack(.3+Math.random()*.25);await sleep(55+i*9)}sfxThud();say(DIEF[v-1]+" Le dé fait "+v)}
+  $("dice").textContent="Résultat du dé : "+v;
+  return v;
+}
+/* affiche un choix sur le plateau ; renvoie true si l'équipe dépense ses points */
+function offer(html,yes,no,t){
+  return new Promise(res=>{
+    const el=$("offer");
+    el.innerHTML=html+`<div class="row"><button type="button" id="ofNo" style="background:var(--t${t})">${no}</button><button type="button" class="spend" id="ofYes">${yes}</button></div>`;
+    el.classList.remove("hide");$("ofNo").focus();
+    const done=v=>{el.classList.add("hide");el.innerHTML="";res(v)};
+    $("ofYes").onclick=()=>done(true);$("ofNo").onclick=()=>done(false);
+  });
+}
+function offerReroll(v){
+  const t=S.turn;
+  return offer(`<p>🎲 Le dé fait ${v}</p><small>${esc(S.names[t])} : ${S.pts[t]} points</small>`,
+    `🔄 Relancer · −${REROLL_COST} pts`,`✔ Avancer de ${v} case${v>1?"s":""}`,t);
+}
+function offerEscape(t){
+  const lieu=S.why[t]==="puits"?"Coincés dans le puits 🪣":"Enfermés en prison ⛓️";
+  return offer(`<p>${esc(S.names[t])} · ${lieu}</p><small>Encore ${S.skip[t]} tour${S.skip[t]>1?"s":""} à passer · ${S.pts[t]} points</small>`,
+    `🔓 Sortir · −${ESCAPE_COST} pts`,"⏸ Passer le tour",t);
+}
 /* Résout la case d'arrivée. bonus=true : déplacement après une épreuve réussie (pas de nouvelle épreuve). */
 async function resolve(v,bonus=false){
   const t=S.turn,p=S.pos[t];
@@ -1234,9 +1276,9 @@ async function resolve(v,bonus=false){
   if(p===N)return win();
   const ty=types[p];
   if(ty==="pont"){const to=SPC.pont[1];say(`🌉 Le pont ! Filez à la case ${to}.`);await sleep(700);await jump(to);return next()}
-  if(ty==="auberge"){S.skip[t]=1;say("🏨 Auberge : vous passez un tour.");await sleep(1000);return next()}
-  if(ty==="puits"){S.skip[t]=2;say("🪣 Puits : vous passez deux tours.");await sleep(1000);return next()}
-  if(ty==="prison"){S.skip[t]=2;say("⛓️ Prison : vous passez deux tours.");await sleep(1000);return next()}
+  if(ty==="auberge"){S.skip[t]=1;S.why[t]="auberge";say("🏨 Auberge : vous passez un tour.");await sleep(1000);return next()}
+  if(ty==="puits"){S.skip[t]=2;S.why[t]="puits";say("🪣 Puits : vous passez deux tours"+(S.pts[t]>=3?" (ou payez 3 points pour en sortir).":"."));await sleep(1000);return next()}
+  if(ty==="prison"){S.skip[t]=2;S.why[t]="prison";say("⛓️ Prison : vous passez deux tours"+(S.pts[t]>=3?" (ou payez 3 points pour en sortir).":"."));await sleep(1000);return next()}
   if(ty==="lab"){const to=SPC.lab[1];say(`🌀 Labyrinthe ! Retour à la case ${to}.`);await sleep(700);await jump(to);return next()}
   if(ty==="mort"){say("💀 La mort ! Retour au départ.");await sleep(700);await jump(0);return next()}
   if(bonus){await sleep(400);return next()}
@@ -1315,7 +1357,7 @@ function ask(ty){
 
 /* ===== Lancement ===== */
 function init(){
-  S.pos=[0,0];S.pts=[0,0];S.skip=[0,0];S.turn=0;S.busy=false;
+  S.pos=[0,0];S.pts=[0,0];S.skip=[0,0];S.why=[null,null];S.turn=0;S.busy=false;
   $("score").innerHTML=[0,1].map(t=>`<div class="team t${t}" id="team${t}">
     <div class="team-top"><b>${esc(S.names[t])}</b><span class="pts"><span id="pts${t}">0</span><small> pt</small></span></div>
     <div class="team-pos"><span id="cell${t}"></span><span id="pct${t}"></span></div>
@@ -1371,7 +1413,10 @@ $("openRules").onclick=()=>{
     <h3>Options</h3>
     <ul><li><b>Chronomètre</b> : 25 secondes par épreuve (il démarre avec la musique au blind test).</li>
     <li><b>Mode animateur</b> : un animateur révèle la réponse et décide si c’est réussi. Sans lui, le quiz, le blind test et les films deviennent des QCM à 4 choix, corrigés automatiquement.</li></ul>
-    <p class="note">Les points départagent les équipes à titre honorifique : c’est l’arrivée au jardin qui compte.</p>`;
+    <h3>Dépenser ses points</h3>
+    <ul><li><b>2 points</b> : relancer le dé, une fois le résultat connu (autant de fois que vous pouvez payer).</li>
+    <li><b>3 points</b> : sortir du puits ou de la prison au lieu de passer son tour.</li></ul>
+    <p class="note">C’est l’arrivée au jardin qui fait gagner : les points servent à acheter ces avantages.</p>`;
   openSheet("rules");
 };
 

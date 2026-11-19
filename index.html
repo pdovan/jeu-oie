@@ -149,6 +149,12 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 .timer{font-family:"Fredoka",sans-serif;font-size:2.2rem;font-weight:700;text-align:center;transition:color .2s}
 .timer.urgent{color:var(--ko);animation:pop .5s ease infinite}
 .qcm{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.picks{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pick{display:grid;justify-items:center;gap:4px;padding:18px 10px;border-radius:16px;background:var(--surface2);border:1.5px solid var(--line);color:var(--ink);transition:transform .15s,border-color .15s,background .15s}
+.pick span{font-size:2.2rem;line-height:1}
+.pick b{font-family:"Fredoka",sans-serif;font-size:1.15rem}
+.pick small{color:var(--mute);font-weight:600;font-size:.78rem}
+.pick:hover:not(:disabled){transform:translateY(-2px);border-color:#8b80ff;background:var(--accent-soft)}
 .choice{background:var(--surface2);border:1.5px solid var(--line);color:var(--ink);font-weight:600;text-align:left;min-height:56px}
 .choice:hover:not(:disabled){border-color:#8b80ff}
 .choice.right{background:var(--ok);border-color:var(--ok);color:#fff;opacity:1}
@@ -256,8 +262,8 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 </div>
 
 <script>
-const ICON={depart:"🚩",q:"❓",b:"🎵",e:"🎬",d:"🎭",pont:"🌉",auberge:"🏨",puits:"🪣",lab:"🌀",prison:"⛓️",mort:"💀",jardin:"🌸"};
-const FILL={depart:"#fffaf0",q:"#f0d28a",b:"#d7c0dc",e:"#c4dcae",d:"#f2c39a",pont:"#a9cdea",auberge:"#eeb1a8",puits:"#8fb4c4",lab:"#c9c4b8",prison:"#9b9a96",mort:"#3a3430",jardin:"#f6b6c8"};
+const ICON={depart:"🚩",q:"❓",b:"🎵",e:"🎬",d:"🎭",c:"🎯",pont:"🌉",auberge:"🏨",puits:"🪣",lab:"🌀",prison:"⛓️",mort:"💀",jardin:"🌸"};
+const FILL={depart:"#fffaf0",q:"#f0d28a",b:"#d7c0dc",e:"#c4dcae",d:"#f2c39a",c:"#8fe0cc",pont:"#a9cdea",auberge:"#eeb1a8",puits:"#8fb4c4",lab:"#c9c4b8",prison:"#9b9a96",mort:"#3a3430",jardin:"#f6b6c8"};
 const cycle=["q","b","e","d"];
 const $=id=>document.getElementById(id);
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
@@ -267,10 +273,10 @@ const store={get(k){try{return JSON.parse(localStorage.getItem(k))}catch(e){retu
 
 /* ===== Parcours : positions des cases spéciales selon la longueur choisie ===== */
 const SPEC={
-  20:{turns:1.6,cs:1.25,pont:[4,8],auberge:7,puits:11,lab:[14,9],mort:17},
-  30:{turns:2.1,cs:1.12,pont:[4,9],auberge:10,puits:15,lab:[20,14],prison:24,mort:27},
-  40:{turns:2.5,cs:1.05,pont:[5,10],auberge:13,puits:20,lab:[27,19],prison:33,mort:37},
-  63:{turns:3,cs:1,pont:[6,12],auberge:19,puits:31,lab:[42,30],prison:52,mort:58}
+  20:{turns:1.6,cs:1.25,pont:[4,8],auberge:7,puits:11,lab:[14,9],mort:17,choix:[6,16]},
+  30:{turns:2.1,cs:1.12,pont:[4,9],auberge:10,puits:15,lab:[20,14],prison:24,mort:27,choix:[7,17,26]},
+  40:{turns:2.5,cs:1.05,pont:[5,10],auberge:13,puits:20,lab:[27,19],prison:33,mort:37,choix:[8,17,25,35]},
+  63:{turns:3,cs:1,pont:[6,12],auberge:19,puits:31,lab:[42,30],prison:52,mort:58,choix:[9,23,37,48,61]}
 };
 const SPDESC={pont:v=>`🌉 Pont (case ${v[0]}) : filez à la case ${v[1]}`,auberge:v=>`🏨 Auberge (case ${v}) : passez 1 tour`,puits:v=>`🪣 Puits (case ${v}) : passez 2 tours`,
   lab:v=>`🌀 Labyrinthe (case ${v[0]}) : retour à la case ${v[1]}`,prison:v=>`⛓️ Prison (case ${v}) : passez 2 tours`,mort:v=>`💀 Mort (case ${v}) : retour au départ`};
@@ -288,12 +294,12 @@ function spiralPoints(turns){
 }
 function setLength(n){
   N=n;SPC=SPEC[n];CS=SPC.cs;
-  const at={};for(const k in SPDESC){const v=SPC[k];if(v!=null)at[Array.isArray(v)?v[0]:v]=k}
+  const at={};for(const p of SPC.choix||[])at[p]="c";for(const k in SPDESC){const v=SPC[k];if(v!=null)at[Array.isArray(v)?v[0]:v]=k}
   at[N]="jardin";
   types=["depart"];for(let i=1;i<=N;i++)types.push(at[i]||cycle[i%4]);
   SPI=spiralPoints(SPC.turns);PTS=SPI.cells;
 }
-function specialList(){const a=[];for(const k in SPDESC)if(SPC[k]!=null)a.push(SPDESC[k](SPC[k]));a.push(`🌸 Jardin (case ${N}) : il faut y tomber pile`);return a}
+function specialList(){const a=[];if(SPC.choix&&SPC.choix.length)a.push(`🎯 Au choix (cases ${SPC.choix.join(", ")}) : l’équipe choisit la catégorie de son épreuve`);for(const k in SPDESC)if(SPC[k]!=null)a.push(SPDESC[k](SPC[k]));a.push(`🌸 Jardin (case ${N}) : il faut y tomber pile`);return a}
 
 /* ===== Questions : liste d'origine + ajouts/suppressions enregistrés dans le navigateur ===== */
 const BASE={
@@ -1234,6 +1240,7 @@ async function resolve(v,bonus=false){
   if(ty==="lab"){const to=SPC.lab[1];say(`🌀 Labyrinthe ! Retour à la case ${to}.`);await sleep(700);await jump(to);return next()}
   if(ty==="mort"){say("💀 La mort ! Retour au départ.");await sleep(700);await jump(0);return next()}
   if(bonus){await sleep(400);return next()}
+  if(ty==="c")return choose();
   ask(ty);
 }
 /* QCM : 3 mauvaises réponses tirées parmi les autres réponses de la même catégorie (nombres avec nombres pour le quiz) */
@@ -1241,6 +1248,14 @@ function choices(k,ans){
   const isNum=s=>/^\d/.test(String(s).trim()),seen=new Set([norm(ans)]),pool=[];
   for(const x of shuffle(BANK[k].slice())){const a=x[1],n=norm(a);if(seen.has(n))continue;if(k==="q"&&isNum(a)!==isNum(ans))continue;seen.add(n);pool.push(a);if(pool.length===3)break}
   return shuffle([ans,...pool]);
+}
+/* case « Au choix » : l'équipe choisit la catégorie de son épreuve */
+function choose(){
+  const L={q:["❓","Quiz","Une question de culture générale"],b:["🎵","Blind test","Trouvez l’artiste"],e:["🎬","Film en emojis","Devinez le film"],d:["🎭","Défi","Mime, dessin, rapidité…"]};
+  showCard(`<h2>🎯 Au choix !</h2><div class="who"><b>${name()}</b>, choisissez votre épreuve.</div>
+    <div class="picks">${CATS.map(k=>`<button class="pick" data-k="${k}"${BANK[k].length?"":" disabled"}><span aria-hidden="true">${L[k][0]}</span><b>${L[k][1]}</b><small>${L[k][2]}</small></button>`).join("")}</div>`);
+  sfxGood();
+  document.querySelectorAll(".pick").forEach(b=>b.onclick=()=>{sfxStep(0,1);ask(b.dataset.k)});
 }
 function ask(ty){
   if(!BANK[ty]||!BANK[ty].length){say("Aucune épreuve dans cette catégorie : tour suivant.");return next()}

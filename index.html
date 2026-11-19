@@ -1961,7 +1961,9 @@ function ask(ty){
   let head,body,reveal=null,song=null;
   const badge=x=>{const n=lvlOf(ty,x);return n?` <span class="lvl l${n}">${"★".repeat(n)} ${LVLNAME[n]}</span>`:""};
   REMOTE.secret=null;
-  if(ty==="d"){const dt=draw("d");REMOTE.secret="Consigne : "+dt;head="🎭 Défi";body=`<p class="note" id="defiHint">La consigne reste cachée jusqu’à ce que votre équipe soit prête.</p><div class="big hide" id="defiTxt">${esc(dt)}</div>`}
+  if(ty==="d"){const dt=draw("d");REMOTE.secret="Consigne : "+dt;head="🎭 Défi";body=S.opts.tv
+    ?`<p class="note" id="defiHint">La consigne s’affiche uniquement sur le téléphone de l’animateur : il la montre discrètement à l’équipe, puis lance le défi.</p><div class="big hide" id="defiTxt">🤫 Défi en cours… la consigne reste secrète !</div>`
+    :`<p class="note" id="defiHint">La consigne reste cachée jusqu’à ce que votre équipe soit prête.</p><div class="big hide" id="defiTxt">${esc(dt)}</div>`}
   else if(ty==="q"){const it=draw("q"),[q,a]=it;REMOTE.secret="Réponse : "+a;head="❓ Quiz"+badge(it);body=`<div class="big">${esc(q)}</div>`;reveal=a}
   else if(ty==="e"){const it=draw("e"),[q,a]=it;REMOTE.secret="Réponse : "+a;head="🎬 Devinez le film"+badge(it);body=`<div class="big" style="font-size:3rem">${esc(q)}</div>`;reveal=a}
   else{const it=draw("b"),[ti,ar]=it;REMOTE.secret="🎵 « "+ti+" » de "+ar;song=[ti,ar];head="🎵 Blind test"+badge(it);

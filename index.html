@@ -10,7 +10,7 @@
 <style>
 :root{color-scheme:dark;
 --bg:#0b0e1c;--surface:#1a2133;--surface2:#121828;--line:#2b3450;--ink:#f1f3fa;--mute:#9aa3b8;
---accent:#5b4fe9;--accent-soft:rgba(91,79,233,.22);--gold:#f5b72e;--t0:#f43f5e;--t1:#3b82f6;--q:#f5b72e;--ok:#22a35a;--ko:#e5484d}
+--accent:#5b4fe9;--accent-soft:rgba(91,79,233,.22);--gold:#f5b72e;--t0:#f43f5e;--t1:#3b82f6;--t2:#22c55e;--t3:#f59e0b;--q:#f5b72e;--ok:#22a35a;--ko:#e5484d}
 *{box-sizing:border-box}
 html{scroll-padding-top:80px}
 body{margin:0;min-height:100vh;color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif;
@@ -56,6 +56,18 @@ main{max-width:680px;margin:0 auto;padding:16px 16px calc(24px + env(safe-area-i
 .teambox.red input{border-color:rgba(244,63,94,.45)}
 .teambox.blue{background:rgba(56,189,248,.08);border-color:rgba(56,189,248,.4);color:#7dd3fc}
 .teambox.blue input{border-color:rgba(56,189,248,.4)}
+.teambox.green{background:rgba(34,197,94,.09);border-color:rgba(34,197,94,.42);color:#86efac}
+.teambox.green input{border-color:rgba(34,197,94,.42)}
+.teambox.yellow{background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.45);color:#fcd34d}
+.teambox.yellow input{border-color:rgba(245,158,11,.45)}
+.ntrow{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.ntrow b{font-weight:700}
+.seg{display:inline-flex;gap:6px;padding:4px;border-radius:12px;background:rgba(255,255,255,.04);border:1.5px solid var(--line)}
+.seg label{position:relative;cursor:pointer}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg span{display:block;padding:7px 16px;border-radius:9px;font-family:"Fredoka",sans-serif;font-weight:600;color:var(--mute);transition:background .2s,color .2s}
+.seg input:checked+span{background:var(--accent);color:#fff}
+.seg input:focus-visible+span{outline:3px solid var(--gold);outline-offset:2px}
 fieldset{border:0;margin:0;padding:0;min-width:0}
 .lens legend{font-weight:700;margin-bottom:12px;padding:0}
 .lengrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
@@ -78,7 +90,8 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 @media (max-width:640px){.setup-card{padding:26px 18px}.teams,.opts{grid-template-columns:1fr}.lengrid{grid-template-columns:1fr 1fr}}
 
 /* ===== Partie ===== */
-.score{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.score{display:grid;grid-template-columns:repeat(var(--nt,2),minmax(0,1fr));gap:10px;margin-bottom:12px}
+@media (max-width:640px){.score{grid-template-columns:1fr 1fr}}
 .team{background:var(--surface);border-radius:14px;padding:10px 12px;border:2px solid transparent;display:grid;gap:6px;min-width:0}
 .team-top{display:flex;justify-content:space-between;align-items:center;gap:8px;min-width:0}
 .team .pts small{font-size:.8rem;font-weight:600;color:var(--mute)}
@@ -88,8 +101,8 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 .tbar i{display:block;height:100%;width:0;border-radius:99px;background:currentColor;transition:width .35s ease}
 .team.on{border-color:currentColor;box-shadow:0 0 0 4px color-mix(in srgb,currentColor 22%,transparent)}
 .team b{font-family:"Fredoka",sans-serif;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.team .pts{font-size:1.6rem;font-weight:700;font-family:"Fredoka",sans-serif;color:var(--ink)}
-.team.t0{color:var(--t0)}.team.t1{color:var(--t1)}
+.team .pts{white-space:nowrap;font-size:1.6rem;font-weight:700;font-family:"Fredoka",sans-serif;color:var(--ink)}
+.team.t0{color:var(--t0)}.team.t1{color:var(--t1)}.team.t2{color:var(--t2)}.team.t3{color:var(--t3)}
 #frame{position:relative;background:radial-gradient(circle at 50% 50%,#f6e7bf,#e8cf93);border:3px solid #6b4a2b;outline:3px solid #c9a15b;outline-offset:-9px;border-radius:14px;padding:10px;margin-bottom:14px;color:#2b1d10;overflow:hidden}
 #banner{position:absolute;left:50%;top:24%;z-index:2;pointer-events:none;white-space:nowrap;max-width:92%;overflow:hidden;text-overflow:ellipsis;
   font-family:"Fredoka",sans-serif;font-weight:700;font-size:clamp(1.1rem,5vw,1.6rem);color:#fff;padding:10px 22px;border-radius:999px;
@@ -113,7 +126,7 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 .pawn .halo{fill:none;stroke-width:2.5;opacity:0;transform-box:fill-box;transform-origin:center}
 .pawn.on .halo{animation:halo 1.4s ease-out infinite}
 @keyframes halo{0%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(2.8)}}
-.t0.dot{fill:var(--t0)}.t1.dot{fill:var(--t1)}.t0.halo{stroke:var(--t0)}.t1.halo{stroke:var(--t1)}
+.t0.dot{fill:var(--t0)}.t1.dot{fill:var(--t1)}.t2.dot{fill:var(--t2)}.t3.dot{fill:var(--t3)}.t0.halo{stroke:var(--t0)}.t1.halo{stroke:var(--t1)}.t2.halo{stroke:var(--t2)}.t3.halo{stroke:var(--t3)}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 /* bouton du dé posé au centre du plateau */
 #roll{position:absolute;left:50%;top:50%;z-index:3;transform:translate(-50%,-50%);display:grid;justify-items:center;gap:2px;
@@ -148,6 +161,7 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 .sheet-head button{padding:6px 12px}
 #card h2,.sheet h2{font-size:1.5rem}
 .who{color:var(--mute)}
+.rank{margin:0;padding-left:22px;display:grid;gap:4px}
 .big{font-size:1.35rem;font-weight:700}
 .ans{background:var(--surface2);border-radius:12px;padding:14px;font-weight:700;font-size:1.2rem}
 .row{display:flex;gap:10px}.row>*{flex:1}
@@ -206,11 +220,20 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
   <div class="setup-head">
    <span class="badge">Soirée quiz &amp; musique</span>
    <h1>Préparez votre partie</h1>
-   <p class="lead">Affrontez-vous en équipe, relevez les épreuves et filez vers le jardin avant l’équipe adverse !</p>
+   <p class="lead">Affrontez-vous en équipe, relevez les épreuves et filez vers le jardin avant les équipes adverses !</p>
+  </div>
+  <div class="ntrow"><b id="ntLbl">👥 Nombre d’équipes</b>
+   <div class="seg" role="radiogroup" aria-labelledby="ntLbl">
+    <label><input type="radio" name="nt" value="2" checked><span>2</span></label>
+    <label><input type="radio" name="nt" value="3"><span>3</span></label>
+    <label><input type="radio" name="nt" value="4"><span>4</span></label>
+   </div>
   </div>
   <div class="teams">
-   <label class="teambox red"><span class="tl"><i></i>Équipe 1 (rouge)</span><input id="n0" value="Les Renards" maxlength="18" autocomplete="off"></label>
-   <label class="teambox blue"><span class="tl"><i></i>Équipe 2 (bleue)</span><input id="n1" value="Les Hiboux" maxlength="18" autocomplete="off"></label>
+   <label class="teambox red" id="box0"><span class="tl"><i></i>Équipe 1 (rouge)</span><input id="n0" value="Les Renards" maxlength="18" autocomplete="off"></label>
+   <label class="teambox blue" id="box1"><span class="tl"><i></i>Équipe 2 (bleue)</span><input id="n1" value="Les Hiboux" maxlength="18" autocomplete="off"></label>
+   <label class="teambox green hide" id="box2"><span class="tl"><i></i>Équipe 3 (verte)</span><input id="n2" value="Les Loups" maxlength="18" autocomplete="off"></label>
+   <label class="teambox yellow hide" id="box3"><span class="tl"><i></i>Équipe 4 (jaune)</span><input id="n3" value="Les Écureuils" maxlength="18" autocomplete="off"></label>
   </div>
   <fieldset class="lens"><legend>📏 Longueur du parcours</legend>
    <div class="lengrid">
@@ -715,8 +738,8 @@ const BASE={
   "Dessinez une girafe sans lever le crayon. Votre équipe doit la reconnaître.",
   "Citez 5 fruits rouges en 15 secondes.",
   "Faites deviner « la tour Eiffel » sans prononcer les mots tour, Eiffel, Paris ni fer.",
-  "Imitez un animal de votre choix. L’autre équipe a une seule chance de deviner.",
-  "Chantez 10 secondes d’une chanson de votre choix. L’autre équipe donne le titre.",
+  "Imitez un animal de votre choix. Une équipe adverse a une seule chance de deviner.",
+  "Chantez 10 secondes d’une chanson de votre choix. Une équipe adverse donne le titre.",
   "Mimez un métier. Votre équipe a 30 secondes pour le trouver.",
   "Citez 5 pays d’Afrique en 15 secondes.",
   "Faites deviner « un hérisson » uniquement en dessinant. Votre équipe a 30 secondes.",
@@ -725,7 +748,7 @@ const BASE={
   "Trouvez 3 mots qui riment avec « chapeau » en 10 secondes.",
   "Dites trois fois de suite, sans erreur : « Les chaussettes de l’archiduchesse sont-elles sèches, archisèches ? »",
   "Citez 6 animaux qui commencent par la lettre C en 20 secondes.",
-  "Faites rire un membre de l’autre équipe en 20 secondes, sans le toucher.",
+  "Faites rire un membre d’une équipe adverse en 20 secondes, sans le toucher.",
   "Racontez une histoire de 3 phrases contenant les mots « girafe », « parapluie » et « lundi ».",
   "Mimez un sport. Votre équipe a 30 secondes pour le trouver.",
   "Fredonnez une chanson connue, sans les paroles. Votre équipe a 30 secondes pour trouver le titre.",
@@ -796,14 +819,14 @@ const BASE={
   "Trouvez 5 mots qui contiennent la lettre Z en 20 secondes.",
   "Trouvez un mot de plus de 12 lettres en 15 secondes.",
   "Dites une phrase de 5 mots qui commencent tous par la lettre M.",
-  "Inventez un slogan publicitaire pour une brosse à dents en 20 secondes. L’autre équipe juge.",
+  "Inventez un slogan publicitaire pour une brosse à dents en 20 secondes. Une équipe adverse juge.",
   "Inventez un nom de super-héros et son super-pouvoir en 15 secondes.",
-  "Racontez une blague. Si au moins une personne de l’autre équipe sourit, c’est réussi.",
+  "Racontez une blague. Si au moins une personne d’une équipe adverse sourit, c’est réussi.",
   "Racontez votre film préféré en 3 phrases sans dire son titre. Votre équipe doit le trouver.",
-  "Faites un compliment original à chaque membre de l’autre équipe.",
+  "Faites un compliment original à chaque membre d’une équipe adverse.",
   "Présentez la météo de demain comme à la télévision, pendant 20 secondes.",
   "Commentez ce que fait l’animateur comme un match de football, pendant 20 secondes.",
-  "Vendez un stylo à l’autre équipe en 30 secondes. Elle décide si elle l’achète.",
+  "Vendez un stylo à une équipe adverse en 30 secondes. Elle décide si elle l’achète.",
   "Chantez « Joyeux anniversaire » en imitant un robot.",
   "Chantez un refrain connu en remplaçant toutes les voyelles par « a ».",
   "Chantez 10 secondes d’une chanson de Noël.",
@@ -820,20 +843,20 @@ const BASE={
   "Faites deviner « un vampire » sans dire sang, dents, nuit ni Dracula.",
   "Tenez une cuillère en équilibre sur votre nez pendant 10 secondes.",
   "Faites 10 sauts sur place en tapant dans vos mains au-dessus de la tête.",
-  "Restez immobile comme une statue pendant 30 secondes, pendant que l’autre équipe essaie de vous faire rire sans vous toucher.",
+  "Restez immobile comme une statue pendant 30 secondes, pendant qu’une équipe adverse essaie de vous faire rire sans vous toucher.",
   "Faites le tour de la table, ou de la pièce, à cloche-pied.",
   "Tournez 5 fois sur vous-même, puis marchez en ligne droite sur 3 mètres.",
   "Gardez les yeux ouverts sans cligner pendant 20 secondes.",
   "Marchez 5 mètres avec un livre en équilibre sur la tête.",
   "Faites 5 pompes, ou 10 sur les genoux.",
   "Tapotez-vous la tête d’une main et frottez-vous le ventre de l’autre pendant 10 secondes.",
-  "Dansez 15 secondes sans musique. L’autre équipe vous note sur 10 : il faut au moins 5.",
+  "Dansez 15 secondes sans musique. Une équipe adverse vous note sur 10 : il faut au moins 5.",
   "Faites une grimace qui fait rire l’animateur.",
   "Imitez le cri de 5 animaux différents en 10 secondes.",
-  "Imitez un membre de l’autre équipe. Votre équipe doit deviner qui c’est.",
+  "Imitez un membre d’une équipe adverse. Votre équipe doit deviner qui c’est.",
   "Parlez des vacances pendant 20 secondes sans jamais dire « euh ».",
   "Parlez des chaussettes pendant 30 secondes sans vous arrêter.",
-  "Citez 5 qualités de l’équipe adverse en 15 secondes.",
+  "Citez 5 qualités de une équipe adverse en 15 secondes.",
   "Devinez l’âge de l’animateur, à 2 ans près.",
   "Pour chaque lettre du mot CHAT, citez un objet qui commence par cette lettre, en 15 secondes."
  ]
@@ -853,7 +876,7 @@ function draw(k){
   if(!deck[k]||!deck[k].length)deck[k]=shuffle(BANK[k].map((_,i)=>i));
   return BANK[k][deck[k].pop()];
 }
-const S={pos:[0,0],pts:[0,0],skip:[0,0],why:[null,null],turn:0,names:[],busy:false,opts:{chrono:true,host:true}};
+const S={T:2,pos:[0,0],pts:[0,0],skip:[0,0],why:[null,null],turn:0,names:[],busy:false,opts:{chrono:true,host:true}};
 
 function buildBoard(){
   const d=SPI.path.map((p,i)=>(i?"L":"M")+p[0].toFixed(1)+" "+p[1].toFixed(1)).join("");
@@ -865,7 +888,8 @@ function buildBoard(){
 <text class="num" x="${x}" y="${y-(jar?16:9*CS)}" style="font-size:${n?7*CS:5.5*CS}px">${n||"DÉPART"}</text>
 <text class="ico" x="${x}" y="${y+(jar?4:3.5*CS)}" style="font-size:${jar?24:13*CS}px">${ICON[ty]}</text></g>`;
   }
-  h+=[0,1].map(t=>`<g id="pawn${t}" class="pawn" style="transform:translate(${PTS[0][0]+(t?7:-7)}px,${PTS[0][1]+11}px)"><circle class="halo t${t}" r="6"/><circle class="dot t${t}" r="6"/></g>`).join("");
+  const pr=S.T<=2?6:S.T===3?5:4;
+  h+=TEAMS().map(t=>{const[ox,oy]=pawnOff2D(t);return `<g id="pawn${t}" class="pawn" style="transform:translate(${PTS[0][0]+ox}px,${PTS[0][1]+oy}px)"><circle class="halo t${t}" r="${pr}"/><circle class="dot t${t}" r="${pr}"/></g>`}).join("");
   $("board").innerHTML=h;
   const xs=SPI.path.map(p=>p[0]),ys=SPI.path.map(p=>p[1]),M=24*CS;
   const x0=Math.min(...xs)-M,y0=Math.min(...ys)-M,w=Math.max(...xs)+M-x0,hh=Math.max(...ys)+M-y0;
@@ -910,7 +934,16 @@ function pawnMesh(col){
   halo.rotation.x=-Math.PI/2;halo.position.y=.3;g.add(halo);g.userData.halo=halo;
   return g;
 }
-function target3(t){const p=S.pos[t],[x,y]=PTS[p];return new THREE.Vector3(x-200+(t?6.8:-6.8),G3.top[p],y-200+3)}
+/* emplacement de chaque pion sur sa case, selon le nombre d'équipes */
+const TEAMS=()=>[...Array(S.T).keys()];
+function pawnOff2D(t){return[(S.T<=2?[-7,7]:S.T===3?[-9,0,9]:[-10.5,-3.5,3.5,10.5])[t],11]}
+function pawnOff3D(t){return(S.T<=2?[[-6.8,3],[6.8,3]]:S.T===3?[[-8,-2],[8,-2],[0,8]]:[[-6,-3],[6,-3],[-6,7],[6,7]])[t]}
+function target3(t){const p=S.pos[t],[x,y]=PTS[p],[ox,oz]=pawnOff3D(t);return new THREE.Vector3(x-200+ox,G3.top[p],y-200+oz)}
+/* (re)crée les pions 3D pour le nombre d'équipes de la partie */
+function build3DPawns(){
+  G3.pawns.forEach(P=>{G3.scene.remove(P.g);P.g.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material)o.material.dispose()})});
+  G3.pawns=TEAMS().map(t=>{const g=pawnMesh(cssVar("--t"+t));if(S.T>2)g.scale.setScalar(.8);G3.scene.add(g);return{g,from:new THREE.Vector3(),to:new THREE.Vector3(),t0:0,dur:0,hop:0}});
+}
 /* le dessus du plateau et les cases dépendent de la longueur choisie : on les reconstruit à chaque partie */
 function build3DBoard(){
   if(G3.group){G3.scene.remove(G3.group);G3.group.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material){if(o.material.map)o.material.map.dispose();o.material.dispose()}})}
@@ -1025,7 +1058,7 @@ async function init3D(){
   gold.rotation.x=Math.PI/2;gold.position.y=.4;scene.add(gold);
   build3DBoard();
   G3.die=makeDie();scene.add(G3.die.mesh);
-  G3.pawns=[0,1].map(t=>{const g=pawnMesh(cssVar("--t"+t));scene.add(g);return{g,from:new THREE.Vector3(),to:new THREE.Vector3(),t0:0,dur:0,hop:0}});
+  G3.pawns=[];build3DPawns();
   const fit=()=>{const w=el.clientWidth,h=el.clientHeight;if(!w||!h)return;R.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()};
   new ResizeObserver(fit).observe(el);fit();
   (function loop(now){
@@ -1066,7 +1099,7 @@ async function zoomOut(){
 }
 function update3D(snap){
   if(!G3.ok)return;
-  [0,1].forEach(t=>{
+  TEAMS().forEach(t=>{
     const P=G3.pawns[t],tg=target3(t);
     if(snap){P.from.copy(tg);P.to.copy(tg);P.dur=0;P.g.position.copy(tg);return}
     if(P.to.distanceTo(tg)<.01)return;
@@ -1077,9 +1110,9 @@ function update3D(snap){
 
 function render(){
   update3D();
-  [0,1].forEach(t=>{
-    const[x,y]=PTS[S.pos[t]],el=$("pawn"+t);
-    el.style.transform=`translate(${x+(t?7:-7)}px,${y+11}px)`;
+  TEAMS().forEach(t=>{
+    const[x,y]=PTS[S.pos[t]],el=$("pawn"+t),[ox,oy]=pawnOff2D(t);
+    el.style.transform=`translate(${x+ox}px,${y+oy}px)`;
     el.classList.toggle("on",t===S.turn);
     $("pts"+t).textContent=S.pts[t];$("pts"+t).nextElementSibling.textContent=S.pts[t]>1?" pts":" pt";
     /* position et progression vers le jardin */
@@ -1204,8 +1237,8 @@ async function step(n){
 async function jump(to){const up=to>S.pos[S.turn];S.pos[S.turn]=to;sfxJump(up);render();await sleep(600)}
 async function next(){
   await zoomOut();
-  let t=1-S.turn;const passed=[];let freed="";
-  for(let i=0;i<10&&S.skip[t]>0;i++){
+  let t=(S.turn+1)%S.T;const passed=[];let freed="";
+  for(let i=0;i<40&&S.skip[t]>0;i++){
     if((S.why[t]==="puits"||S.why[t]==="prison")&&S.pts[t]>=ESCAPE_COST){
       S.turn=t;render();
       if(await offerEscape(t)){
@@ -1214,7 +1247,7 @@ async function next(){
       }
     }
     S.skip[t]--;if(!S.skip[t])S.why[t]=null;
-    if(!passed.includes(S.names[t]))passed.push(S.names[t]);t=1-t;
+    if(!passed.includes(S.names[t]))passed.push(S.names[t]);t=(t+1)%S.T;
   }
   S.turn=t;S.busy=false;$("roll").disabled=false;render();
   say(freed+(passed.length?passed.join(" et ")+(passed.length>1?" passent leur tour. ":" passe son tour. "):"")+"À "+S.names[t]+" de jouer.",passed.length>0||!!freed);
@@ -1222,7 +1255,7 @@ async function next(){
 }
 function win(){
   sfxGood();
-  showCard(`<h2>🌸 ${name()} gagne !</h2><p>Score : ${S.pts[0]} – ${S.pts[1]}</p><button id="again">Rejouer</button><button class="ghost" id="toSetup">Changer les réglages</button>`);
+  showCard(`<h2>🌸 ${name()} gagne !</h2><ol class="rank">${TEAMS().sort((a,b)=>S.pos[b]-S.pos[a]||S.pts[b]-S.pts[a]).map(i=>`<li><b style="color:var(--t${i})">${esc(S.names[i])}</b> · case ${S.pos[i]} · ${S.pts[i]} pt${S.pts[i]>1?"s":""}</li>`).join("")}</ol><button id="again">Rejouer</button><button class="ghost" id="toSetup">Changer les réglages</button>`);
   $("again").onclick=()=>{hideCard();init()};
   $("toSetup").onclick=()=>{hideCard();showSetup()};
 }
@@ -1335,7 +1368,7 @@ function ask(ty){
   const finish=async ok=>{
     if(done)return;done=true;stopTimer();hideCard();
     if(ok){sfxGood();S.pts[S.turn]++;render();say("Bravo ! +1 point et +2 cases.");await step(2);resolve(2,true)}
-    else{sfxBad();say("Raté… au tour de l’autre équipe.");next()}
+    else{sfxBad();say("Raté… au tour de l’équipe suivante.");next()}
   };
   const pick=i=>{
     if(done)return;stopTimer();
@@ -1357,30 +1390,37 @@ function ask(ty){
 
 /* ===== Lancement ===== */
 function init(){
-  S.pos=[0,0];S.pts=[0,0];S.skip=[0,0];S.why=[null,null];S.turn=0;S.busy=false;
-  $("score").innerHTML=[0,1].map(t=>`<div class="team t${t}" id="team${t}">
+  const z=v=>Array(S.T).fill(v);
+  S.pos=z(0);S.pts=z(0);S.skip=z(0);S.why=z(null);S.turn=0;S.busy=false;
+  $("score").style.setProperty("--nt",S.T===4?2:S.T);
+  $("score").innerHTML=TEAMS().map(t=>`<div class="team t${t}" id="team${t}">
     <div class="team-top"><b>${esc(S.names[t])}</b><span class="pts"><span id="pts${t}">0</span><small> pt</small></span></div>
     <div class="team-pos"><span id="cell${t}"></span><span id="pct${t}"></span></div>
     <div class="tbar" id="bar${t}" role="progressbar" aria-label="Progression de ${esc(S.names[t])}" aria-valuemin="0" aria-valuemax="${N}"><i></i></div>
   </div>`).join("");
-  if(G3.ok){G3.tw=null;G3.view=null;G3.ctl.enabled=true;build3DBoard();if(G3.die){G3.die.anim=null;G3.die.hideT0=0;G3.die.mesh.visible=false}}
+  if(G3.ok){G3.tw=null;G3.view=null;G3.ctl.enabled=true;build3DBoard();build3DPawns();if(G3.die){G3.die.anim=null;G3.die.hideT0=0;G3.die.mesh.visible=false}}
   buildBoard();render();update3D(true);say("À "+S.names[0]+" de jouer.",false);$("dice").textContent="";$("roll").disabled=false;
   setTimeout(()=>announce("C’est parti"),250);
 }
 function showSetup(){$("game").classList.add("hide");$("setup").classList.remove("hide");scrollTo(0,0)}
 const saved=store.get("oie-reglages");
 if(saved){
-  if(saved.n0)$("n0").value=saved.n0;if(saved.n1)$("n1").value=saved.n1;
+  (saved.names||[saved.n0,saved.n1]).forEach((n,i)=>{if(n&&$("n"+i))$("n"+i).value=n});
+  const nt=document.querySelector(`input[name=nt][value="${saved.nt}"]`);if(nt)nt.checked=true;
   const r=document.querySelector(`input[name=len][value="${saved.len}"]`);if(r)r.checked=true;
   if(typeof saved.chrono==="boolean")$("optChrono").checked=saved.chrono;
   if(typeof saved.host==="boolean")$("optHost").checked=saved.host;
 }
+/* affiche autant de cases de noms que d'équipes choisies */
+function syncTeams(){const n=+document.querySelector("input[name=nt]:checked").value;for(let i=0;i<4;i++)$("box"+i).classList.toggle("hide",i>=n)}
+document.querySelectorAll("input[name=nt]").forEach(r=>r.onchange=syncTeams);syncTeams();
 $("start").onclick=async()=>{
   fxCtx();
-  S.names=[$("n0").value.trim()||"Équipe 1",$("n1").value.trim()||"Équipe 2"];
+  S.T=+document.querySelector("input[name=nt]:checked").value;
+  S.names=TEAMS().map(i=>$("n"+i).value.trim()||"Équipe "+(i+1));
   const len=+document.querySelector("input[name=len]:checked").value;
   S.opts={chrono:$("optChrono").checked,host:$("optHost").checked};
-  store.set("oie-reglages",{n0:$("n0").value.trim(),n1:$("n1").value.trim(),len,...S.opts});
+  store.set("oie-reglages",{names:[0,1,2,3].map(i=>$("n"+i).value.trim()),nt:S.T,len,...S.opts});
   setLength(len);
   $("setup").classList.add("hide");$("game").classList.remove("hide");scrollTo(0,0);
   if(!G3.tried){G3.tried=true;G3.ok=await init3D();$("board").classList.toggle("hide",G3.ok)}
@@ -1402,12 +1442,12 @@ $("openRules").onclick=()=>{
   const playing=!$("game").classList.contains("hide");
   if(!playing)setLength(+document.querySelector("input[name=len]:checked").value);
   $("rulesBody").innerHTML=`
-    <p>Deux équipes s’affrontent sur un parcours en spirale de <b>${N} cases</b>. La première équipe qui arrive pile sur le jardin 🌸 gagne.</p>
+    <p>De 2 à 4 équipes s’affrontent sur un parcours en spirale de <b>${N} cases</b>. La première équipe qui arrive pile sur le jardin 🌸 gagne.</p>
     <h3>À chaque tour</h3>
     <ul><li>L’équipe lance le dé et avance d’autant de cases.</li>
     <li>Si le dé fait dépasser le jardin, le pion recule des cases en trop.</li>
     <li>La case d’arrivée propose une épreuve : ❓ quiz, 🎵 blind test (trouvez l’artiste), 🎬 film en emojis ou 🎭 défi.</li>
-    <li>Épreuve réussie : <b>+1 point et +2 cases</b>. Épreuve ratée : la main passe à l’autre équipe.</li></ul>
+    <li>Épreuve réussie : <b>+1 point et +2 cases</b>. Épreuve ratée : la main passe à l’équipe suivante.</li></ul>
     <h3>Cases spéciales</h3>
     <ul>${specialList().map(s=>`<li>${s}</li>`).join("")}</ul>
     <h3>Options</h3>

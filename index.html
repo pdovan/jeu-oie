@@ -159,6 +159,7 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 .sheet.wide{max-width:720px;align-content:start}
 .sheet-head{display:flex;justify-content:space-between;align-items:center;gap:12px}
 .sheet-head button{padding:6px 12px}
+#card{overflow-x:hidden}
 #card h2,.sheet h2{font-size:1.5rem}
 .who{color:var(--mute)}
 .lvl{display:inline-block;vertical-align:middle;margin-left:8px;font-family:system-ui,sans-serif;font-size:.72rem;font-weight:800;letter-spacing:.04em;text-transform:uppercase;padding:3px 9px;border-radius:999px;border:1.5px solid}
@@ -209,9 +210,11 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 .qlist button{flex:none;padding:6px 10px;background:transparent;border:1.5px solid var(--line);color:var(--mute)}
 .qlist button:hover{color:#fff;border-color:var(--ko);background:var(--ko)}
 /* ===== Cases surprise ===== */
-.gift{font-size:4.5rem;text-align:center;line-height:1.2;animation:shake .35s ease-in-out infinite}
+.gift{font-size:4.5rem;text-align:center;line-height:1;padding:14px 0;overflow:hidden}
+.gift span{display:inline-block;animation:shake .35s ease-in-out infinite}
 @keyframes shake{0%,100%{transform:rotate(0) scale(1)}25%{transform:rotate(-12deg) scale(1.08)}75%{transform:rotate(12deg) scale(1.08)}}
-.surp{display:grid;justify-items:center;gap:4px;text-align:center;padding:16px;border-radius:16px;background:linear-gradient(135deg,rgba(247,168,224,.18),rgba(91,79,233,.22));border:1.5px solid rgba(247,168,224,.45);animation:winin .45s cubic-bezier(.2,1.4,.4,1)}
+.surp{display:grid;justify-items:center;gap:4px;text-align:center;padding:16px;border-radius:16px;background:linear-gradient(135deg,rgba(247,168,224,.18),rgba(91,79,233,.22));border:1.5px solid rgba(247,168,224,.45);animation:surpin .4s ease-out}
+@keyframes surpin{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:none}}
 .surp span{font-size:3rem;line-height:1}
 .surp b{font-family:"Fredoka",sans-serif;font-size:1.5rem}
 .surp small{color:#d3d8e6;font-size:.92rem}
@@ -222,7 +225,7 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 .buzzer b{font-family:"Fredoka",sans-serif;font-size:1.2rem;overflow-wrap:anywhere}
 .buzzer small{opacity:.85;font-weight:600}
 .buzzer:active{transform:translateY(6px);box-shadow:0 2px 0 rgba(0,0,0,.35)}
-@media (prefers-reduced-motion:reduce){.gift,.surp{animation:none}}
+@media (prefers-reduced-motion:reduce){.gift span,.surp{animation:none}}
 /* ===== Écran de victoire ===== */
 #winScr{z-index:40;background:radial-gradient(ellipse at 50% 20%,rgba(91,79,233,.45),rgba(4,6,14,.88) 70%);overflow:auto;align-items:flex-start}
 #confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:41}
@@ -1788,7 +1791,7 @@ function pickTeam(sel){return new Promise(res=>document.querySelectorAll(sel||".
 async function surprise(){
   const t=S.turn,keys=Object.keys(SURPRISES),k=keys[Math.floor(Math.random()*keys.length)],[ic,ti,tx]=SURPRISES[k];
   S.st[t].surp++;
-  showCard(`<h2>🎁 Case surprise !</h2><div class="who">Au tour de <b>${name()}</b></div><div class="gift" aria-hidden="true">🎁</div>`);
+  showCard(`<h2>🎁 Case surprise !</h2><div class="who">Au tour de <b>${name()}</b></div><div class="gift" aria-hidden="true"><span>🎁</span></div>`);
   sfxTick();await sleep(REDUCE?200:1100);
   showCard(`<h2>🎁 Case surprise !</h2><div class="who">Au tour de <b>${name()}</b></div>
     <div class="surp"><span aria-hidden="true">${ic}</span><b>${ti}</b><small>${tx}</small></div><div id="surpAct"></div>`);

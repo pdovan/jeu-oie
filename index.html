@@ -368,13 +368,14 @@ body.remote-mode>header,body.remote-mode>main{display:none!important}
    <label class="teambox green hide" id="box2"><span class="tl"><i></i>Équipe 3 (verte)</span><input id="n2" value="Les Loups" maxlength="18" autocomplete="off"></label>
    <label class="teambox yellow hide" id="box3"><span class="tl"><i></i>Équipe 4 (jaune)</span><input id="n3" value="Les Écureuils" maxlength="18" autocomplete="off"></label>
   </div>
-  <fieldset class="lens hide" id="roundsBox"><legend>🎵 Nombre de morceaux par équipe</legend>
+  <fieldset class="lens hide" id="roundsBox"><legend id="roundsLbl">🎵 Nombre de morceaux par équipe</legend>
    <div class="lengrid">
     <label class="lenopt"><input type="radio" name="rounds" value="5"><span><b>5</b><small>Express (~10 min)</small></span></label>
     <label class="lenopt"><input type="radio" name="rounds" value="10" checked><span><b>10</b><small>Classique (~20 min)</small></span></label>
     <label class="lenopt"><input type="radio" name="rounds" value="15"><span><b>15</b><small>Long (~30 min)</small></span></label>
     <label class="lenopt"><input type="radio" name="rounds" value="20"><span><b>20</b><small>Marathon (~40 min)</small></span></label>
    </div>
+   <label class="opt" style="margin-top:12px"><span><b>🔔 Mode buzzer</b><small>Toutes les équipes écoutent le même morceau : la première qui buzze répond (bouton ou touches 1 à 4). Mauvaise réponse : les autres peuvent buzzer.</small></span><input type="checkbox" id="optBuzz"></label>
   </fieldset>
   <fieldset class="lens" id="lenBox"><legend>📏 Longueur du parcours</legend>
    <div class="lengrid">
@@ -1699,6 +1700,10 @@ function render(){
     $("pts"+t).textContent=S.pts[t];$("pts"+t).nextElementSibling.textContent=S.pts[t]>1?" pts":" pt";
     /* position et progression vers le jardin */
     const p=S.pos[t],pct=Math.round(100*p/N);
+    if(S.opts.buzz){const st=S.st[t],R=buzzTotal();
+      $("cell"+t).innerHTML=`🔔 <b>${st.ok.b}</b> trouvé${st.ok.b>1?"s":""} · ${st.ko.b} raté${st.ko.b>1?"s":""}`;$("pct"+t).textContent="";
+      $("bar"+t).firstElementChild.style.width=Math.round(100*S.songs/R)+"%";$("bar"+t).setAttribute("aria-valuenow",S.songs);$("bar"+t).setAttribute("aria-valuemax",R);
+      $("team"+t).classList.remove("on");return}
     if(S.opts.blind){const n=S.played[t],R=S.opts.rounds;
       $("cell"+t).innerHTML=`🎵 <b>${n}</b> / ${R} morceau${R>1?"x":""}`;$("pct"+t).textContent="";
       $("bar"+t).firstElementChild.style.width=Math.round(100*n/R)+"%";$("bar"+t).setAttribute("aria-valuenow",n);$("bar"+t).setAttribute("aria-valuemax",R);
@@ -1710,13 +1715,14 @@ function render(){
   });
   const pa=$("pawn"+S.turn);if($("board").lastElementChild!==pa)$("board").appendChild(pa);
   const r=$("roll"),rl=S.opts.blind?"🎵 Écouter le morceau":"🎲 Lancer le dé";r.style.background=`var(--t${S.turn})`;$("rollWho").textContent=S.names[S.turn];
+  if(S.opts.buzz){r.style.background="var(--accent)";$("rollWho").textContent="Toutes les équipes";r.setAttribute("aria-label","Lancer le blind test buzzer")}
   if(r.firstElementChild.textContent!==rl)r.firstElementChild.textContent=rl;r.setAttribute("aria-label",S.names[S.turn]+(S.opts.blind?", écoutez le morceau":", lancez le dé"));
-  if(S.opts.blind){const R=S.opts.rounds,m=Math.min(R,Math.min(...S.played)+1),bt="Manche "+m+" / "+R;if($("bround").textContent!==bt)$("bround").textContent=bt}
+  if(S.opts.blind){const R=S.opts.buzz?buzzTotal():S.opts.rounds,m=Math.min(R,(S.opts.buzz?S.songs:Math.min(...S.played))+1),bt=(S.opts.buzz?"Morceau ":"Manche ")+m+" / "+R;if($("bround").textContent!==bt)$("bround").textContent=bt}
 }
 function announce(extra){
   const b=$("banner");
-  b.textContent=(extra||"À vous de jouer")+" · "+S.names[S.turn];
-  b.style.background=`var(--t${S.turn})`;
+  b.textContent=S.opts.buzz?"🔔 "+(extra||"À vos buzzers")+" !":(extra||"À vous de jouer")+" · "+S.names[S.turn];
+  b.style.background=S.opts.buzz?"var(--accent)":`var(--t${S.turn})`;
   [b,$("team"+S.turn),$("roll")].forEach(el=>{const c=el===b?"show":"pop";el.classList.remove(c);void el.offsetWidth;el.classList.add(c)});
 }
 /* message de jeu : lu par les lecteurs d'écran, et affiché quelques secondes en haut du plateau si show */
@@ -1909,7 +1915,7 @@ function win(){
   if(r=best(st=>st.spent))recs.push(["💸","Plus dépensiers",who(r),pl(r.v,"point")+" dépensé"+(r.v>1?"s":"")]);
   const all=TEAMS().reduce((s,t)=>s+tried(S.st[t]),0),okAll=TEAMS().reduce((s,t)=>s+tot(S.st[t]),0);
   const dur=Math.max(1,Math.round((Date.now()-S.t0)/60000));
-  recs.push(["⏱️","La partie",BL?S.T*S.opts.rounds+" morceaux":pl(S.turns,"lancer")+" de dé",(dur<60?dur+" min":Math.floor(dur/60)+" h "+String(dur%60).padStart(2,"0"))+" · "+okAll+"/"+all+" épreuves réussies"]);
+  recs.push(["⏱️","La partie",BL?(S.opts.buzz?buzzTotal():S.T*S.opts.rounds)+" morceaux":pl(S.turns,"lancer")+" de dé",(dur<60?dur+" min":Math.floor(dur/60)+" h "+String(dur%60).padStart(2,"0"))+" · "+okAll+"/"+all+" épreuves réussies"]);
   /* tableau par catégorie */
   const cell=(st,k)=>{const n=st.ok[k]+st.ko[k];return n?`${st.ok[k]}<span style="color:var(--mute)">/${n}</span>`:'<span class="none">—</span>'};
   const CK=BL?["b"]:CATS;
@@ -1918,7 +1924,7 @@ function win(){
       return `<tr><td style="box-shadow:inset 4px 0 0 var(--t${t})">${esc(S.names[t])}</td>${CK.map(k=>`<td>${cell(st,k)}</td>`).join("")}<td class="rate">${n?tot(st)+"/"+n+`<br><small style="color:var(--mute);font-weight:600">${p} %</small>`:'<span class="none">—</span>'}</td></tr>`}).join("")}</tbody></table></div>`;
   $("winBox").innerHTML=`<div class="crown" aria-hidden="true">🏆</div>
     <h2 id="winTitle">${tie?"Égalité&nbsp;!":`<span style="color:var(--t${order[0]})">${esc(S.names[order[0]])}</span> gagne&nbsp;!`}</h2>
-    <p class="sub">${BL?(tie?"Ex æquo avec ":"")+S.pts[order[0]]+(S.pts[order[0]]>1?" bonnes réponses":" bonne réponse")+" sur "+S.opts.rounds+" morceaux":`Arrivée à la case ${N} après ${pl(S.st[order[0]].rolls,"lancer")} de dé`}</p>
+    <p class="sub">${BL?(tie?"Ex æquo avec ":"")+S.pts[order[0]]+(S.pts[order[0]]>1?" bonnes réponses":" bonne réponse")+" sur "+(S.opts.buzz?buzzTotal():S.opts.rounds)+" morceaux":`Arrivée à la case ${N} après ${pl(S.st[order[0]].rolls,"lancer")} de dé`}</p>
     <div class="podium">${podium}</div>${fourth}
     <h3>🏅 Les records</h3><div class="wstats">${recs.map(([ic,ti,w,d])=>`<div class="wstat"><span class="ic" aria-hidden="true">${ic}</span><small>${ti}</small><b>${w}</b><small>${d}</small></div>`).join("")}</div>
     <h3>📊 ${BL?"Morceaux trouvés":"Épreuves réussies par catégorie"}</h3>${table}
@@ -1930,7 +1936,7 @@ function win(){
 }
 $("roll").onclick=async()=>{
   if(S.busy)return;S.busy=true;$("roll").disabled=true;S.turns++;
-  if(S.opts.blind)return ask("b");
+  if(S.opts.blind)return S.opts.buzz?blindBuzz():ask("b");
   let v=await throwDie();
   /* relance : 2 points, autant de fois que l'équipe peut payer */
   while(S.pts[S.turn]>=REROLL_COST){
@@ -2195,10 +2201,82 @@ function ask(ty){
   $("no").onclick=()=>finish(false);
 }
 
+/* ===== Blind test buzzer : toutes les équipes écoutent le même morceau, la première qui buzze répond ===== */
+let BUZZ_ID=0;
+const buzzTotal=()=>S.opts.rounds*2;
+function blindBuzz(){
+  if(!BANK.b||!BANK.b.length){say("Aucun blind test disponible.");S.busy=false;$("roll").disabled=false;return}
+  const my=++BUZZ_ID,it=draw("b"),[ti,ar]=it,qcm=!S.opts.host,chrono=S.opts.chrono,n=lvlOf("b",it),tot=buzzTotal();
+  REMOTE.secret="🎵 « "+ti+" » de "+ar;
+  const opts=qcm?choices("b",ar):[],good=opts.indexOf(ar),wrong=new Set();
+  showCard(`<h2>🔔 Blind test buzzer${n?` <span class="lvl l${n}">${"★".repeat(n)} ${LVLNAME[n]}</span>`:""}</h2>
+    <div class="who">Morceau <b>${S.songs+1}</b> / ${tot} · toutes les équipes écoutent</div>
+    <p style="margin:0">Trouvez l’artiste : la première équipe qui buzze répond.</p>
+    <button id="play" style="background:var(--accent)" disabled>⏳ Chargement de l’extrait…</button>
+    <div class="bar" aria-hidden="true"><i id="prog"></i></div>
+    <p class="note" id="audMsg">Extrait officiel de 30 s, via iTunes${chrono?" · le chrono démarre avec la musique et s’arrête pendant les réponses":""}</p>
+    ${chrono?'<div id="timer" class="timer" aria-live="off">25</div>':""}
+    <div class="buzzers" id="buzz">${TEAMS().map(t=>`<button class="buzzer" data-t="${t}" style="background:var(--t${t})"><b>🔔 ${esc(S.names[t])}</b><small>ou touche ${t+1}</small></button>`).join("")}</div>
+    <div id="dAns"></div><div id="out"></div>`);
+  let timer=null,left=25,over=false,cur=-1;const out=new Set();
+  const pauseTimer=()=>{clearInterval(timer);timer=null};
+  const runTimer=()=>{if(!chrono||timer||over||cur>=0)return;clearInterval(CARD_TIMER);
+    timer=CARD_TIMER=setInterval(()=>{
+      const el=$("timer");if(!el){pauseTimer();return}
+      left--;el.textContent=left>0?left:"⏰";el.classList.toggle("urgent",left>0&&left<=5);if(left>0&&left<=5)sfxTick();
+      if(left<=0){pauseTimer();end(-1,true)}
+    },1000)};
+  const end=(w,timeout)=>{
+    if(over)return;over=true;pauseTimer();removeEventListener("keydown",kb);$("buzz").classList.add("hide");
+    S.songs++;if(w>=0)S.pts[w]++;
+    const last=S.songs>=tot;
+    $("dAns").innerHTML="";
+    $("out").innerHTML=`<div class="ans">${w<0?(timeout?"⏰ Temps écoulé. ":"Personne n’a trouvé. "):"✅ "}« ${esc(ti)} » de ${esc(ar)}</div>`
+      +(w>=0?`<p class="big" style="text-align:center;margin:8px 0 0;color:var(--t${w})">🏆 ${esc(S.names[w])} : +1 point !</p>`:"")
+      +`<button id="bNext" style="background:var(--accent)">${last?"🏆 Voir le classement":"🎵 Morceau suivant"}</button>`;
+    w>=0?sfxGood():sfxBuzz();render();
+    say(w>=0?S.names[w]+" marque 1 point.":"Personne ne marque.",false);
+    $("bNext").onclick=()=>{hideCard();if(last)return win();blindBuzz()};
+  };
+  const verdict=(t,ok)=>{
+    const st=S.st[t];if(ok){st.ok.b++;st.cur++;st.best=Math.max(st.best,st.cur)}else{st.ko.b++;st.cur=0}
+    if(ok)return end(t);
+    out.add(t);cur=-1;sfxBad();
+    const bt=$("buzz").querySelector(`[data-t="${t}"]`);if(bt)bt.disabled=true;
+    if(out.size>=S.T)return end(-1);
+    $("dAns").innerHTML=`<p class="note" style="margin:0">❌ Raté pour <b style="color:var(--t${t})">${esc(S.names[t])}</b> : les autres équipes peuvent buzzer !</p>`;
+    $("buzz").classList.remove("hide");
+    if(AUD&&AUD.paused&&!AUD.ended&&AUD.currentTime>0)AUD.play().catch(()=>{});
+    runTimer();
+  };
+  const buzz=t=>{
+    if(over||cur>=0||out.has(t)||t>=S.T)return;
+    cur=t;pauseTimer();if(AUD&&!AUD.paused)AUD.pause();sfxClack(.4,1600);
+    $("buzz").classList.add("hide");
+    const head=`<p class="who" style="margin:0">🔔 <b style="color:var(--t${t})">${esc(S.names[t])}</b> a buzzé en premier : à vous de répondre !</p>`;
+    if(qcm){
+      $("dAns").innerHTML=head+`<div class="qcm" style="margin-top:10px">${opts.map((o,i)=>`<button class="choice${wrong.has(i)?" wrong":""}" data-i="${i}"${wrong.has(i)?" disabled":""}>${esc(o)}</button>`).join("")}</div>`;
+      document.querySelectorAll("#dAns .choice").forEach(b=>b.onclick=()=>{
+        const i=+b.dataset.i;document.querySelectorAll("#dAns .choice").forEach(x=>x.disabled=true);
+        b.classList.add(i===good?"right":"wrong");if(i!==good)wrong.add(i);
+        setTimeout(()=>verdict(t,i===good),900);
+      });
+    }else{
+      $("dAns").innerHTML=head+(S.opts.tv?`<p class="note">L’animateur valide la réponse depuis son téléphone.</p>`:`<p class="note">Animateur : c’est « ${esc(ti)} » de ${esc(ar)}.</p>`)
+        +`<div class="row"><button class="ok" id="bOk">Bonne réponse</button><button class="ko" id="bKo">Mauvaise réponse</button></div>`;
+      $("bOk").onclick=()=>verdict(t,true);$("bKo").onclick=()=>verdict(t,false);
+    }
+  };
+  const kb=e=>{if(my!==BUZZ_ID){removeEventListener("keydown",kb);return}const m=/^(?:Digit|Numpad)([1-4])$/.exec(e.code||"");if(m&&!e.repeat&&$("modal")&&!$("modal").classList.contains("hide"))buzz(+m[1]-1)};
+  addEventListener("keydown",kb);
+  document.querySelectorAll("#buzz .buzzer").forEach(x=>x.onclick=()=>buzz(+x.dataset.t));
+  setupAudio([ti,ar],runTimer);
+}
+
 /* ===== Lancement ===== */
 function init(){
   const z=v=>Array(S.T).fill(v);
-  S.pos=z(0);S.pts=z(0);S.skip=z(0);S.played=z(0);S.why=z(null);S.turn=0;S.busy=false;
+  S.pos=z(0);S.pts=z(0);S.skip=z(0);S.played=z(0);S.songs=0;S.why=z(null);S.turn=0;S.busy=false;
   S.st=TEAMS().map(()=>({ok:{q:0,b:0,e:0,d:0},ko:{q:0,b:0,e:0,d:0},cur:0,best:0,rolls:0,sixes:0,rerolls:0,pont:0,back:0,traps:0,spent:0,surp:0,swaps:0,stolen:0,duels:0}));S.turns=0;S.t0=Date.now();
   $("score").style.setProperty("--nt",S.T===4?2:S.T);
   $("score").innerHTML=TEAMS().map(t=>`<div class="team t${t}" id="team${t}">
@@ -2223,16 +2301,19 @@ if(saved){
   if(typeof saved.lite==="boolean")$("optLite").checked=saved.lite;
   const mo=document.querySelector(`input[name=mode][value="${saved.blind?"blind":"oie"}"]`);if(mo)mo.checked=true;
   const ro=document.querySelector(`input[name=rounds][value="${saved.rounds}"]`);if(ro)ro.checked=true;
+  if(typeof saved.buzz==="boolean")$("optBuzz").checked=saved.buzz;
   const lvr=document.querySelector(`input[name=lv][value="${saved.level}"]`);if(lvr)lvr.checked=true;
 }
 /* affiche autant de cases de noms que d'équipes choisies */
 function syncTeams(){const n=+document.querySelector("input[name=nt]:checked").value;for(let i=0;i<4;i++)$("box"+i).classList.toggle("hide",i>=n)}
 document.querySelectorAll("input[name=nt]").forEach(r=>r.onchange=syncTeams);syncTeams();
 /* type de partie : jeu de l'oie complet, ou blind test seul (sans plateau) */
-function syncMode(){const b=document.querySelector("input[name=mode]:checked").value==="blind";
+function syncMode(){const b=document.querySelector("input[name=mode]:checked").value==="blind",bz=$("optBuzz").checked;
+  $("roundsLbl").textContent=bz?"🎵 Nombre de morceaux":"🎵 Nombre de morceaux par équipe";
+  document.querySelectorAll("input[name=rounds]").forEach(r=>{r.nextElementSibling.firstElementChild.textContent=bz?r.value*2:r.value});
   $("lenBox").classList.toggle("hide",b);$("roundsBox").classList.toggle("hide",!b);
   $("start").textContent=b?"🎵 Lancer le blind test !":"🎲 Lancer la partie !"}
-document.querySelectorAll("input[name=mode]").forEach(r=>r.onchange=syncMode);syncMode();
+document.querySelectorAll("input[name=mode]").forEach(r=>r.onchange=syncMode);$("optBuzz").onchange=syncMode;syncMode();
 $("start").onclick=async()=>{
   fxCtx();
   S.T=+document.querySelector("input[name=nt]:checked").value;
@@ -2241,7 +2322,7 @@ $("start").onclick=async()=>{
   const lvv=document.querySelector("input[name=lv]:checked").value;
   const tv=$("optTv").checked;
   const blind=document.querySelector("input[name=mode]:checked").value==="blind",rounds=+document.querySelector("input[name=rounds]:checked").value;
-  S.opts={chrono:$("optChrono").checked,host:$("optHost").checked||tv,tv,lite:$("optLite").checked,level:lvv==="all"?"all":+lvv,blind,rounds};
+  S.opts={chrono:$("optChrono").checked,host:$("optHost").checked||tv,tv,lite:$("optLite").checked,level:lvv==="all"?"all":+lvv,blind,rounds,buzz:blind&&$("optBuzz").checked};
   document.body.classList.toggle("blind",blind);
   document.body.classList.toggle("lite",S.opts.lite);if(G3.quality)G3.quality();
   for(const k of CATS)deck[k]=null;
@@ -2401,7 +2482,7 @@ function showPair(){
 }
 /* état envoyé au téléphone : ce qui est à l'écran et les boutons utilisables */
 function remoteState(){
-  const st={t:"state",blind:!!(S.opts&&S.opts.blind),played:S.played,rounds:S.opts&&S.opts.rounds,names:S.names,pts:S.pts,pos:S.pos,turn:S.turn,N,T:S.T,msg:$("msg").textContent,ctx:"board",title:"",lines:[],timer:"",secret:null,btns:[]};
+  const st={t:"state",blind:!!(S.opts&&S.opts.blind),buzz:!!(S.opts&&S.opts.buzz),played:S.played,rounds:S.opts&&S.opts.rounds,names:S.names,pts:S.pts,pos:S.pos,turn:S.turn,N,T:S.T,msg:$("msg").textContent,ctx:"board",title:"",lines:[],timer:"",secret:null,btns:[]};
   let root=null,btns=[];
   if(!$("setup").classList.contains("hide")){st.ctx="setup";btns=[$("start")]}
   else if(!$("winScr").classList.contains("hide")){st.ctx="win";root=$("winBox");st.title=txt($("winTitle"))+" 🏆"}
@@ -2461,7 +2542,7 @@ async function remoteBoot(){
 function renderRemote(st){
   if(!st||st.t!=="state")return;
   const col=t=>`var(--t${t})`;
-  $("rmTeams").innerHTML=(st.names||[]).map((n,t)=>`<div class="rmteam${t===st.turn&&st.ctx!=="setup"?" cur":""}" style="--c:${col(t)}"><b>${esc(n)}</b><span>${st.pts[t]} pt${st.pts[t]>1?"s":""} · ${st.blind?"🎵 "+st.played[t]+"/"+st.rounds:"case "+st.pos[t]+"/"+st.N}</span></div>`).join("");
+  $("rmTeams").innerHTML=(st.names||[]).map((n,t)=>`<div class="rmteam${t===st.turn&&st.ctx!=="setup"?" cur":""}" style="--c:${col(t)}"><b>${esc(n)}</b><span>${st.pts[t]} pt${st.pts[t]>1?"s":""} · ${st.buzz?"🔔 buzzer":st.blind?"🎵 "+st.played[t]+"/"+st.rounds:"case "+st.pos[t]+"/"+st.N}</span></div>`).join("");
   const ctxTitle={setup:"Réglages en cours sur la TV",board:"Plateau",offer:"Choix",win:"Fin de partie"};
   $("rmTitle").textContent=st.title||(st.ctx==="board"&&st.names?"🎲 À "+st.names[st.turn]+" de jouer":ctxTitle[st.ctx]||"");
   $("rmLines").innerHTML=(st.lines||[]).map(l=>`<p>${esc(l)}</p>`).join("");

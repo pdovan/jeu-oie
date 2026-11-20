@@ -214,6 +214,14 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 #tvBtn.on{border-color:var(--ok)!important;box-shadow:0 0 0 3px rgba(34,163,90,.3)}
 body.tv main{max-width:min(1280px,96vw)}
 body.tv .score{max-width:none}
+/* en mode TV, les scores sont intégrés au cadre du plateau, toutes les équipes sur une ligne */
+body.tv #frame>.score{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);margin:4px 4px 10px;position:relative;z-index:3}
+body.tv #frame>.score .team{background:rgba(255,250,240,.92);border-color:rgba(107,74,43,.35);box-shadow:0 2px 8px rgba(43,29,16,.12)}
+body.tv #frame>.score .team.on{border-color:currentColor;box-shadow:0 0 0 4px color-mix(in srgb,currentColor 22%,transparent)}
+body.tv #frame>.score .team .pts,body.tv #frame>.score .team-pos b{color:#2b1d10}
+body.tv #frame>.score .team-pos,body.tv #frame>.score .team .pts small{color:#6b5a48}
+body.tv #frame>.score .tbar{background:rgba(107,74,43,.15)}
+body.tv #toast{top:calc(var(--scoreH,110px) + 20px)}
 body.lite *{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
 body.lite .overlay{background:rgba(4,6,14,.9)}
 body.tv .top{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(14,18,34,.96)}
@@ -2076,7 +2084,11 @@ $("start").onclick=async()=>{
   document.body.classList.toggle("lite",S.opts.lite);if(G3.quality)G3.quality();
   for(const k of CATS)deck[k]=null;
   store.set("oie-reglages",{names:[0,1,2,3].map(i=>$("n"+i).value.trim()),nt:S.T,len,...S.opts,host:$("optHost").checked});
-  document.body.classList.toggle("tv",tv);$("fsBtn").classList.toggle("hide",!tv);$("tvBtn").classList.toggle("hide",!tv);
+  document.body.classList.toggle("tv",tv);
+  /* mode TV : le bloc des scores passe dans le cadre du plateau ; sinon il reste juste au-dessus */
+  if(tv)$("frame").prepend($("score"));else $("frame").before($("score"));
+  if(!window.__scoreRO&&window.ResizeObserver){window.__scoreRO=new ResizeObserver(()=>$("frame").style.setProperty("--scoreH",$("score").offsetHeight+"px"));window.__scoreRO.observe($("score"))}
+  $("fsBtn").classList.toggle("hide",!tv);$("tvBtn").classList.toggle("hide",!tv);
   setLength(len);
   $("setup").classList.add("hide");$("game").classList.remove("hide");scrollTo(0,0);
   if(!G3.tried){G3.tried=true;G3.ok=await init3D();$("board").classList.toggle("hide",G3.ok)}

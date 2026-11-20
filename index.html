@@ -71,6 +71,8 @@ main{max-width:680px;margin:0 auto;padding:16px 16px calc(24px + env(safe-area-i
 fieldset{border:0;margin:0;padding:0;min-width:0}
 .lens legend{font-weight:700;margin-bottom:12px;padding:0}
 .lengrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+#roundsBox .lengrid{grid-template-columns:repeat(5,1fr)}
+@media (max-width:640px){#roundsBox .lengrid{grid-template-columns:repeat(3,1fr)}}
 .lenopt{position:relative;cursor:pointer}
 .lenopt input{position:absolute;opacity:0;pointer-events:none}
 .lenopt span{display:grid;gap:2px;text-align:center;padding:14px 8px;border-radius:14px;border:1.5px solid var(--line);background:rgba(255,255,255,.03);transition:background .2s,border-color .2s,box-shadow .2s}
@@ -374,6 +376,7 @@ body.remote-mode>header,body.remote-mode>main{display:none!important}
     <label class="lenopt"><input type="radio" name="rounds" value="10" checked><span><b>10</b><small>Classique (~20 min)</small></span></label>
     <label class="lenopt"><input type="radio" name="rounds" value="15"><span><b>15</b><small>Long (~30 min)</small></span></label>
     <label class="lenopt"><input type="radio" name="rounds" value="20"><span><b>20</b><small>Marathon (~40 min)</small></span></label>
+    <label class="lenopt"><input type="radio" name="rounds" value="40"><span><b>40</b><small>Soirée (~1 h 20)</small></span></label>
    </div>
    <label class="opt" style="margin-top:12px"><span><b>🔔 Mode buzzer</b><small>Toutes les équipes écoutent le même morceau : la première qui buzze répond (bouton ou touches 1 à 4). Mauvaise réponse : les autres peuvent buzzer.</small></span><input type="checkbox" id="optBuzz"></label>
   </fieldset>

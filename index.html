@@ -217,6 +217,19 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 .qlist .tag{font-size:.72rem;font-weight:800;color:var(--gold);text-transform:uppercase;letter-spacing:.04em}
 .qlist button{flex:none;padding:6px 10px;background:transparent;border:1.5px solid var(--line);color:var(--mute)}
 .qlist button:hover{color:#fff;border-color:var(--ko);background:var(--ko)}
+/* ===== Mode blind test seul : pas de plateau, une platine au centre ===== */
+#bpanel{display:none}
+body.blind #stage,body.blind #board,body.blind .legend,body.blind .team-pos #pct0,body.blind .team-pos #pct1,body.blind .team-pos #pct2,body.blind .team-pos #pct3{display:none!important}
+body.blind #bpanel{display:grid;place-items:center;min-height:clamp(340px,58vh,720px);position:relative}
+body.blind #frame{background:radial-gradient(circle at 50% 45%,#3b2f7a,#1b1640 70%);border-color:#2a2160;outline-color:#8b80ff;color:#fff}
+.vinyl{width:min(78%,52vh,520px);aspect-ratio:1;border-radius:50%;position:relative;
+  background:repeating-radial-gradient(circle,#15131f 0 2px,#23202f 2px 4px);box-shadow:0 18px 50px rgba(0,0,0,.55),inset 0 0 0 6px #0c0b12;animation:spin 6s linear infinite}
+.vinyl::after{content:"";position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 30deg,transparent 0 15%,rgba(255,255,255,.1) 20%,transparent 26% 65%,rgba(255,255,255,.07) 70%,transparent 76%)}
+.vinyl i{position:absolute;inset:34%;border-radius:50%;background:radial-gradient(circle,#0b0e1c 0 9%,var(--accent) 10% 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.25)}
+@keyframes spin{to{transform:rotate(360deg)}}
+#bround{position:absolute;bottom:14px;left:0;right:0;margin:0;text-align:center;font-family:"Fredoka",sans-serif;font-weight:700;font-size:clamp(1.1rem,3.4vw,1.6rem);color:#fff;text-shadow:0 2px 8px rgba(0,0,0,.5)}
+body.blind.tv #frame>.score .team{color:inherit}
+@media (prefers-reduced-motion:reduce){.vinyl{animation:none}}
 /* ===== Mode télévision et télécommande ===== */
 .opt.wide{grid-column:1/-1}
 #tvBtn.on{border-color:var(--ok)!important;box-shadow:0 0 0 3px rgba(34,163,90,.3)}
@@ -336,6 +349,12 @@ body.remote-mode>header,body.remote-mode>main{display:none!important}
    <h1>Préparez votre partie</h1>
    <p class="lead">Affrontez-vous en équipe, relevez les épreuves et filez vers le jardin avant les équipes adverses !</p>
   </div>
+  <div class="ntrow"><b id="modeLbl">🎮 Type de partie</b>
+   <div class="seg" role="radiogroup" aria-labelledby="modeLbl">
+    <label><input type="radio" name="mode" value="oie" checked><span>🪿 Jeu de l’oie</span></label>
+    <label><input type="radio" name="mode" value="blind"><span>🎵 Blind test seul</span></label>
+   </div>
+  </div>
   <div class="ntrow"><b id="ntLbl">👥 Nombre d’équipes</b>
    <div class="seg" role="radiogroup" aria-labelledby="ntLbl">
     <label><input type="radio" name="nt" value="2" checked><span>2</span></label>
@@ -349,7 +368,15 @@ body.remote-mode>header,body.remote-mode>main{display:none!important}
    <label class="teambox green hide" id="box2"><span class="tl"><i></i>Équipe 3 (verte)</span><input id="n2" value="Les Loups" maxlength="18" autocomplete="off"></label>
    <label class="teambox yellow hide" id="box3"><span class="tl"><i></i>Équipe 4 (jaune)</span><input id="n3" value="Les Écureuils" maxlength="18" autocomplete="off"></label>
   </div>
-  <fieldset class="lens"><legend>📏 Longueur du parcours</legend>
+  <fieldset class="lens hide" id="roundsBox"><legend>🎵 Nombre de morceaux par équipe</legend>
+   <div class="lengrid">
+    <label class="lenopt"><input type="radio" name="rounds" value="5"><span><b>5</b><small>Express (~10 min)</small></span></label>
+    <label class="lenopt"><input type="radio" name="rounds" value="10" checked><span><b>10</b><small>Classique (~20 min)</small></span></label>
+    <label class="lenopt"><input type="radio" name="rounds" value="15"><span><b>15</b><small>Long (~30 min)</small></span></label>
+    <label class="lenopt"><input type="radio" name="rounds" value="20"><span><b>20</b><small>Marathon (~40 min)</small></span></label>
+   </div>
+  </fieldset>
+  <fieldset class="lens" id="lenBox"><legend>📏 Longueur du parcours</legend>
    <div class="lengrid">
     <label class="lenopt"><input type="radio" name="len" value="20"><span><b>20 cases</b><small>Rapide (~15 min)</small></span></label>
     <label class="lenopt"><input type="radio" name="len" value="30" checked><span><b>30 cases</b><small>Classique (~25 min)</small></span></label>
@@ -381,6 +408,7 @@ body.remote-mode>header,body.remote-mode>main{display:none!important}
 <div id="banner" aria-hidden="true"></div>
 <div id="stage" class="hide" role="img" aria-label="Plateau 3D du jeu de l’oie en spirale, jardin au centre. Glissez pour le faire tourner."><p id="hint3d">↻ Glissez pour tourner</p><button class="ghost" id="recenter" type="button">Recentrer</button></div>
 <svg id="board" viewBox="0 0 400 400" role="img" aria-label="Plateau du jeu de l’oie en spirale, jardin au centre"></svg>
+<div id="bpanel" aria-hidden="true"><div class="vinyl"><i></i></div><p id="bround"></p></div>
 <div id="toast" aria-hidden="true"></div>
 <div id="offer" class="hide" role="group" aria-label="Choix"></div>
 <button id="roll" type="button"><span class="rl">🎲 Lancer le dé</span><small id="rollWho"></small></button>
@@ -1615,6 +1643,7 @@ async function init3D(){
   let lastF=0;
   (function loop(now){
     requestAnimationFrame(loop);
+    if(S.opts&&S.opts.blind)return;
     if(LITE()){if(now-lastF<31)return;lastF=now}
     G3.pawns.forEach((P,t)=>{
       const k=P.dur?Math.min(1,(now-P.t0)/P.dur):1,e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2;
@@ -1670,13 +1699,19 @@ function render(){
     $("pts"+t).textContent=S.pts[t];$("pts"+t).nextElementSibling.textContent=S.pts[t]>1?" pts":" pt";
     /* position et progression vers le jardin */
     const p=S.pos[t],pct=Math.round(100*p/N);
+    if(S.opts.blind){const n=S.played[t],R=S.opts.rounds;
+      $("cell"+t).innerHTML=`🎵 <b>${n}</b> / ${R} morceau${R>1?"x":""}`;$("pct"+t).textContent="";
+      $("bar"+t).firstElementChild.style.width=Math.round(100*n/R)+"%";$("bar"+t).setAttribute("aria-valuenow",n);$("bar"+t).setAttribute("aria-valuemax",R);
+      $("team"+t).classList.toggle("on",t===S.turn);return}
     $("cell"+t).innerHTML=p===0?"<b>Départ</b>":p===N?"<b>🌸 Jardin !</b>":`Case <b>${p}</b> / ${N}`+(S.skip[t]?` · ⏸ ${S.skip[t]} tour${S.skip[t]>1?"s":""}`:"");
     $("pct"+t).textContent=pct+" %";
     $("bar"+t).firstElementChild.style.width=pct+"%";$("bar"+t).setAttribute("aria-valuenow",p);
     $("team"+t).classList.toggle("on",t===S.turn);
   });
   const pa=$("pawn"+S.turn);if($("board").lastElementChild!==pa)$("board").appendChild(pa);
-  const r=$("roll");r.style.background=`var(--t${S.turn})`;$("rollWho").textContent=S.names[S.turn];r.setAttribute("aria-label",S.names[S.turn]+", lancez le dé");
+  const r=$("roll"),rl=S.opts.blind?"🎵 Écouter le morceau":"🎲 Lancer le dé";r.style.background=`var(--t${S.turn})`;$("rollWho").textContent=S.names[S.turn];
+  if(r.firstElementChild.textContent!==rl)r.firstElementChild.textContent=rl;r.setAttribute("aria-label",S.names[S.turn]+(S.opts.blind?", écoutez le morceau":", lancez le dé"));
+  if(S.opts.blind){const R=S.opts.rounds,m=Math.min(R,Math.min(...S.played)+1),bt="Manche "+m+" / "+R;if($("bround").textContent!==bt)$("bround").textContent=bt}
 }
 function announce(extra){
   const b=$("banner");
@@ -1845,15 +1880,19 @@ function hideWin(){cancelAnimationFrame(CONF.raf);$("winScr").classList.add("hid
 function win(){
   S.busy=true;$("roll").disabled=true;
   const tot=st=>CATS.reduce((s,k)=>s+st.ok[k],0),tried=st=>CATS.reduce((s,k)=>s+st.ok[k]+st.ko[k],0);
-  const order=TEAMS().sort((a,b)=>(b===S.turn)-(a===S.turn)||S.pos[b]-S.pos[a]||S.pts[b]-S.pts[a]||tot(S.st[b])-tot(S.st[a]));
+  const BL=S.opts.blind,acc=st=>tried(st)?tot(st)/tried(st):0;
+  const order=BL?TEAMS().sort((a,b)=>S.pts[b]-S.pts[a]||acc(S.st[b])-acc(S.st[a])||S.st[b].best-S.st[a].best)
+    :TEAMS().sort((a,b)=>(b===S.turn)-(a===S.turn)||S.pos[b]-S.pos[a]||S.pts[b]-S.pts[a]||tot(S.st[b])-tot(S.st[a]));
+  const tie=BL&&order.length>1&&S.pts[order[0]]===S.pts[order[1]]&&acc(S.st[order[0]])===acc(S.st[order[1]]);
   const nm=t=>`<b style="color:var(--t${t})">${esc(S.names[t])}</b>`,pl=(n,w)=>n+" "+w+(n>1?"s":"");
   /* podium : 2e, 1er, 3e */
   const MED=["🥇","🥈","🥉"],slots=[1,0,2].filter(r=>r<order.length);
-  const podium=slots.map(r=>{const t=order[r];return `<div class="pod p${r+1}"><span class="medal" aria-hidden="true">${MED[r]}</span>
+  const rank=t=>BL?1+order.filter(o=>S.pts[o]>S.pts[t]||(S.pts[o]===S.pts[t]&&acc(S.st[o])>acc(S.st[t]))).length:order.indexOf(t)+1;
+  const podium=slots.map(r=>{const t=order[r],R=rank(t);return `<div class="pod p${r+1}"><span class="medal" aria-hidden="true">${MED[R-1]}</span>
     <span class="pname" style="color:var(--t${t})">${esc(S.names[t])}</span>
-    <span class="pinfo">${r?"case "+S.pos[t]+" · ":""}${pl(S.pts[t],"pt")}</span>
-    <div class="step" style="background:var(--t${t});background:linear-gradient(180deg,var(--t${t}),color-mix(in srgb,var(--t${t}) 55%,#000))">${r+1}</div></div>`}).join("");
-  const fourth=order.length>3?`<p class="fourth">4ᵉ : ${nm(order[3])} · case ${S.pos[order[3]]} · ${pl(S.pts[order[3]],"pt")}</p>`:"";
+    <span class="pinfo">${r&&!BL?"case "+S.pos[t]+" · ":""}${pl(S.pts[t],"pt")}</span>
+    <div class="step" style="background:var(--t${t});background:linear-gradient(180deg,var(--t${t}),color-mix(in srgb,var(--t${t}) 55%,#000))">${R}</div></div>`}).join("");
+  const fourth=order.length>3?`<p class="fourth">4ᵉ : ${nm(order[3])} · ${BL?"":"case "+S.pos[order[3]]+" · "}${pl(S.pts[order[3]],"pt")}</p>`:"";
   /* records */
   const best=(f,min=1)=>{const v=Math.max(...TEAMS().map(t=>f(S.st[t],t)));if(!(v>=min))return null;return{v,who:TEAMS().filter(t=>f(S.st[t],t)===v)}};
   const who=r=>{const l=r.who.map(nm);return l.length>1?l.slice(0,-1).join(", ")+" et "+l[l.length-1]:l[0]};
@@ -1870,18 +1909,19 @@ function win(){
   if(r=best(st=>st.spent))recs.push(["💸","Plus dépensiers",who(r),pl(r.v,"point")+" dépensé"+(r.v>1?"s":"")]);
   const all=TEAMS().reduce((s,t)=>s+tried(S.st[t]),0),okAll=TEAMS().reduce((s,t)=>s+tot(S.st[t]),0);
   const dur=Math.max(1,Math.round((Date.now()-S.t0)/60000));
-  recs.push(["⏱️","La partie",pl(S.turns,"lancer")+" de dé",(dur<60?dur+" min":Math.floor(dur/60)+" h "+String(dur%60).padStart(2,"0"))+" · "+okAll+"/"+all+" épreuves réussies"]);
+  recs.push(["⏱️","La partie",BL?S.T*S.opts.rounds+" morceaux":pl(S.turns,"lancer")+" de dé",(dur<60?dur+" min":Math.floor(dur/60)+" h "+String(dur%60).padStart(2,"0"))+" · "+okAll+"/"+all+" épreuves réussies"]);
   /* tableau par catégorie */
   const cell=(st,k)=>{const n=st.ok[k]+st.ko[k];return n?`${st.ok[k]}<span style="color:var(--mute)">/${n}</span>`:'<span class="none">—</span>'};
-  const table=`<div class="tscroll"><table class="wtable"><thead><tr><th style="text-align:left">Équipe</th>${CATS.map(k=>`<th scope="col"><span aria-hidden="true">${CATNAME[k][0]}</span> ${CATNAME[k][1]}</th>`).join("")}<th scope="col">Total</th></tr></thead>
+  const CK=BL?["b"]:CATS;
+  const table=`<div class="tscroll"><table class="wtable"><thead><tr><th style="text-align:left">Équipe</th>${CK.map(k=>`<th scope="col"><span aria-hidden="true">${CATNAME[k][0]}</span> ${CATNAME[k][1]}</th>`).join("")}<th scope="col">Total</th></tr></thead>
     <tbody>${order.map(t=>{const st=S.st[t],n=tried(st),p=n?Math.round(100*tot(st)/n):null;
-      return `<tr><td style="box-shadow:inset 4px 0 0 var(--t${t})">${esc(S.names[t])}</td>${CATS.map(k=>`<td>${cell(st,k)}</td>`).join("")}<td class="rate">${n?tot(st)+"/"+n+`<br><small style="color:var(--mute);font-weight:600">${p} %</small>`:'<span class="none">—</span>'}</td></tr>`}).join("")}</tbody></table></div>`;
+      return `<tr><td style="box-shadow:inset 4px 0 0 var(--t${t})">${esc(S.names[t])}</td>${CK.map(k=>`<td>${cell(st,k)}</td>`).join("")}<td class="rate">${n?tot(st)+"/"+n+`<br><small style="color:var(--mute);font-weight:600">${p} %</small>`:'<span class="none">—</span>'}</td></tr>`}).join("")}</tbody></table></div>`;
   $("winBox").innerHTML=`<div class="crown" aria-hidden="true">🏆</div>
-    <h2 id="winTitle"><span style="color:var(--t${order[0]})">${esc(S.names[order[0]])}</span> gagne&nbsp;!</h2>
-    <p class="sub">Arrivée à la case ${N} après ${pl(S.st[order[0]].rolls,"lancer")} de dé</p>
+    <h2 id="winTitle">${tie?"Égalité&nbsp;!":`<span style="color:var(--t${order[0]})">${esc(S.names[order[0]])}</span> gagne&nbsp;!`}</h2>
+    <p class="sub">${BL?(tie?"Ex æquo avec ":"")+S.pts[order[0]]+(S.pts[order[0]]>1?" bonnes réponses":" bonne réponse")+" sur "+S.opts.rounds+" morceaux":`Arrivée à la case ${N} après ${pl(S.st[order[0]].rolls,"lancer")} de dé`}</p>
     <div class="podium">${podium}</div>${fourth}
     <h3>🏅 Les records</h3><div class="wstats">${recs.map(([ic,ti,w,d])=>`<div class="wstat"><span class="ic" aria-hidden="true">${ic}</span><small>${ti}</small><b>${w}</b><small>${d}</small></div>`).join("")}</div>
-    <h3>📊 Épreuves réussies par catégorie</h3>${table}
+    <h3>📊 ${BL?"Morceaux trouvés":"Épreuves réussies par catégorie"}</h3>${table}
     <div class="row"><button id="again">🔁 Rejouer</button><button class="ghost" id="toSetup">Changer les réglages</button></div>`;
   $("winScr").classList.remove("hide");$("winScr").scrollTop=0;
   sfxFanfare();confetti();$("again").focus({preventScroll:true});$("winScr").scrollTop=0;
@@ -1890,6 +1930,7 @@ function win(){
 }
 $("roll").onclick=async()=>{
   if(S.busy)return;S.busy=true;$("roll").disabled=true;S.turns++;
+  if(S.opts.blind)return ask("b");
   let v=await throwDie();
   /* relance : 2 points, autant de fois que l'équipe peut payer */
   while(S.pts[S.turn]>=REROLL_COST){
@@ -2108,7 +2149,7 @@ function ask(ty){
     ${!qcm&&reveal?'<button id="rev">Voir la réponse</button>':""}
     <div id="out"></div>
     ${ty==="d"?`<button id="go" style="background:var(--t${S.turn})">${mi&&!S.opts.tv?"👀 Voir le mot (joueur seul)":"▶ Prêts ? Démarrer le défi"}</button>`:""}
-    <div class="row ${reveal||ty==="d"?"hide":""}" id="verdict"><button class="ok" id="yes">Réussi (+1 pt, +2 cases)</button><button class="ko" id="no">Raté</button></div>`);
+    <div class="row ${reveal||ty==="d"?"hide":""}" id="verdict"><button class="ok" id="yes">Réussi (+1 pt${S.opts.blind?"":", +2 cases"})</button><button class="ko" id="no">Raté</button></div>`);
   let timer=null,done=false;
   const stopTimer=()=>{clearInterval(timer);timer=null};
   const startTimer=()=>{
@@ -2124,6 +2165,9 @@ function ask(ty){
   const finish=async ok=>{
     if(done)return;done=true;stopTimer();hideCard();
     const st=S.st[S.turn];if(ok){st.ok[ty]++;st.cur++;st.best=Math.max(st.best,st.cur)}else{st.ko[ty]++;st.cur=0}
+    if(S.opts.blind){S.played[S.turn]++;
+      if(ok){sfxGood();S.pts[S.turn]++;say("Bravo ! +1 point.")}else{sfxBad();say("Raté… au tour de l’équipe suivante.")}
+      render();if(S.played.every(n=>n>=S.opts.rounds)){await sleep(900);return win()}return next()}
     if(ok){sfxGood();S.pts[S.turn]++;render();say("Bravo ! +1 point et +2 cases.");await step(2);resolve(2,true)}
     else{sfxBad();say("Raté… au tour de l’équipe suivante.");next()}
   };
@@ -2154,7 +2198,7 @@ function ask(ty){
 /* ===== Lancement ===== */
 function init(){
   const z=v=>Array(S.T).fill(v);
-  S.pos=z(0);S.pts=z(0);S.skip=z(0);S.why=z(null);S.turn=0;S.busy=false;
+  S.pos=z(0);S.pts=z(0);S.skip=z(0);S.played=z(0);S.why=z(null);S.turn=0;S.busy=false;
   S.st=TEAMS().map(()=>({ok:{q:0,b:0,e:0,d:0},ko:{q:0,b:0,e:0,d:0},cur:0,best:0,rolls:0,sixes:0,rerolls:0,pont:0,back:0,traps:0,spent:0,surp:0,swaps:0,stolen:0,duels:0}));S.turns=0;S.t0=Date.now();
   $("score").style.setProperty("--nt",S.T===4?2:S.T);
   $("score").innerHTML=TEAMS().map(t=>`<div class="team t${t}" id="team${t}">
@@ -2177,11 +2221,18 @@ if(saved){
   if(typeof saved.host==="boolean")$("optHost").checked=saved.host;
   if(typeof saved.tv==="boolean")$("optTv").checked=saved.tv;
   if(typeof saved.lite==="boolean")$("optLite").checked=saved.lite;
+  const mo=document.querySelector(`input[name=mode][value="${saved.blind?"blind":"oie"}"]`);if(mo)mo.checked=true;
+  const ro=document.querySelector(`input[name=rounds][value="${saved.rounds}"]`);if(ro)ro.checked=true;
   const lvr=document.querySelector(`input[name=lv][value="${saved.level}"]`);if(lvr)lvr.checked=true;
 }
 /* affiche autant de cases de noms que d'équipes choisies */
 function syncTeams(){const n=+document.querySelector("input[name=nt]:checked").value;for(let i=0;i<4;i++)$("box"+i).classList.toggle("hide",i>=n)}
 document.querySelectorAll("input[name=nt]").forEach(r=>r.onchange=syncTeams);syncTeams();
+/* type de partie : jeu de l'oie complet, ou blind test seul (sans plateau) */
+function syncMode(){const b=document.querySelector("input[name=mode]:checked").value==="blind";
+  $("lenBox").classList.toggle("hide",b);$("roundsBox").classList.toggle("hide",!b);
+  $("start").textContent=b?"🎵 Lancer le blind test !":"🎲 Lancer la partie !"}
+document.querySelectorAll("input[name=mode]").forEach(r=>r.onchange=syncMode);syncMode();
 $("start").onclick=async()=>{
   fxCtx();
   S.T=+document.querySelector("input[name=nt]:checked").value;
@@ -2189,7 +2240,9 @@ $("start").onclick=async()=>{
   const len=+document.querySelector("input[name=len]:checked").value;
   const lvv=document.querySelector("input[name=lv]:checked").value;
   const tv=$("optTv").checked;
-  S.opts={chrono:$("optChrono").checked,host:$("optHost").checked||tv,tv,lite:$("optLite").checked,level:lvv==="all"?"all":+lvv};
+  const blind=document.querySelector("input[name=mode]:checked").value==="blind",rounds=+document.querySelector("input[name=rounds]:checked").value;
+  S.opts={chrono:$("optChrono").checked,host:$("optHost").checked||tv,tv,lite:$("optLite").checked,level:lvv==="all"?"all":+lvv,blind,rounds};
+  document.body.classList.toggle("blind",blind);
   document.body.classList.toggle("lite",S.opts.lite);if(G3.quality)G3.quality();
   for(const k of CATS)deck[k]=null;
   store.set("oie-reglages",{names:[0,1,2,3].map(i=>$("n"+i).value.trim()),nt:S.T,len,...S.opts,host:$("optHost").checked});
@@ -2200,7 +2253,7 @@ $("start").onclick=async()=>{
   $("fsBtn").classList.toggle("hide",!tv);$("tvBtn").classList.toggle("hide",!tv);
   setLength(len);
   $("setup").classList.add("hide");$("game").classList.remove("hide");scrollTo(0,0);
-  if(!G3.tried){G3.tried=true;G3.ok=await init3D();$("board").classList.toggle("hide",G3.ok)}
+  if(!G3.tried&&!blind){G3.tried=true;G3.ok=await init3D();$("board").classList.toggle("hide",G3.ok)}
   init();
   if(S.opts.tv)tvStart();
 };
@@ -2348,7 +2401,7 @@ function showPair(){
 }
 /* état envoyé au téléphone : ce qui est à l'écran et les boutons utilisables */
 function remoteState(){
-  const st={t:"state",names:S.names,pts:S.pts,pos:S.pos,turn:S.turn,N,T:S.T,msg:$("msg").textContent,ctx:"board",title:"",lines:[],timer:"",secret:null,btns:[]};
+  const st={t:"state",blind:!!(S.opts&&S.opts.blind),played:S.played,rounds:S.opts&&S.opts.rounds,names:S.names,pts:S.pts,pos:S.pos,turn:S.turn,N,T:S.T,msg:$("msg").textContent,ctx:"board",title:"",lines:[],timer:"",secret:null,btns:[]};
   let root=null,btns=[];
   if(!$("setup").classList.contains("hide")){st.ctx="setup";btns=[$("start")]}
   else if(!$("winScr").classList.contains("hide")){st.ctx="win";root=$("winBox");st.title=txt($("winTitle"))+" 🏆"}
@@ -2408,7 +2461,7 @@ async function remoteBoot(){
 function renderRemote(st){
   if(!st||st.t!=="state")return;
   const col=t=>`var(--t${t})`;
-  $("rmTeams").innerHTML=(st.names||[]).map((n,t)=>`<div class="rmteam${t===st.turn&&st.ctx!=="setup"?" cur":""}" style="--c:${col(t)}"><b>${esc(n)}</b><span>${st.pts[t]} pt${st.pts[t]>1?"s":""} · case ${st.pos[t]}/${st.N}</span></div>`).join("");
+  $("rmTeams").innerHTML=(st.names||[]).map((n,t)=>`<div class="rmteam${t===st.turn&&st.ctx!=="setup"?" cur":""}" style="--c:${col(t)}"><b>${esc(n)}</b><span>${st.pts[t]} pt${st.pts[t]>1?"s":""} · ${st.blind?"🎵 "+st.played[t]+"/"+st.rounds:"case "+st.pos[t]+"/"+st.N}</span></div>`).join("");
   const ctxTitle={setup:"Réglages en cours sur la TV",board:"Plateau",offer:"Choix",win:"Fin de partie"};
   $("rmTitle").textContent=st.title||(st.ctx==="board"&&st.names?"🎲 À "+st.names[st.turn]+" de jouer":ctxTitle[st.ctx]||"");
   $("rmLines").innerHTML=(st.lines||[]).map(l=>`<p>${esc(l)}</p>`).join("");

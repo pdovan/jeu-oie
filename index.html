@@ -169,6 +169,9 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 .seg.small span{padding:6px 10px;font-size:.9rem}
 .rank{margin:0;padding-left:22px;display:grid;gap:4px}
 .big{font-size:1.35rem;font-weight:700}
+/* drapeaux : Windows n'a pas d'emojis de drapeaux, cette police (Twemoji, drapeaux uniquement) les fournit */
+@font-face{font-family:"Twemoji Country Flags";unicode-range:U+1F1E6-1F1FF,U+1F3F4,U+E0062-E007F;src:url("https://cdn.jsdelivr.net/npm/country-flag-emoji-polyfill@0.1.8/dist/TwemojiCountryFlags.woff2") format("woff2");font-display:swap}
+.flag{font-family:"Twemoji Country Flags","Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif;font-size:6rem;line-height:1.1;text-align:center}
 /* défi mot interdit */
 #miCard{display:grid;gap:10px}
 .miword{font-family:"Fredoka",sans-serif;font-size:2.2rem;font-weight:700;text-align:center;padding:14px;border-radius:14px;background:var(--surface2)}
@@ -691,7 +694,52 @@ const BASE={
   ["Quelle est la seule des sept merveilles du monde antique encore debout ?","La pyramide de Khéops"],
   ["Avec combien de pays la France métropolitaine partage-t-elle une frontière terrestre ?","8"],
   ["Quel est le plus petit pays d’Afrique continentale ?","La Gambie"],
-  ["Dans quel pays se trouve le temple d’Angkor Vat ?","Le Cambodge"]
+  ["Dans quel pays se trouve le temple d’Angkor Vat ?","Le Cambodge"],
+  ["🇮🇹 À quel pays appartient ce drapeau ?","L’Italie"],
+  ["🇩🇪 À quel pays appartient ce drapeau ?","L’Allemagne"],
+  ["🇪🇸 À quel pays appartient ce drapeau ?","L’Espagne"],
+  ["🇬🇧 À quel pays appartient ce drapeau ?","Le Royaume-Uni"],
+  ["🇺🇸 À quel pays appartient ce drapeau ?","Les États-Unis"],
+  ["🇯🇵 À quel pays appartient ce drapeau ?","Le Japon"],
+  ["🇨🇦 À quel pays appartient ce drapeau ?","Le Canada"],
+  ["🇧🇷 À quel pays appartient ce drapeau ?","Le Brésil"],
+  ["🇧🇪 À quel pays appartient ce drapeau ?","La Belgique"],
+  ["🇨🇭 À quel pays appartient ce drapeau ?","La Suisse"],
+  ["🇨🇳 À quel pays appartient ce drapeau ?","La Chine"],
+  ["🇵🇹 À quel pays appartient ce drapeau ?","Le Portugal"],
+  ["🇬🇷 À quel pays appartient ce drapeau ?","La Grèce"],
+  ["🇸🇪 À quel pays appartient ce drapeau ?","La Suède"],
+  ["🇮🇪 À quel pays appartient ce drapeau ?","L’Irlande"],
+  ["🇲🇽 À quel pays appartient ce drapeau ?","Le Mexique"],
+  ["🇦🇷 À quel pays appartient ce drapeau ?","L’Argentine"],
+  ["🇮🇳 À quel pays appartient ce drapeau ?","L’Inde"],
+  ["🇰🇷 À quel pays appartient ce drapeau ?","La Corée du Sud"],
+  ["🇦🇺 À quel pays appartient ce drapeau ?","L’Australie"],
+  ["🇲🇦 À quel pays appartient ce drapeau ?","Le Maroc"],
+  ["🇹🇷 À quel pays appartient ce drapeau ?","La Turquie"],
+  ["🇳🇱 À quel pays appartient ce drapeau ?","Les Pays-Bas"],
+  ["🇳🇴 À quel pays appartient ce drapeau ?","La Norvège"],
+  ["🇩🇰 À quel pays appartient ce drapeau ?","Le Danemark"],
+  ["🇿🇦 À quel pays appartient ce drapeau ?","L’Afrique du Sud"],
+  ["🇩🇿 À quel pays appartient ce drapeau ?","L’Algérie"],
+  ["🇫🇮 À quel pays appartient ce drapeau ?","La Finlande"],
+  ["🇵🇱 À quel pays appartient ce drapeau ?","La Pologne"],
+  ["🇦🇹 À quel pays appartient ce drapeau ?","L’Autriche"],
+  ["🇭🇷 À quel pays appartient ce drapeau ?","La Croatie"],
+  ["🇮🇸 À quel pays appartient ce drapeau ?","L’Islande"],
+  ["🇸🇳 À quel pays appartient ce drapeau ?","Le Sénégal"],
+  ["🇳🇬 À quel pays appartient ce drapeau ?","Le Nigeria"],
+  ["🇵🇪 À quel pays appartient ce drapeau ?","Le Pérou"],
+  ["🇨🇴 À quel pays appartient ce drapeau ?","La Colombie"],
+  ["🇻🇳 À quel pays appartient ce drapeau ?","Le Viêt Nam"],
+  ["🇱🇧 À quel pays appartient ce drapeau ?","Le Liban"],
+  ["🇳🇵 À quel pays appartient ce drapeau ?","Le Népal"],
+  ["🇰🇪 À quel pays appartient ce drapeau ?","Le Kenya"],
+  ["🇹🇳 À quel pays appartient ce drapeau ?","La Tunisie"],
+  ["🇯🇲 À quel pays appartient ce drapeau ?","La Jamaïque"],
+  ["🇨🇮 À quel pays appartient ce drapeau ?","La Côte d’Ivoire"],
+  ["🇷🇴 À quel pays appartient ce drapeau ?","La Roumanie"],
+  ["🇨🇱 À quel pays appartient ce drapeau ?","Le Chili"]
  ],
  b:[
   ["Billie Jean","Michael Jackson"],
@@ -1334,7 +1382,7 @@ const BASE={
 };
 const CATS=["q","b","e","d"];
 /* niveau de chaque élément d'origine (1 facile, 2 moyen, 3 difficile), dans l'ordre de BASE ; les défis conviennent à tous les niveaux */
-const LEVELS={"q":"2111111211121222212222222122111121122223311122321133112122331133321332313221231121222123112311123212322111111323111211322222121211333333333333333333333333333333333333333333333333333333333333333333333333333333","b":"1121111222211112221123121232221321222332232222321211322222232123332123333322121211212122122122222321123312112111112222222233331222333333333333333333333333333333333333333333333333333333333333333333333333333322322221212222222231221133132323121223311232223122122331132322232133322233221223","e":"11111212212221112122211122322122112212221122222232122112221333333223233232232322232322233213222323333233321233233332212222333322221333333333333333333333333333333333333333333333333333333333333333"};
+const LEVELS={"q":"2111111211121222212222222122111121122223311122321133112122331133321332313221231121222123112311123212322111111323111211322222121211333333333333333333333333333333333333333333333333333333333333333333333333333333111111111112222222222222222333333333333333333","b":"1121111222211112221123121232221321222332232222321211322222232123332123333322121211212122122122222321123312112111112222222233331222333333333333333333333333333333333333333333333333333333333333333333333333333322322221212222222231221133132323121223311232223122122331132322232133322233221223","e":"11111212212221112122211122322122112212221122222232122112221333333223233232232322232322233213222323333233321233233332212222333322221333333333333333333333333333333333333333333333333333333333333333"};
 const LVLNAME={1:"Facile",2:"Moyen",3:"Difficile"};
 const CATMETA={q:{label:"Quiz",icon:"❓",f:["Question","Réponse"]},b:{label:"Blind test",icon:"🎵",f:["Titre","Artiste"]},e:{label:"Emojis",icon:"🎬",f:["Emojis","Film"]},d:{label:"Défis",icon:"🎭",f:["Défi"]}};
 const deck={},BANK={};
@@ -1960,7 +2008,7 @@ function duel(a,b){
   const KEY={[a]:"A",[b]:"L"};
   showCard(`<h2>⚔️ Duel</h2><div class="who"><b style="color:var(--t${a})">${esc(S.names[a])}</b> contre <b style="color:var(--t${b})">${esc(S.names[b])}</b></div>
     <div class="note" style="margin:0">${ty==="q"?"❓ Quiz":"🎬 Devinez le film"}${n?` <span class="lvl l${n}">${"★".repeat(n)} ${LVLNAME[n]}</span>`:""}</div>
-    <div class="big"${ty==="e"?' style="font-size:3rem"':""}>${esc(q)}</div>
+    ${ty==="q"?qHtml(q):`<div class="big" style="font-size:3rem">${esc(q)}</div>`}
     ${S.opts.chrono?'<div id="timer" class="timer">25</div>':""}
     <div class="buzzers" id="buzz">${[a,b].map(t=>`<button class="buzzer" data-t="${t}" style="background:var(--t${t})"><b>🔔 ${esc(S.names[t])}</b><small>ou touche ${KEY[t]}</small></button>`).join("")}</div>
     <div id="dAns"></div><div id="out"></div>`);
@@ -1985,7 +2033,7 @@ function duel(a,b){
       const other=t===a?b:a;$("buzz").classList.add("hide");removeEventListener("keydown",kb);
       const head=`<p class="who" style="margin:0">🔔 <b style="color:var(--t${t})">${esc(S.names[t])}</b> a buzzé en premier : à vous de répondre !</p>`;
       if(qcm){
-        const opts=choices(ty,ans),good=opts.indexOf(ans);
+        const opts=choices(ty,ans,q),good=opts.indexOf(ans);
         $("dAns").innerHTML=head+`<div class="qcm" style="margin-top:10px">${opts.map((o,i)=>`<button class="choice" data-i="${i}">${esc(o)}</button>`).join("")}</div>`;
         document.querySelectorAll("#dAns .choice").forEach(btn=>btn.onclick=()=>{
           const i=+btn.dataset.i;document.querySelectorAll("#dAns .choice").forEach((x,j)=>{x.disabled=true;if(j===good)x.classList.add("right");else if(j===i)x.classList.add("wrong")});
@@ -2007,9 +2055,17 @@ function duel(a,b){
   });
 }
 /* QCM : 3 mauvaises réponses tirées parmi les autres réponses de la même catégorie (nombres avec nombres pour le quiz) */
-function choices(k,ans){
-  const isNum=s=>/^\d/.test(String(s).trim()),seen=new Set([norm(ans)]),pool=[];
-  for(const x of shuffle(BANK[k].slice())){const a=x[1],n=norm(a);if(seen.has(n))continue;if(k==="q"&&isNum(a)!==isNum(ans))continue;seen.add(n);pool.push(a);if(pool.length===3)break}
+/* question drapeau : commence par un drapeau en emoji (deux « indicateurs régionaux ») */
+const isFlagQ=s=>/^\p{RI}{2}/u.test(String(s));
+/* affichage d'une question du quiz : le drapeau en très grand, puis la question */
+function qHtml(q){
+  if(!isFlagQ(q))return`<div class="big">${esc(q)}</div>`;
+  const fl=[...q.matchAll(/\p{RI}/gu)].slice(0,2).map(m=>m[0]).join("");
+  return`<div class="flag" role="img" aria-label="Drapeau mystère">${fl}</div><div class="big" style="text-align:center">${esc(q.slice(fl.length).trim())}</div>`;
+}
+function choices(k,ans,q){
+  const isNum=s=>/^\d/.test(String(s).trim()),seen=new Set([norm(ans)]),pool=[],flag=k==="q"&&isFlagQ(q);
+  for(const x of shuffle(BANK[k].slice())){const a=x[1],n=norm(a);if(seen.has(n))continue;if(k==="q"&&isNum(a)!==isNum(ans))continue;if(flag&&!isFlagQ(x[0]))continue;seen.add(n);pool.push(a);if(pool.length===3)break}
   return shuffle([ans,...pool]);
 }
 /* case « Au choix » : l'équipe choisit la catégorie de son épreuve */
@@ -2026,7 +2082,7 @@ function ask(ty){
   let head,body,reveal=null,song=null;
   const badge=x=>{const n=lvlOf(ty,x);return n?` <span class="lvl l${n}">${"★".repeat(n)} ${LVLNAME[n]}</span>`:""};
   REMOTE.secret=null;
-  let mi=null;
+  let mi=null,qText="";
   if(ty==="d"){const dt=draw("d");mi=motInterdit(dt);
     REMOTE.secret=mi?"🚫 Mot interdit : « "+mi.word+" » · interdits : "+mi.ban.join(", "):"Consigne : "+dt;
     head=mi?"🎭 Défi · 🚫 Mot interdit":"🎭 Défi";body=S.opts.tv
@@ -2036,7 +2092,8 @@ function ask(ty){
       <button id="miHide" style="background:var(--t${S.turn})">🙈 Cacher le mot et lancer le défi</button></div>
       <div class="big hide" id="defiTxt">🤫 Faites deviner le mot sans dire les mots interdits !</div>`
     :`<p class="note" id="defiHint">La consigne reste cachée jusqu’à ce que votre équipe soit prête.</p><div class="big hide" id="defiTxt">${esc(dt)}</div>`}
-  else if(ty==="q"){const it=draw("q"),[q,a]=it;REMOTE.secret="Réponse : "+a;head="❓ Quiz"+badge(it);body=`<div class="big">${esc(q)}</div>`;reveal=a}
+  else if(ty==="q"){const it=draw("q"),[q,a]=it;qText=q;REMOTE.secret="Réponse : "+a;
+    head=(isFlagQ(q)?"❓ Quiz · 🏳️ Drapeau":"❓ Quiz")+badge(it);body=qHtml(q);reveal=a}
   else if(ty==="e"){const it=draw("e"),[q,a]=it;REMOTE.secret="Réponse : "+a;head="🎬 Devinez le film"+badge(it);body=`<div class="big" style="font-size:3rem">${esc(q)}</div>`;reveal=a}
   else{const it=draw("b"),[ti,ar]=it;REMOTE.secret="🎵 « "+ti+" » de "+ar;song=[ti,ar];head="🎵 Blind test"+badge(it);
     body=`<p style="margin:0">Écoutez l’extrait et trouvez l’artiste.</p>
@@ -2044,7 +2101,7 @@ function ask(ty){
       <div class="bar" aria-hidden="true"><i id="prog"></i></div>
       <p class="note" id="audMsg">Extrait officiel de 30 s, via iTunes${chrono?" · le chrono démarre avec la musique":""}</p>
       ${qcm||S.opts.tv?"":`<button class="ghost" id="host">Animateur : voir le morceau</button><div class="ans hide" id="hostInfo">${esc(ti)}</div>`}`;reveal=ar}
-  const opts=qcm?choices(ty,reveal):[],good=opts.indexOf(reveal);
+  const opts=qcm?choices(ty,reveal,qText):[],good=opts.indexOf(reveal);
   showCard(`<h2>${head}</h2><div class="who">Au tour de <b>${name()}</b></div>${body}
     ${chrono?'<div id="timer" class="timer" aria-live="off">25</div>':""}
     ${qcm?`<div class="qcm">${opts.map((o,i)=>`<button class="choice" data-i="${i}">${esc(o)}</button>`).join("")}</div>`:""}

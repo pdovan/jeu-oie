@@ -169,6 +169,11 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 .seg.small span{padding:6px 10px;font-size:.9rem}
 .rank{margin:0;padding-left:22px;display:grid;gap:4px}
 .big{font-size:1.35rem;font-weight:700}
+/* défi mot interdit */
+#miCard{display:grid;gap:10px}
+.miword{font-family:"Fredoka",sans-serif;font-size:2.2rem;font-weight:700;text-align:center;padding:14px;border-radius:14px;background:var(--surface2)}
+.miban{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+.miban span{padding:6px 12px;border-radius:999px;font-weight:700;color:#fda4af;border:1.5px solid rgba(244,63,94,.5);background:rgba(244,63,94,.12)}
 .ans{background:var(--surface2);border-radius:12px;padding:14px;font-weight:700;font-size:1.2rem}
 .row{display:flex;gap:10px}.row>*{flex:1}
 .ok{background:var(--ok)}.ko{background:var(--ko)}
@@ -1280,6 +1285,33 @@ const BASE={
   "Faites deviner « la plage » sans dire sable, mer, soleil ni vacances.",
   "Faites deviner « un mariage » sans dire mariés, robe, bague ni église.",
   "Faites deviner « un vampire » sans dire sang, dents, nuit ni Dracula.",
+  "Faites deviner « une baguette » sans dire pain, boulangerie, croûte ni farine.",
+  "Faites deviner « un parapluie » sans dire pluie, ouvrir, mouillé ni météo.",
+  "Faites deviner « le football » sans dire ballon, but, équipe ni match.",
+  "Faites deviner « Noël » sans dire sapin, cadeaux, décembre ni père.",
+  "Faites deviner « un dentiste » sans dire dents, soigner, cabinet ni carie.",
+  "Faites deviner « une girafe » sans dire cou, Afrique, taches ni grande.",
+  "Faites deviner « le chocolat » sans dire cacao, sucré, noir ni lait.",
+  "Faites deviner « un avion » sans dire voler, aéroport, pilote ni ailes.",
+  "Faites deviner « la neige » sans dire blanc, froid, hiver ni flocon.",
+  "Faites deviner « un anniversaire » sans dire gâteau, bougies, âge ni fête.",
+  "Faites deviner « un pompier » sans dire feu, camion, rouge ni sauver.",
+  "Faites deviner « la Lune » sans dire nuit, astronaute, ciel ni croissant.",
+  "Faites deviner « un ordinateur » sans dire écran, clavier, souris ni internet.",
+  "Faites deviner « une abeille » sans dire miel, piquer, jaune ni ruche.",
+  "Faites deviner « le cinéma » sans dire film, écran, salle ni pop-corn.",
+  "Faites deviner « un fantôme » sans dire drap, peur, château ni hanté.",
+  "Faites deviner « un dragon » sans dire feu, voler, chevalier ni écailles.",
+  "Faites deviner « un escargot » sans dire coquille, lent, bave ni limace.",
+  "Faites deviner « le café » sans dire boire, tasse, noir ni matin.",
+  "Faites deviner « une sirène » sans dire mer, queue, poisson ni Ariel.",
+  "Faites deviner « un piano » sans dire touches, musique, noir ni blanc.",
+  "Faites deviner « les vacances » sans dire été, voyage, partir ni repos.",
+  "Faites deviner « un pirate » sans dire bateau, trésor, perroquet ni jambe.",
+  "Faites deviner « un hamburger » sans dire pain, steak, fast-food ni frites.",
+  "Faites deviner « un réveil » sans dire heure, matin, sonner ni dormir.",
+  "Faites deviner « un kangourou » sans dire Australie, sauter, poche ni bébé.",
+  "Faites deviner « une licorne » sans dire cheval, corne, magique ni arc-en-ciel.",
   "Tenez une cuillère en équilibre sur votre nez pendant 10 secondes.",
   "Faites 10 sauts sur place en tapant dans vos mains au-dessus de la tête.",
   "Restez immobile comme une statue pendant 30 secondes, pendant qu’une équipe adverse essaie de vous faire rire sans vous toucher.",
@@ -1317,6 +1349,13 @@ function lvlOf(k,x){
 }
 function applyCustom(){
   for(const k of CATS){const rm=new Set(CUSTOM.removed[k]||[]);BANK[k]=BASE[k].filter(x=>!rm.has(ikey(x))).concat(CUSTOM.added[k]||[]);deck[k]=null}
+}
+/* défi « mot interdit » : « Faites deviner « X » sans dire a, b, c ni d. » → {word:"X", ban:["a","b","c","d"]} (null sinon) */
+function motInterdit(s){
+  const m=/^Faites deviner « (.+?) » sans (?:dire|prononcer)(?: les mots)? (.+?)\.?$/.exec(String(s).trim());
+  if(!m)return null;
+  const ban=m[2].split(/\s*,\s*|\s+ni\s+/).map(w=>w.trim()).filter(Boolean);
+  return ban.length?{word:m[1],ban}:null;
 }
 function saveCustom(){store.set("oie-questions",CUSTOM);applyCustom()}
 applyCustom();
@@ -1987,8 +2026,15 @@ function ask(ty){
   let head,body,reveal=null,song=null;
   const badge=x=>{const n=lvlOf(ty,x);return n?` <span class="lvl l${n}">${"★".repeat(n)} ${LVLNAME[n]}</span>`:""};
   REMOTE.secret=null;
-  if(ty==="d"){const dt=draw("d");REMOTE.secret="Consigne : "+dt;head="🎭 Défi";body=S.opts.tv
-    ?`<p class="note" id="defiHint">La consigne s’affiche uniquement sur le téléphone de l’animateur : il la montre discrètement à l’équipe, puis lance le défi.</p><div class="big hide" id="defiTxt">🤫 Défi en cours… la consigne reste secrète !</div>`
+  let mi=null;
+  if(ty==="d"){const dt=draw("d");mi=motInterdit(dt);
+    REMOTE.secret=mi?"🚫 Mot interdit : « "+mi.word+" » · interdits : "+mi.ban.join(", "):"Consigne : "+dt;
+    head=mi?"🎭 Défi · 🚫 Mot interdit":"🎭 Défi";body=S.opts.tv
+    ?`<p class="note" id="defiHint">${mi?"Le mot à faire deviner s’affiche uniquement sur le téléphone de l’animateur : il le montre discrètement au joueur, puis lance le défi.":"La consigne s’affiche uniquement sur le téléphone de l’animateur : il la montre discrètement à l’équipe, puis lance le défi."}</p><div class="big hide" id="defiTxt">${mi?"🤫 Faites deviner le mot sans dire les mots interdits !":"🤫 Défi en cours… la consigne reste secrète !"}</div>`
+    :mi?`<p class="note" id="defiHint">Un joueur fait deviner un mot à son équipe sans prononcer les mots interdits. Lui seul regarde l’écran : ses coéquipiers détournent les yeux !</p>
+      <div class="hide" id="miCard"><div class="miword">${esc(mi.word)}</div><p class="note" style="text-align:center">Mots interdits</p><div class="miban">${mi.ban.map(w=>`<span>🚫 ${esc(w)}</span>`).join("")}</div>
+      <button id="miHide" style="background:var(--t${S.turn})">🙈 Cacher le mot et lancer le défi</button></div>
+      <div class="big hide" id="defiTxt">🤫 Faites deviner le mot sans dire les mots interdits !</div>`
     :`<p class="note" id="defiHint">La consigne reste cachée jusqu’à ce que votre équipe soit prête.</p><div class="big hide" id="defiTxt">${esc(dt)}</div>`}
   else if(ty==="q"){const it=draw("q"),[q,a]=it;REMOTE.secret="Réponse : "+a;head="❓ Quiz"+badge(it);body=`<div class="big">${esc(q)}</div>`;reveal=a}
   else if(ty==="e"){const it=draw("e"),[q,a]=it;REMOTE.secret="Réponse : "+a;head="🎬 Devinez le film"+badge(it);body=`<div class="big" style="font-size:3rem">${esc(q)}</div>`;reveal=a}
@@ -2004,7 +2050,7 @@ function ask(ty){
     ${qcm?`<div class="qcm">${opts.map((o,i)=>`<button class="choice" data-i="${i}">${esc(o)}</button>`).join("")}</div>`:""}
     ${!qcm&&reveal?'<button id="rev">Voir la réponse</button>':""}
     <div id="out"></div>
-    ${ty==="d"?`<button id="go" style="background:var(--t${S.turn})">▶ Prêts ? Démarrer le défi</button>`:""}
+    ${ty==="d"?`<button id="go" style="background:var(--t${S.turn})">${mi&&!S.opts.tv?"👀 Voir le mot (joueur seul)":"▶ Prêts ? Démarrer le défi"}</button>`:""}
     <div class="row ${reveal||ty==="d"?"hide":""}" id="verdict"><button class="ok" id="yes">Réussi (+1 pt, +2 cases)</button><button class="ko" id="no">Raté</button></div>`);
   let timer=null,done=false;
   const stopTimer=()=>{clearInterval(timer);timer=null};
@@ -2035,7 +2081,13 @@ function ask(ty){
   if($("host"))$("host").onclick=()=>$("hostInfo").classList.toggle("hide");
   document.querySelectorAll(".choice").forEach(b=>b.onclick=()=>pick(+b.dataset.i));
   /* défi : l'équipe lit la consigne, se prépare, puis lance elle-même le chrono */
-  if(ty==="d")$("go").onclick=()=>{$("go").classList.add("hide");$("defiHint").classList.add("hide");$("defiTxt").classList.remove("hide");$("verdict").classList.remove("hide");sfxTick();startTimer()};
+  const goDefi=()=>{$("defiHint").classList.add("hide");$("defiTxt").classList.remove("hide");$("verdict").classList.remove("hide");sfxTick();startTimer()};
+  /* mot interdit hors mode TV : le joueur voit seul le mot, le cache, puis le chrono démarre */
+  if(ty==="d"&&mi&&!S.opts.tv){
+    $("go").onclick=()=>{$("go").classList.add("hide");$("defiHint").classList.add("hide");$("miCard").classList.remove("hide")};
+    $("miHide").onclick=()=>{$("miCard").remove();goDefi()};
+  }
+  else if(ty==="d")$("go").onclick=()=>{$("go").classList.add("hide");goDefi()};
   else if(song)setupAudio(song,startTimer);else startTimer();
   if($("rev"))$("rev").onclick=()=>{$("out").innerHTML=`<div class="ans">${esc(reveal)}</div>`;$("verdict").classList.remove("hide");$("rev").classList.add("hide")};
   $("yes").onclick=()=>finish(true);

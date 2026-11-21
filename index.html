@@ -172,9 +172,9 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 .rank{margin:0;padding-left:22px;display:grid;gap:4px}
 .big{font-size:1.35rem;font-weight:700}
 .poster{display:flex;justify-content:center;margin:6px 0 0;overflow:hidden;border-radius:12px}
-.poster img{display:block;height:min(42vh,340px);width:auto;max-width:100%;border-radius:12px;box-shadow:0 6px 24px rgba(0,0,0,.35);filter:blur(22px) saturate(1.1);transform:scale(1.04);animation:unblur 25s linear forwards}
+.poster img{display:block;height:min(42vh,340px);width:auto;max-width:100%;border-radius:12px;box-shadow:0 6px 24px rgba(0,0,0,.35);filter:blur(16px) saturate(1.1);transform:scale(1.04);animation:unblur 12s ease-out forwards}
 .poster img.clear{animation:none;filter:none;transform:none;transition:filter .6s,transform .6s}
-@keyframes unblur{from{filter:blur(22px)}to{filter:blur(5px)}}
+@keyframes unblur{from{filter:blur(16px)}to{filter:blur(5px)}}
 body.lite .poster img{animation-timing-function:steps(8,end)}
 body.tv .poster img{height:min(46vh,520px)}
 /* drapeaux : Windows n'a pas d'emojis de drapeaux, cette police (Twemoji, drapeaux uniquement) les fournit */

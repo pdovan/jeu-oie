@@ -171,6 +171,12 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 .seg.small span{padding:6px 10px;font-size:.9rem}
 .rank{margin:0;padding-left:22px;display:grid;gap:4px}
 .big{font-size:1.35rem;font-weight:700}
+.poster{display:flex;justify-content:center;margin:6px 0 0;overflow:hidden;border-radius:12px}
+.poster img{display:block;height:min(42vh,340px);width:auto;max-width:100%;border-radius:12px;box-shadow:0 6px 24px rgba(0,0,0,.35);filter:blur(22px) saturate(1.1);transform:scale(1.04);animation:unblur 25s linear forwards}
+.poster img.clear{animation:none;filter:none;transform:none;transition:filter .6s,transform .6s}
+@keyframes unblur{from{filter:blur(22px)}to{filter:blur(5px)}}
+body.lite .poster img{animation-timing-function:steps(8,end)}
+body.tv .poster img{height:min(46vh,520px)}
 /* drapeaux : Windows n'a pas d'emojis de drapeaux, cette police (Twemoji, drapeaux uniquement) les fournit */
 @font-face{font-family:"Twemoji Country Flags";unicode-range:U+1F1E6-1F1FF,U+1F3F4,U+E0062-E007F;src:url("https://cdn.jsdelivr.net/npm/country-flag-emoji-polyfill@0.1.8/dist/TwemojiCountryFlags.woff2") format("woff2");font-display:swap}
 .flag{font-family:"Twemoji Country Flags","Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif;font-size:6rem;line-height:1.1;text-align:center}
@@ -2792,7 +2798,136 @@ const BASE={
   ["🐐🇲🇽😬","La Chèvre"],
   ["🎩🧔🍬","Les Aventures de Rabbi Jacob"],
   ["🥬🍲👽","La Soupe aux choux"],
-  ["👱‍♂️👞⬛","Le Grand Blond avec une chaussure noire"]
+  ["👱‍♂️👞⬛","Le Grand Blond avec une chaussure noire"],
+  ["🖼️","Titanic"],
+  ["🖼️","Le Roi Lion"],
+  ["🖼️","Avatar"],
+  ["🖼️","Star Wars"],
+  ["🖼️","Jurassic Park"],
+  ["🖼️","Harry Potter à l’école des sorciers"],
+  ["🖼️","Le Seigneur des anneaux"],
+  ["🖼️","Retour vers le futur"],
+  ["🖼️","Les Visiteurs"],
+  ["🖼️","Bienvenue chez les Ch’tis"],
+  ["🖼️","Intouchables"],
+  ["🖼️","La Reine des neiges"],
+  ["🖼️","Toy Story"],
+  ["🖼️","Le Monde de Nemo"],
+  ["🖼️","Shrek"],
+  ["🖼️","Les Indestructibles"],
+  ["🖼️","Ratatouille"],
+  ["🖼️","E.T. l’extra-terrestre"],
+  ["🖼️","Pirates des Caraïbes"],
+  ["🖼️","Spider-Man"],
+  ["🖼️","Avengers"],
+  ["🖼️","Iron Man"],
+  ["🖼️","The Dark Knight"],
+  ["🖼️","Astérix & Obélix : Mission Cléopâtre"],
+  ["🖼️","Le Fabuleux Destin d’Amélie Poulain"],
+  ["🖼️","Rocky"],
+  ["🖼️","Les Dents de la mer"],
+  ["🖼️","Matrix"],
+  ["🖼️","Gladiator"],
+  ["🖼️","Forrest Gump"],
+  ["🖼️","Le Dîner de cons"],
+  ["🖼️","Les Minions"],
+  ["🖼️","Vice-Versa"],
+  ["🖼️","Coco"],
+  ["🖼️","Vaiana"],
+  ["🖼️","Aladdin"],
+  ["🖼️","La Belle et la Bête"],
+  ["🖼️","Mamma Mia!"],
+  ["🖼️","Grease"],
+  ["🖼️","Top Gun"],
+  ["🖼️","Pulp Fiction"],
+  ["🖼️","Le Parrain"],
+  ["🖼️","Inception"],
+  ["🖼️","Interstellar"],
+  ["🖼️","Fight Club"],
+  ["🖼️","Le Silence des agneaux"],
+  ["🖼️","Seven"],
+  ["🖼️","Kill Bill"],
+  ["🖼️","Le Grand Bleu"],
+  ["🖼️","Léon"],
+  ["🖼️","Le Cinquième Élément"],
+  ["🖼️","La Haine"],
+  ["🖼️","OSS 117 : Le Caire, nid d’espions"],
+  ["🖼️","Les Choristes"],
+  ["🖼️","La La Land"],
+  ["🖼️","Black Panther"],
+  ["🖼️","Joker"],
+  ["🖼️","Dune"],
+  ["🖼️","Barbie"],
+  ["🖼️","Oppenheimer"],
+  ["🖼️","Top Gun : Maverick"],
+  ["🖼️","Mad Max : Fury Road"],
+  ["🖼️","Le Loup de Wall Street"],
+  ["🖼️","Django Unchained"],
+  ["🖼️","Les Évadés"],
+  ["🖼️","Pretty Woman"],
+  ["🖼️","Dirty Dancing"],
+  ["🖼️","SOS Fantômes"],
+  ["🖼️","Les Aventuriers de l’arche perdue"],
+  ["🖼️","Terminator 2"],
+  ["🖼️","Alien"],
+  ["🖼️","Men in Black"],
+  ["🖼️","Sixième Sens"],
+  ["🖼️","Bohemian Rhapsody"],
+  ["🖼️","Le Diable s’habille en Prada"],
+  ["🖼️","Slumdog Millionaire"],
+  ["🖼️","The Artist"],
+  ["🖼️","Qu’est-ce qu’on a fait au Bon Dieu ?"],
+  ["🖼️","Lucy"],
+  ["🖼️","Gravity"],
+  ["🖼️","Hunger Games"],
+  ["🖼️","Twilight"],
+  ["🖼️","Le Hobbit"],
+  ["🖼️","Mission impossible"],
+  ["🖼️","Casino Royale"],
+  ["🖼️","Fast & Furious"],
+  ["🖼️","Shining"],
+  ["🖼️","Orange mécanique"],
+  ["🖼️","2001 : l’Odyssée de l’espace"],
+  ["🖼️","Apocalypse Now"],
+  ["🖼️","Taxi Driver"],
+  ["🖼️","Psychose"],
+  ["🖼️","Sueurs froides"],
+  ["🖼️","Le Bon, la Brute et le Truand"],
+  ["🖼️","Il était une fois dans l’Ouest"],
+  ["🖼️","Blade Runner"],
+  ["🖼️","La Grande Vadrouille"],
+  ["🖼️","Le Corniaud"],
+  ["🖼️","La Cité de la peur"],
+  ["🖼️","Les Parapluies de Cherbourg"],
+  ["🖼️","La vie est belle"],
+  ["🖼️","Casablanca"],
+  ["🖼️","Citizen Kane"],
+  ["🖼️","Mulholland Drive"],
+  ["🖼️","Parasite"],
+  ["🖼️","Drive"],
+  ["🖼️","Whiplash"],
+  ["🖼️","Her"],
+  ["🖼️","Birdman"],
+  ["🖼️","Get Out"],
+  ["🖼️","Le Labyrinthe de Pan"],
+  ["🖼️","Le Voyage de Chihiro"],
+  ["🖼️","Mon voisin Totoro"],
+  ["🖼️","Princesse Mononoké"],
+  ["🖼️","Amadeus"],
+  ["🖼️","Scarface"],
+  ["🖼️","Les Affranchis"],
+  ["🖼️","Reservoir Dogs"],
+  ["🖼️","Fargo"],
+  ["🖼️","The Big Lebowski"],
+  ["🖼️","No Country for Old Men"],
+  ["🖼️","Un prophète"],
+  ["🖼️","La Vie d’Adèle"],
+  ["🖼️","Anatomie d’une chute"],
+  ["🖼️","Le Comte de Monte-Cristo"],
+  ["🖼️","Délicatessen"],
+  ["🖼️","Le Pacte des loups"],
+  ["🖼️","Brice de Nice"],
+  ["🖼️","Les Petits Mouchoirs"]
  ],
  d:[
   "Mimez « faire du ski ». Votre équipe a 25 secondes pour deviner.",
@@ -2951,7 +3086,7 @@ const BASE={
 };
 const CATS=["q","b","e","d"];
 /* niveau de chaque élément d'origine (1 facile, 2 moyen, 3 difficile), dans l'ordre de BASE ; les défis conviennent à tous les niveaux */
-const LEVELS={"q":"211111211121222212222222122111121122223311122321133112122331133321332313221231121222123112311123212322111111323111211322222121211333333333333333333333333333333333333333333333333333333333333333333333333333333111111111112222222222222222333333333333333333","b":"112111122221111222112312123222132122233223222232121132222223212333212333332212121121212212212222232112331211211111222222223333122233333333333333333333333333333333333333333333333333333333333333333333333333332232222121222222223122113313232312122331123222312212233113232223213332223322122321111221211111211122122221222121222221212122212322222112321223212222222222212233213221232132232322323222323112332322112313233323223333232223322333233223222313232332222221222221122221222122222212221222333333333333333333333332222333221233122333232323333333332232223323333332232333323233323233223233323322333333233333333123123233323223323333332333322223332233333233223323321333233332122332222333123333322223322223323222333223222223232223321233232333232233323233222333333332333332332323233332233333333333333333333333333332333333333333333322333333322333233333332333333233333323323323333333333333333222333332333323233333322333323233323322333333333333333232333333233332333333333333333333312233333232323333333332333233333233323333332333223333333333333332233333333323333333333232232333333333333333233333332323332333333333333233333333122133233333333333333333333222233333333333333333232333333332233333223333332222322322333333233333333323333323333333323333323332323333222223333233333333333333333333333333333333333333322233333333233332333323333332332233323323333331333333333233333333323223333333322332222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222122222222222222233333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333","e":"11111212212221112122211122322122112212221122222232122112221333333223233232232322232322233213222323333233321233233332212222333322221333333333333333333333333333333333333333333333333333333333333333"};
+const LEVELS={"q":"211111211121222212222222122111121122223311122321133112122331133321332313221231121222123112311123212322111111323111211322222121211333333333333333333333333333333333333333333333333333333333333333333333333333333111111111112222222222222222333333333333333333","b":"112111122221111222112312123222132122233223222232121132222223212333212333332212121121212212212222232112331211211111222222223333122233333333333333333333333333333333333333333333333333333333333333333333333333332232222121222222223122113313232312122331123222312212233113232223213332223322122321111221211111211122122221222121222221212122212322222112321223212222222222212233213221232132232322323222323112332322112313233323223333232223322333233223222313232332222221222221122221222122222212221222333333333333333333333332222333221233122333232323333333332232223323333332232333323233323233223233323322333333233333333123123233323223323333332333322223332233333233223323321333233332122332222333123333322223322223323222333223222223232223321233232333232233323233222333333332333332332323233332233333333333333333333333333332333333333333333322333333322333233333332333333233333323323323333333333333333222333332333323233333322333323233323322333333333333333232333333233332333333333333333333312233333232323333333332333233333233323333332333223333333333333332233333333323333333333232232333333333333333233333332323332333333333333233333333122133233333333333333333333222233333333333333333232333333332233333223333332222322322333333233333333323333323333333323333323332323333222223333233333333333333333333333333333333333333322233333333233332333323333332332233323323333331333333333233333333323223333333322332222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222122222222222222233333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333","e":"11111212212221112122211122322122112212221122222232122112221333333223233232232322232322233213222323333233321233233332212222333322221333333333333333333333333333333333333333333333333333333333333333111111111111111111111111111111111111111122222222222222222222222222222222222222222222223333333333333333333333333333333333333333333"};
 const LVLNAME={1:"Facile",2:"Moyen",3:"Difficile"};
 const CATMETA={q:{label:"Quiz",icon:"❓",f:["Question","Réponse"]},b:{label:"Blind test",icon:"🎵",f:["Titre","Artiste"]},e:{label:"Emojis",icon:"🎬",f:["Emojis","Film"]},d:{label:"Défis",icon:"🎭",f:["Défi"]}};
 const deck={},BANK={};
@@ -3271,6 +3406,15 @@ function say(t,show=true){
   $("msg").textContent=t;if(!show)return;
   const el=$("toast");el.textContent=t;el.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove("show"),2600);
 }
+/* affiches de films (Wikipédia) : question « 🖼️ » → on montre l’affiche floutée, qui se dévoile peu à peu */
+const POSTERS={"Titanic":"https://upload.wikimedia.org/wikipedia/en/1/18/Titanic_%281997_film%29_poster.png","Le Roi Lion":"https://upload.wikimedia.org/wikipedia/en/3/3d/The_Lion_King_poster.jpg","Avatar":"https://upload.wikimedia.org/wikipedia/en/d/d6/Avatar_%282009_film%29_poster.jpg","Star Wars":"https://upload.wikimedia.org/wikipedia/en/8/87/StarWarsMoviePoster1977.jpg","Jurassic Park":"https://upload.wikimedia.org/wikipedia/en/e/e7/Jurassic_Park_poster.jpg","Harry Potter à l’école des sorciers":"https://thumb.wikimedia.org/wikipedia/en/thumb/7/7a/Harry_Potter_and_the_Philosopher%27s_Stone_banner.jpg/330px-Harry_Potter_and_the_Philosopher%27s_Stone_banner.jpg","Le Seigneur des anneaux":"https://upload.wikimedia.org/wikipedia/en/f/fb/Lord_Rings_Fellowship_Ring.jpg","Retour vers le futur":"https://upload.wikimedia.org/wikipedia/en/d/d2/Back_to_the_Future.jpg","Les Visiteurs":"https://upload.wikimedia.org/wikipedia/en/c/c3/PosterVisituers.jpg","Bienvenue chez les Ch’tis":"https://upload.wikimedia.org/wikipedia/en/5/55/Bienvenue_chez_les_CH%27TIS.png","Intouchables":"https://upload.wikimedia.org/wikipedia/en/9/93/The_Intouchables.jpg","La Reine des neiges":"https://upload.wikimedia.org/wikipedia/en/0/05/Frozen_%282013_film%29_poster.jpg","Toy Story":"https://upload.wikimedia.org/wikipedia/en/1/13/Toy_Story.jpg","Le Monde de Nemo":"https://upload.wikimedia.org/wikipedia/en/2/29/Finding_Nemo.jpg","Shrek":"https://upload.wikimedia.org/wikipedia/en/7/7b/Shrek_%282001_animated_feature_film%29.jpg","Les Indestructibles":"https://upload.wikimedia.org/wikipedia/en/2/27/The_Incredibles_%282004_animated_feature_film%29.jpg","Ratatouille":"https://upload.wikimedia.org/wikipedia/en/5/50/RatatouillePoster.jpg","E.T. l’extra-terrestre":"https://upload.wikimedia.org/wikipedia/en/6/66/E_t_the_extra_terrestrial_ver3.jpg","Pirates des Caraïbes":"https://upload.wikimedia.org/wikipedia/en/8/89/Pirates_of_the_Caribbean_-_The_Curse_of_the_Black_Pearl.png","Spider-Man":"https://upload.wikimedia.org/wikipedia/en/6/6c/Spider-Man_%282002_film%29_poster.jpg","Avengers":"https://upload.wikimedia.org/wikipedia/en/8/8a/The_Avengers_%282012_film%29_poster.jpg","Iron Man":"https://upload.wikimedia.org/wikipedia/en/0/02/Iron_Man_%282008_film%29_poster.jpg","The Dark Knight":"https://upload.wikimedia.org/wikipedia/en/1/1c/The_Dark_Knight_%282008_film%29.jpg","Astérix & Obélix : Mission Cléopâtre":"https://upload.wikimedia.org/wikipedia/en/1/18/Mission_cleopatre_affiche.jpg","Le Fabuleux Destin d’Amélie Poulain":"https://upload.wikimedia.org/wikipedia/en/5/53/Amelie_poster.jpg","Rocky":"https://upload.wikimedia.org/wikipedia/en/1/18/Rocky_poster.jpg","Les Dents de la mer":"https://thumb.wikimedia.org/wikipedia/commons/thumb/4/40/Jaws_movie_poster.jpg/330px-Jaws_movie_poster.jpg","Matrix":"https://upload.wikimedia.org/wikipedia/en/d/db/The_Matrix.png","Gladiator":"https://upload.wikimedia.org/wikipedia/en/f/fb/Gladiator_%282000_film_poster%29.png","Forrest Gump":"https://upload.wikimedia.org/wikipedia/en/6/67/Forrest_Gump_poster.jpg","Le Dîner de cons":"https://upload.wikimedia.org/wikipedia/en/2/25/Le_d%C3%AEner_de_cons_%28Poster%29.jpg","Les Minions":"https://upload.wikimedia.org/wikipedia/en/1/19/Minions_%282015_film%29.jpg","Vice-Versa":"https://upload.wikimedia.org/wikipedia/en/0/0a/Inside_Out_%282015_film%29_poster.jpg","Coco":"https://upload.wikimedia.org/wikipedia/en/9/98/Coco_%282017_film%29_poster.jpg","Vaiana":"https://upload.wikimedia.org/wikipedia/en/2/26/Moana_Teaser_Poster.jpg","Aladdin":"https://upload.wikimedia.org/wikipedia/en/b/bd/Aladdin_%281992_Disney_film%29_poster.jpg","La Belle et la Bête":"https://upload.wikimedia.org/wikipedia/en/5/5e/Beauty_and_the_Beast_%281991_film%29_poster.jpg","Mamma Mia!":"https://upload.wikimedia.org/wikipedia/en/9/95/Mamma_Mia_%282008%29_US_poster.jpg","Grease":"https://upload.wikimedia.org/wikipedia/en/e/e2/Grease_ver2.jpg","Top Gun":"https://upload.wikimedia.org/wikipedia/en/4/46/Top_Gun_Movie.jpg","Pulp Fiction":"https://upload.wikimedia.org/wikipedia/en/3/3b/Pulp_Fiction_%281994%29_poster.jpg","Le Parrain":"https://upload.wikimedia.org/wikipedia/en/1/1c/Godfather_ver1.jpg","Inception":"https://upload.wikimedia.org/wikipedia/en/2/2e/Inception_%282010%29_theatrical_poster.jpg","Interstellar":"https://upload.wikimedia.org/wikipedia/en/b/bc/Interstellar_film_poster.jpg","Fight Club":"https://upload.wikimedia.org/wikipedia/en/f/fc/Fight_Club_poster.jpg","Le Silence des agneaux":"https://upload.wikimedia.org/wikipedia/en/8/86/The_Silence_of_the_Lambs_poster.jpg","Seven":"https://upload.wikimedia.org/wikipedia/en/6/68/Seven_%28movie%29_poster.jpg","Kill Bill":"https://upload.wikimedia.org/wikipedia/en/2/2c/Kill_Bill_Volume_1.png","Le Grand Bleu":"https://upload.wikimedia.org/wikipedia/en/9/93/The_Big_Blue_poster.jpg","Léon":"https://upload.wikimedia.org/wikipedia/en/0/03/Leon-poster.jpg","Le Cinquième Élément":"https://upload.wikimedia.org/wikipedia/en/6/65/Fifth_element_poster_%281997%29.jpg","La Haine":"https://upload.wikimedia.org/wikipedia/en/0/01/La_Haine_%281995_movie_poster%29.jpg","OSS 117 : Le Caire, nid d’espions":"https://upload.wikimedia.org/wikipedia/en/8/85/OSS_117%2C_Le_Caire_nid_d%27espions_poster.jpg","Les Choristes":"https://upload.wikimedia.org/wikipedia/en/9/9c/LesChoristes.jpeg","La La Land":"https://upload.wikimedia.org/wikipedia/en/a/ab/La_La_Land_%28film%29.png","Black Panther":"https://upload.wikimedia.org/wikipedia/en/d/d6/Black_Panther_%28film%29_poster.jpg","Joker":"https://upload.wikimedia.org/wikipedia/en/e/e1/Joker_%282019_film%29_poster.jpg","Dune":"https://upload.wikimedia.org/wikipedia/en/8/8e/Dune_%282021_film%29.jpg","Barbie":"https://upload.wikimedia.org/wikipedia/en/0/0b/Barbie_2023_poster.jpg","Oppenheimer":"https://upload.wikimedia.org/wikipedia/en/4/4a/Oppenheimer_%28film%29.jpg","Top Gun : Maverick":"https://upload.wikimedia.org/wikipedia/en/1/13/Top_Gun_Maverick_Poster.jpg","Mad Max : Fury Road":"https://upload.wikimedia.org/wikipedia/en/6/6e/Mad_Max_Fury_Road.jpg","Le Loup de Wall Street":"https://upload.wikimedia.org/wikipedia/en/d/d8/The_Wolf_of_Wall_Street_%282013%29.png","Django Unchained":"https://upload.wikimedia.org/wikipedia/en/8/8b/Django_Unchained_Poster.jpg","Les Évadés":"https://upload.wikimedia.org/wikipedia/en/8/81/ShawshankRedemptionMoviePoster.jpg","Pretty Woman":"https://upload.wikimedia.org/wikipedia/en/b/b6/Pretty_woman_movie.jpg","Dirty Dancing":"https://upload.wikimedia.org/wikipedia/en/0/00/Dirty_Dancing.jpg","SOS Fantômes":"https://upload.wikimedia.org/wikipedia/en/2/2f/Ghostbusters_%281984%29_theatrical_poster.png","Les Aventuriers de l’arche perdue":"https://upload.wikimedia.org/wikipedia/en/4/4c/Raiders_of_the_Lost_Ark.jpg","Terminator 2":"https://upload.wikimedia.org/wikipedia/en/5/5e/Terminator_2-Judgment_Day.png","Alien":"https://upload.wikimedia.org/wikipedia/en/c/c3/Alien_movie_poster.jpg","Men in Black":"https://upload.wikimedia.org/wikipedia/en/f/fb/Men_in_Black_Poster.jpg","Sixième Sens":"https://upload.wikimedia.org/wikipedia/en/a/a4/The_Sixth_Sense_poster.png","Bohemian Rhapsody":"https://upload.wikimedia.org/wikipedia/en/2/2e/Bohemian_Rhapsody_poster.png","Le Diable s’habille en Prada":"https://upload.wikimedia.org/wikipedia/en/e/e7/The_Devil_Wears_Prada_main_onesheet.jpg","Slumdog Millionaire":"https://upload.wikimedia.org/wikipedia/en/9/92/Slumdog_Millionaire_poster.png","The Artist":"https://upload.wikimedia.org/wikipedia/en/a/a4/The_Artist_Poster.jpg","Qu’est-ce qu’on a fait au Bon Dieu ?":"https://upload.wikimedia.org/wikipedia/en/e/e0/Qu%27est-ce_qu%27on_a_fait_au_bon_dieu%3F_poster.jpg","Lucy":"https://upload.wikimedia.org/wikipedia/en/1/14/Lucy_%282014_film%29_poster.jpg","Gravity":"https://upload.wikimedia.org/wikipedia/en/f/f6/Gravity_Poster.jpg","Hunger Games":"https://upload.wikimedia.org/wikipedia/en/4/42/HungerGamesPoster.jpg","Twilight":"https://upload.wikimedia.org/wikipedia/en/b/b6/Twilight_%282008_film%29_poster.jpg","Le Hobbit":"https://upload.wikimedia.org/wikipedia/en/b/b3/The_Hobbit-_An_Unexpected_Journey.jpeg","Mission impossible":"https://upload.wikimedia.org/wikipedia/en/e/e1/MissionImpossiblePoster.jpg","Casino Royale":"https://thumb.wikimedia.org/wikipedia/en/thumb/8/82/Casino_Royale_%282006_film_poster%29.jpg/330px-Casino_Royale_%282006_film_poster%29.jpg","Fast & Furious":"https://upload.wikimedia.org/wikipedia/en/5/54/Fast_and_the_furious_poster.jpg","Shining":"https://upload.wikimedia.org/wikipedia/en/1/1d/The_Shining_%281980%29_U.K._release_poster_-_The_tide_of_terror_that_swept_America_IS_HERE.jpg","Orange mécanique":"https://upload.wikimedia.org/wikipedia/en/7/73/A_Clockwork_Orange_%281971%29.png","2001 : l’Odyssée de l’espace":"https://upload.wikimedia.org/wikipedia/en/1/11/2001_A_Space_Odyssey_%281968%29.png","Apocalypse Now":"https://upload.wikimedia.org/wikipedia/en/c/c2/Apocalypse_Now_poster.jpg","Taxi Driver":"https://upload.wikimedia.org/wikipedia/en/3/33/Taxi_Driver_%281976_film_poster%29.jpg","Psychose":"https://thumb.wikimedia.org/wikipedia/commons/thumb/7/76/Psycho_%281960%29_theatrical_poster_%28retouched%29.jpg/330px-Psycho_%281960%29_theatrical_poster_%28retouched%29.jpg","Sueurs froides":"https://thumb.wikimedia.org/wikipedia/commons/thumb/7/75/Vertigomovie_restoration.jpg/330px-Vertigomovie_restoration.jpg","Le Bon, la Brute et le Truand":"https://upload.wikimedia.org/wikipedia/en/4/45/Good_the_bad_and_the_ugly_poster.jpg","Il était une fois dans l’Ouest":"https://upload.wikimedia.org/wikipedia/en/a/a2/Once_upon_a_Time_in_the_West.jpg","Blade Runner":"https://upload.wikimedia.org/wikipedia/en/9/9f/Blade_Runner_%281982_poster%29.png","La Grande Vadrouille":"https://upload.wikimedia.org/wikipedia/en/e/e8/La_Grande_Vadrouille_poster.jpg","Le Corniaud":"https://upload.wikimedia.org/wikipedia/en/7/7b/Le_Corniaud_%28movie_poster%29.jpg","La Cité de la peur":"https://upload.wikimedia.org/wikipedia/en/a/ac/La_Cit%C3%A9_de_la_peur.jpg","Les Parapluies de Cherbourg":"https://upload.wikimedia.org/wikipedia/en/c/cc/The_Umbrellas_of_Cherbourg_%281964_film%29_poster.jpg","La vie est belle":"https://thumb.wikimedia.org/wikipedia/commons/thumb/2/25/It%27s_a_Wonderful_Life_%281946_poster%29.jpeg/330px-It%27s_a_Wonderful_Life_%281946_poster%29.jpeg","Casablanca":"https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b3/CasablancaPoster-Gold.jpg/330px-CasablancaPoster-Gold.jpg","Citizen Kane":"https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c0/Citizen_Kane_poster%2C_1941_%28Style_B%2C_unrestored%29.jpg/330px-Citizen_Kane_poster%2C_1941_%28Style_B%2C_unrestored%29.jpg","Mulholland Drive":"https://upload.wikimedia.org/wikipedia/en/0/0f/Mulholland.png","Parasite":"https://upload.wikimedia.org/wikipedia/en/5/53/Parasite_%282019_film%29.png","Drive":"https://upload.wikimedia.org/wikipedia/en/1/13/Drive2011Poster.jpg","Whiplash":"https://upload.wikimedia.org/wikipedia/en/0/01/Whiplash_poster.jpg","Her":"https://upload.wikimedia.org/wikipedia/en/4/44/Her2013Poster.jpg","Birdman":"https://upload.wikimedia.org/wikipedia/en/6/63/Birdman_poster.png","Get Out":"https://upload.wikimedia.org/wikipedia/en/a/a3/Get_Out_poster.png","Le Labyrinthe de Pan":"https://upload.wikimedia.org/wikipedia/en/6/67/Pan%27s_Labyrinth.jpg","Le Voyage de Chihiro":"https://upload.wikimedia.org/wikipedia/en/d/db/Spirited_Away_Japanese_poster.png","Mon voisin Totoro":"https://upload.wikimedia.org/wikipedia/en/0/02/My_Neighbor_Totoro_-_Tonari_no_Totoro_%28Movie_Poster%29.jpg","Princesse Mononoké":"https://upload.wikimedia.org/wikipedia/en/8/8c/Princess_Mononoke_Japanese_poster.png","Amadeus":"https://upload.wikimedia.org/wikipedia/en/2/2f/Amadeusmov.jpg","Scarface":"https://upload.wikimedia.org/wikipedia/en/7/71/Scarface_-_1983_film.jpg","Les Affranchis":"https://upload.wikimedia.org/wikipedia/en/7/7b/Goodfellas.jpg","Reservoir Dogs":"https://upload.wikimedia.org/wikipedia/en/0/01/Reservoir_Dogs.png","Fargo":"https://upload.wikimedia.org/wikipedia/en/3/33/Fargo_%281996_movie_poster%29.jpg","The Big Lebowski":"https://upload.wikimedia.org/wikipedia/en/3/35/Biglebowskiposter.jpg","No Country for Old Men":"https://upload.wikimedia.org/wikipedia/en/8/8b/No_Country_for_Old_Men_poster.jpg","Un prophète":"https://upload.wikimedia.org/wikipedia/en/d/d1/A_Prophet.jpg","La Vie d’Adèle":"https://upload.wikimedia.org/wikipedia/en/3/3e/La_Vie_d%27Ad%C3%A8le_film_poster.png","Anatomie d’une chute":"https://upload.wikimedia.org/wikipedia/en/8/88/Anatomy_of_a_Fall_%282023%29_film_poster.jpg","Le Comte de Monte-Cristo":"https://upload.wikimedia.org/wikipedia/en/d/d0/Le_Comte_de_Monte-Cristo_2024_film_poster.jpg","Délicatessen":"https://upload.wikimedia.org/wikipedia/en/0/04/Delicatessen2.jpg","Le Pacte des loups":"https://upload.wikimedia.org/wikipedia/en/e/ed/Brotherhood_of_the_Wolf_Film_Poster.jpg","Brice de Nice":"https://upload.wikimedia.org/wikipedia/en/5/51/Brice_de_Nice_poster.jpg","Les Petits Mouchoirs":"https://upload.wikimedia.org/wikipedia/en/0/07/Lespetitsmouchoirs.jpg"};
+const isPosterQ=(q,a)=>q==="🖼️"&&!!POSTERS[a];
+function eHtml(q,a){
+  if(!isPosterQ(q,a))return`<div class="big" style="font-size:3rem">${esc(q)}</div>`;
+  return`<div class="poster"><img src="${esc(POSTERS[a])}" alt="Affiche mystère" referrerpolicy="no-referrer" onerror="this.parentNode.innerHTML='<p class=note>Affiche indisponible</p>'"></div><p class="note" style="text-align:center;margin:4px 0 0">L’affiche se dévoile peu à peu…</p>`;
+}
+const posterClear=()=>document.querySelectorAll("#card .poster img").forEach(i=>i.classList.add("clear"));
+const posterPause=on=>document.querySelectorAll("#card .poster img").forEach(i=>i.style.animationPlayState=on?"paused":"");
 function showCard(h){$("card").innerHTML=h;$("modal").classList.remove("hide")}
 
 /* ===== Blind test : extraits officiels de 30 s (iTunes) ===== */
@@ -3594,8 +3738,8 @@ function duel(a,b){
   const ty=k[Math.floor(Math.random()*k.length)],it=draw(ty),[q,ans]=it,qcm=!S.opts.host,n=lvlOf(ty,it);REMOTE.secret="Réponse : "+ans;
   const KEY={[a]:"A",[b]:"L"};
   showCard(`<h2>⚔️ Duel</h2><div class="who"><b style="color:var(--t${a})">${esc(S.names[a])}</b> contre <b style="color:var(--t${b})">${esc(S.names[b])}</b></div>
-    <div class="note" style="margin:0">${ty==="q"?"❓ Quiz":"🎬 Devinez le film"}${n?` <span class="lvl l${n}">${"★".repeat(n)} ${LVLNAME[n]}</span>`:""}</div>
-    ${ty==="q"?qHtml(q):`<div class="big" style="font-size:3rem">${esc(q)}</div>`}
+    <div class="note" style="margin:0">${ty==="q"?"❓ Quiz":isPosterQ(q,ans)?"🎬 Devinez le film · 🖼️ Affiche":"🎬 Devinez le film"}${n?` <span class="lvl l${n}">${"★".repeat(n)} ${LVLNAME[n]}</span>`:""}</div>
+    ${ty==="q"?qHtml(q):eHtml(q,ans)}
     ${S.opts.chrono?'<div id="timer" class="timer">25</div>':""}
     <div class="buzzers" id="buzz">${[a,b].map(t=>`<button class="buzzer" data-t="${t}" style="background:var(--t${t})"><b>🔔 ${esc(S.names[t])}</b><small>ou touche ${KEY[t]}</small></button>`).join("")}</div>
     <div id="dAns"></div><div id="out"></div>`);
@@ -3603,7 +3747,7 @@ function duel(a,b){
   return new Promise(done=>{
     let timer=null,over=false,left=25;
     const end=async w=>{
-      if(over)return;over=true;clearInterval(timer);removeEventListener("keydown",kb);
+      if(over)return;over=true;clearInterval(timer);removeEventListener("keydown",kb);posterClear();
       $("out").innerHTML=`<div class="ans">${w<0?"⏰ Personne n’a buzzé. ":""}Réponse : ${esc(ans)}</div>`+(w>=0?`<p class="big" style="text-align:center;margin:8px 0 0;color:var(--t${w})">🏆 ${esc(S.names[w])} remporte le duel : +1 point et +2 cases !</p>`:"");
       w>=0?sfxGood():sfxBuzz();
       await sleep(2600);hideCard();
@@ -3617,7 +3761,7 @@ function duel(a,b){
     };
     const buzz=t=>{
       if(over||$("buzz").classList.contains("hide"))return;clearInterval(timer);sfxClack(.4,1600);
-      const other=t===a?b:a;$("buzz").classList.add("hide");removeEventListener("keydown",kb);
+      const other=t===a?b:a;$("buzz").classList.add("hide");posterPause(true);removeEventListener("keydown",kb);
       const head=`<p class="who" style="margin:0">🔔 <b style="color:var(--t${t})">${esc(S.names[t])}</b> a buzzé en premier : à vous de répondre !</p>`;
       if(qcm){
         const opts=choices(ty,ans,q),good=opts.indexOf(ans);
@@ -3651,13 +3795,13 @@ function qHtml(q){
   return`<div class="flag" role="img" aria-label="Drapeau mystère">${fl}</div><div class="big" style="text-align:center">${esc(q.slice(fl.length).trim())}</div>`;
 }
 function choices(k,ans,q){
-  const isNum=s=>/^\d/.test(String(s).trim()),seen=new Set([norm(ans)]),pool=[],flag=k==="q"&&isFlagQ(q);
-  for(const x of shuffle(BANK[k].slice())){const a=x[1],n=norm(a);if(seen.has(n))continue;if(k==="q"&&isNum(a)!==isNum(ans))continue;if(flag&&!isFlagQ(x[0]))continue;seen.add(n);pool.push(a);if(pool.length===3)break}
+  const isNum=s=>/^\d/.test(String(s).trim()),seen=new Set([norm(ans)]),pool=[],flag=k==="q"&&isFlagQ(q),post=k==="e"&&isPosterQ(q,ans);
+  for(const x of shuffle(BANK[k].slice())){const a=x[1],n=norm(a);if(seen.has(n))continue;if(k==="q"&&isNum(a)!==isNum(ans))continue;if(flag&&!isFlagQ(x[0]))continue;if(post&&!isPosterQ(x[0],x[1]))continue;seen.add(n);pool.push(a);if(pool.length===3)break}
   return shuffle([ans,...pool]);
 }
 /* case « Au choix » : l'équipe choisit la catégorie de son épreuve */
 function choose(){
-  const L={q:["❓","Quiz","Une question de culture générale"],b:["🎵","Blind test","Trouvez l’artiste"],e:["🎬","Film en emojis","Devinez le film"],d:["🎭","Défi","Mime, dessin, rapidité…"]};
+  const L={q:["❓","Quiz","Une question de culture générale"],b:["🎵","Blind test","Trouvez l’artiste"],e:["🎬","Film","Emojis ou affiche floutée"],d:["🎭","Défi","Mime, dessin, rapidité…"]};
   showCard(`<h2>🎯 Au choix !</h2><div class="who"><b>${name()}</b>, choisissez votre épreuve.</div>
     <div class="picks">${CATS.map(k=>`<button class="pick" data-k="${k}"${BANK[k].length?"":" disabled"}><span aria-hidden="true">${L[k][0]}</span><b>${L[k][1]}</b><small>${L[k][2]}</small></button>`).join("")}</div>`);
   sfxGood();
@@ -3681,7 +3825,7 @@ function ask(ty){
     :`<p class="note" id="defiHint">La consigne reste cachée jusqu’à ce que votre équipe soit prête.</p><div class="big hide" id="defiTxt">${esc(dt)}</div>`}
   else if(ty==="q"){const it=draw("q"),[q,a]=it;qText=q;REMOTE.secret="Réponse : "+a;
     head=(isFlagQ(q)?"❓ Quiz · 🏳️ Drapeau":"❓ Quiz")+badge(it);body=qHtml(q);reveal=a}
-  else if(ty==="e"){const it=draw("e"),[q,a]=it;REMOTE.secret="Réponse : "+a;head="🎬 Devinez le film"+badge(it);body=`<div class="big" style="font-size:3rem">${esc(q)}</div>`;reveal=a}
+  else if(ty==="e"){const it=draw("e"),[q,a]=it;REMOTE.secret="Réponse : "+a;head=(isPosterQ(q,a)?"🎬 Devinez le film · 🖼️ Affiche":"🎬 Devinez le film")+badge(it);body=eHtml(q,a);qText=q;reveal=a}
   else{const it=draw("b"),[ti,ar]=it;REMOTE.secret="🎵 « "+ti+" » de "+ar;song=[ti,ar];head="🎵 Blind test"+badge(it);
     body=`<p style="margin:0">Écoutez l’extrait et trouvez l’artiste.</p>
       <button id="play" style="background:var(--t${S.turn})" disabled>⏳ Chargement de l’extrait…</button>
@@ -3719,7 +3863,7 @@ function ask(ty){
   };
   const pick=i=>{
     if(done)return;stopTimer();
-    document.querySelectorAll(".choice").forEach((b,j)=>{b.disabled=true;if(j===good)b.classList.add("right");else if(j===i)b.classList.add("wrong")});
+    document.querySelectorAll(".choice").forEach((b,j)=>{b.disabled=true;if(j===good)b.classList.add("right");else if(j===i)b.classList.add("wrong")});posterClear();
     $("out").innerHTML=i===good?`<div class="ans">✅ Bonne réponse !</div>`:`<div class="ans">${i<0?"⏰ Temps écoulé. ":"❌ "}Réponse : ${esc(reveal)}</div>`;
     (i===good?sfxGood:sfxBad)();
     setTimeout(()=>{done=false;finishQ(i===good)},1600);
@@ -3736,7 +3880,7 @@ function ask(ty){
   }
   else if(ty==="d")$("go").onclick=()=>{$("go").classList.add("hide");goDefi()};
   else if(song)setupAudio(song,startTimer);else startTimer();
-  if($("rev"))$("rev").onclick=()=>{$("out").innerHTML=`<div class="ans">${esc(reveal)}</div>`;$("verdict").classList.remove("hide");$("rev").classList.add("hide")};
+  if($("rev"))$("rev").onclick=()=>{posterClear();$("out").innerHTML=`<div class="ans">${esc(reveal)}</div>`;$("verdict").classList.remove("hide");$("rev").classList.add("hide")};
   $("yes").onclick=()=>finish(true);
   $("no").onclick=()=>finish(false);
 }
@@ -3898,7 +4042,7 @@ $("openRules").onclick=()=>{
     <h3>À chaque tour</h3>
     <ul><li>L’équipe lance le dé et avance d’autant de cases.</li>
     <li>Si le dé fait dépasser le jardin, le pion recule des cases en trop.</li>
-    <li>La case d’arrivée propose une épreuve : ❓ quiz, 🎵 blind test (trouvez l’artiste), 🎬 film en emojis ou 🎭 défi.</li>
+    <li>La case d’arrivée propose une épreuve : ❓ quiz, 🎵 blind test (trouvez l’artiste), 🎬 film (emojis ou affiche floutée) ou 🎭 défi.</li>
     <li>Épreuve réussie : <b>+1 point et +2 cases</b>. Épreuve ratée : la main passe à l’équipe suivante.</li></ul>
     <h3>Cases spéciales</h3>
     <ul>${specialList().map(s=>`<li>${s}</li>`).join("")}</ul>

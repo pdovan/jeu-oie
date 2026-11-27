@@ -71,8 +71,8 @@ main{max-width:680px;margin:0 auto;padding:16px 16px calc(24px + env(safe-area-i
 fieldset{border:0;margin:0;padding:0;min-width:0}
 .lens legend{font-weight:700;margin-bottom:12px;padding:0}
 .lengrid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-#roundsBox .lengrid{grid-template-columns:repeat(5,1fr)}
-@media (max-width:640px){#roundsBox .lengrid{grid-template-columns:repeat(3,1fr)}}
+#roundsBox .lengrid,#lenBox .lengrid{grid-template-columns:repeat(5,1fr)}
+@media (max-width:640px){#roundsBox .lengrid,#lenBox .lengrid{grid-template-columns:repeat(3,1fr)}}
 .lenopt{position:relative;cursor:pointer}
 .lenopt input{position:absolute;opacity:0;pointer-events:none}
 .lenopt span{display:grid;gap:2px;text-align:center;padding:14px 8px;border-radius:14px;border:1.5px solid var(--line);background:rgba(255,255,255,.03);transition:background .2s,border-color .2s,box-shadow .2s}
@@ -392,6 +392,7 @@ body.remote-mode>header,body.remote-mode>main{display:none!important}
     <label class="lenopt"><input type="radio" name="len" value="30" checked><span><b>30 cases</b><small>Classique (~25 min)</small></span></label>
     <label class="lenopt"><input type="radio" name="len" value="40"><span><b>40 cases</b><small>Épique (~40 min)</small></span></label>
     <label class="lenopt"><input type="radio" name="len" value="63"><span><b>63 cases</b><small>Traditionnel (~1 h)</small></span></label>
+    <label class="lenopt"><input type="radio" name="len" value="100"><span><b>100 cases</b><small>Marathon (~1 h 30)</small></span></label>
    </div>
   </fieldset>
   <div class="ntrow"><b id="lvLbl">🎚️ Niveau des questions</b>
@@ -497,7 +498,8 @@ const SPEC={
   20:{turns:1.6,cs:1.25,pont:[4,8],auberge:7,puits:11,lab:[14,9],mort:17,choix:[6,16],surp:[3,10,13]},
   30:{turns:2.1,cs:1.12,pont:[4,9],auberge:10,puits:15,lab:[20,14],prison:24,mort:27,choix:[7,17,26],surp:[5,12,19,22]},
   40:{turns:2.5,cs:1.05,pont:[5,10],auberge:13,puits:20,lab:[27,19],prison:33,mort:37,choix:[8,17,25,35],surp:[3,11,22,30,38]},
-  63:{turns:3,cs:1,pont:[6,12],auberge:19,puits:31,lab:[42,30],prison:52,mort:58,choix:[9,23,37,48,61],surp:[4,14,27,34,45,55]}
+  63:{turns:3,cs:1,pont:[6,12],auberge:19,puits:31,lab:[42,30],prison:52,mort:58,choix:[9,23,37,48,61],surp:[4,14,27,34,45,55]},
+  100:{turns:4,cs:.8,pont:[10,19],auberge:30,puits:49,lab:[67,48],prison:83,mort:92,choix:[14,36,58,76,97],surp:[6,22,43,54,71,88]}
 };
 const SPDESC={pont:v=>`🌉 Pont (case ${v[0]}) : filez à la case ${v[1]}`,auberge:v=>`🏨 Auberge (case ${v}) : passez 1 tour`,puits:v=>`🪣 Puits (case ${v}) : passez 2 tours`,
   lab:v=>`🌀 Labyrinthe (case ${v[0]}) : retour à la case ${v[1]}`,prison:v=>`⛓️ Prison (case ${v}) : passez 2 tours`,mort:v=>`💀 Mort (case ${v}) : retour au départ`};

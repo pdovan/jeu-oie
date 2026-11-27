@@ -10,7 +10,7 @@
 <style>
 :root{color-scheme:dark;
 --bg:#0b0e1c;--surface:#1a2133;--surface2:#121828;--line:#2b3450;--ink:#f1f3fa;--mute:#9aa3b8;
---accent:#5b4fe9;--accent-soft:rgba(91,79,233,.22);--gold:#f5b72e;--t0:#f43f5e;--t1:#3b82f6;--t2:#22c55e;--t3:#f59e0b;--q:#f5b72e;--ok:#22a35a;--ko:#e5484d}
+--accent:#5b4fe9;--accent-soft:rgba(91,79,233,.22);--gold:#f5b72e;--t0:#f43f5e;--t1:#3b82f6;--t2:#22c55e;--t3:#f59e0b;--t4:#8b5cf6;--t5:#06b6d4;--t6:#ec4899;--t7:#f97316;--q:#f5b72e;--ok:#22a35a;--ko:#e5484d}
 *{box-sizing:border-box}
 html{scroll-padding-top:80px}
 body{margin:0;min-height:100vh;color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif;
@@ -60,6 +60,14 @@ main{max-width:680px;margin:0 auto;padding:16px 16px calc(24px + env(safe-area-i
 .teambox.green input{border-color:rgba(34,197,94,.42)}
 .teambox.yellow{background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.45);color:#fcd34d}
 .teambox.yellow input{border-color:rgba(245,158,11,.45)}
+.teambox.violet{background:rgba(139,92,246,.1);border-color:rgba(139,92,246,.45);color:color-mix(in srgb,rgb(139,92,246) 55%,#fff)}
+.teambox.violet input{border-color:rgba(139,92,246,.45)}
+.teambox.cyan{background:rgba(6,182,212,.1);border-color:rgba(6,182,212,.45);color:color-mix(in srgb,rgb(6,182,212) 55%,#fff)}
+.teambox.cyan input{border-color:rgba(6,182,212,.45)}
+.teambox.pink{background:rgba(236,72,153,.1);border-color:rgba(236,72,153,.45);color:color-mix(in srgb,rgb(236,72,153) 55%,#fff)}
+.teambox.pink input{border-color:rgba(236,72,153,.45)}
+.teambox.orange{background:rgba(249,115,22,.1);border-color:rgba(249,115,22,.45);color:color-mix(in srgb,rgb(249,115,22) 55%,#fff)}
+.teambox.orange input{border-color:rgba(249,115,22,.45)}
 .ntrow{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .ntrow b{font-weight:700}
 .seg{display:inline-flex;gap:6px;padding:4px;border-radius:12px;background:rgba(255,255,255,.04);border:1.5px solid var(--line)}
@@ -104,7 +112,7 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 .team.on{border-color:currentColor;box-shadow:0 0 0 4px color-mix(in srgb,currentColor 22%,transparent)}
 .team b{font-family:"Fredoka",sans-serif;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .team .pts{white-space:nowrap;font-size:1.6rem;font-weight:700;font-family:"Fredoka",sans-serif;color:var(--ink)}
-.team.t0{color:var(--t0)}.team.t1{color:var(--t1)}.team.t2{color:var(--t2)}.team.t3{color:var(--t3)}
+.team.t0{color:var(--t0)}.team.t1{color:var(--t1)}.team.t2{color:var(--t2)}.team.t3{color:var(--t3)}.team.t4{color:var(--t4)}.team.t5{color:var(--t5)}.team.t6{color:var(--t6)}.team.t7{color:var(--t7)}
 #frame{position:relative;background:radial-gradient(circle at 50% 50%,#f6e7bf,#e8cf93);border:3px solid #6b4a2b;outline:3px solid #c9a15b;outline-offset:-9px;border-radius:14px;padding:10px;margin-bottom:14px;color:#2b1d10;overflow:hidden}
 #banner{position:absolute;left:50%;top:24%;z-index:2;pointer-events:none;white-space:nowrap;max-width:92%;overflow:hidden;text-overflow:ellipsis;
   font-family:"Fredoka",sans-serif;font-weight:700;font-size:clamp(1.1rem,5vw,1.6rem);color:#fff;padding:10px 22px;border-radius:999px;
@@ -128,7 +136,7 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 .pawn .halo{fill:none;stroke-width:2.5;opacity:0;transform-box:fill-box;transform-origin:center}
 .pawn.on .halo{animation:halo 1.4s ease-out infinite}
 @keyframes halo{0%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(2.8)}}
-.t0.dot{fill:var(--t0)}.t1.dot{fill:var(--t1)}.t2.dot{fill:var(--t2)}.t3.dot{fill:var(--t3)}.t0.halo{stroke:var(--t0)}.t1.halo{stroke:var(--t1)}.t2.halo{stroke:var(--t2)}.t3.halo{stroke:var(--t3)}
+.t0.dot{fill:var(--t0)}.t1.dot{fill:var(--t1)}.t2.dot{fill:var(--t2)}.t3.dot{fill:var(--t3)}.t0.halo{stroke:var(--t0)}.t1.halo{stroke:var(--t1)}.t2.halo{stroke:var(--t2)}.t3.halo{stroke:var(--t3)}.t4.dot{fill:var(--t4)}.t4.halo{stroke:var(--t4)}.t5.dot{fill:var(--t5)}.t5.halo{stroke:var(--t5)}.t6.dot{fill:var(--t6)}.t6.halo{stroke:var(--t6)}.t7.dot{fill:var(--t7)}.t7.halo{stroke:var(--t7)}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 /* bouton du dé posé au centre du plateau */
 #roll{position:absolute;left:50%;top:50%;z-index:3;transform:translate(-50%,-50%);display:grid;justify-items:center;gap:2px;
@@ -227,7 +235,7 @@ body.tv .poster img{height:min(46vh,520px)}
 .qlist button:hover{color:#fff;border-color:var(--ko);background:var(--ko)}
 /* ===== Mode blind test seul : pas de plateau, une platine au centre ===== */
 #bpanel{display:none}
-body.blind #stage,body.blind #board,body.blind .legend,body.blind .team-pos #pct0,body.blind .team-pos #pct1,body.blind .team-pos #pct2,body.blind .team-pos #pct3{display:none!important}
+body.blind #stage,body.blind #board,body.blind .legend,body.blind .team-pos [id^=pct]{display:none!important}
 body.blind #bpanel{display:grid;place-items:center;min-height:clamp(340px,58vh,720px);position:relative}
 body.blind #frame{background:radial-gradient(circle at 50% 45%,#3b2f7a,#1b1640 70%);border-color:#2a2160;outline-color:#8b80ff;color:#fff}
 .vinyl{width:min(78%,52vh,520px);aspect-ratio:1;border-radius:50%;position:relative;
@@ -294,6 +302,8 @@ body.remote-mode>header,body.remote-mode>main{display:none!important}
 .tpick{border-color:color-mix(in srgb,var(--tc) 60%,transparent)}
 .tpick:disabled{opacity:.4}
 .buzzers{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.buzzers.many{grid-template-columns:repeat(4,1fr);gap:8px}.buzzers.many .buzzer{padding:12px 6px}
+@media (max-width:640px){.buzzers.many{grid-template-columns:1fr 1fr}}
 .buzzer{display:grid;gap:4px;padding:22px 10px;border-radius:999px;box-shadow:0 8px 0 rgba(0,0,0,.35);transition:transform .08s,box-shadow .08s}
 .buzzer b{font-family:"Fredoka",sans-serif;font-size:1.2rem;overflow-wrap:anywhere}
 .buzzer small{opacity:.85;font-weight:600}
@@ -368,6 +378,10 @@ body.remote-mode>header,body.remote-mode>main{display:none!important}
     <label><input type="radio" name="nt" value="2" checked><span>2</span></label>
     <label><input type="radio" name="nt" value="3"><span>3</span></label>
     <label><input type="radio" name="nt" value="4"><span>4</span></label>
+    <label><input type="radio" name="nt" value="5"><span>5</span></label>
+    <label><input type="radio" name="nt" value="6"><span>6</span></label>
+    <label><input type="radio" name="nt" value="7"><span>7</span></label>
+    <label><input type="radio" name="nt" value="8"><span>8</span></label>
    </div>
   </div>
   <div class="teams">
@@ -375,6 +389,10 @@ body.remote-mode>header,body.remote-mode>main{display:none!important}
    <label class="teambox blue" id="box1"><span class="tl"><i></i>Équipe 2 (bleue)</span><input id="n1" value="Les Hiboux" maxlength="18" autocomplete="off"></label>
    <label class="teambox green hide" id="box2"><span class="tl"><i></i>Équipe 3 (verte)</span><input id="n2" value="Les Loups" maxlength="18" autocomplete="off"></label>
    <label class="teambox yellow hide" id="box3"><span class="tl"><i></i>Équipe 4 (jaune)</span><input id="n3" value="Les Écureuils" maxlength="18" autocomplete="off"></label>
+   <label class="teambox violet hide" id="box4"><span class="tl"><i></i>Équipe 5 (violette)</span><input id="n4" value="Les Pandas" maxlength="18" autocomplete="off"></label>
+   <label class="teambox cyan hide" id="box5"><span class="tl"><i></i>Équipe 6 (cyan)</span><input id="n5" value="Les Dauphins" maxlength="18" autocomplete="off"></label>
+   <label class="teambox pink hide" id="box6"><span class="tl"><i></i>Équipe 7 (rose)</span><input id="n6" value="Les Flamants" maxlength="18" autocomplete="off"></label>
+   <label class="teambox orange hide" id="box7"><span class="tl"><i></i>Équipe 8 (orange)</span><input id="n7" value="Les Tigres" maxlength="18" autocomplete="off"></label>
   </div>
   <fieldset class="lens hide" id="roundsBox"><legend id="roundsLbl">🎵 Nombre de morceaux par équipe</legend>
    <div class="lengrid">
@@ -384,7 +402,7 @@ body.remote-mode>header,body.remote-mode>main{display:none!important}
     <label class="lenopt"><input type="radio" name="rounds" value="20"><span><b>20</b><small>Marathon (~40 min)</small></span></label>
     <label class="lenopt"><input type="radio" name="rounds" value="40"><span><b>40</b><small>Soirée (~1 h 20)</small></span></label>
    </div>
-   <label class="opt" style="margin-top:12px"><span><b>🔔 Mode buzzer</b><small>Toutes les équipes écoutent le même morceau : la première qui buzze répond (bouton ou touches 1 à 4). Mauvaise réponse : les autres peuvent buzzer.</small></span><input type="checkbox" id="optBuzz"></label>
+   <label class="opt" style="margin-top:12px"><span><b>🔔 Mode buzzer</b><small>Toutes les équipes écoutent le même morceau : la première qui buzze répond (bouton ou touches 1 à 8). Mauvaise réponse : les autres peuvent buzzer.</small></span><input type="checkbox" id="optBuzz"></label>
   </fieldset>
   <fieldset class="lens" id="lenBox"><legend>📏 Longueur du parcours</legend>
    <div class="lengrid">
@@ -3629,7 +3647,7 @@ function buildBoard(){
 <text class="num" x="${x}" y="${y-(jar?16:9*CS)}" style="font-size:${n?7*CS:5.5*CS}px">${n||"DÉPART"}</text>
 <text class="ico" x="${x}" y="${y+(jar?4:3.5*CS)}" style="font-size:${jar?24:13*CS}px">${ICON[ty]}</text></g>`;
   }
-  const pr=S.T<=2?6:S.T===3?5:4;
+  const pr=S.T<=2?6:S.T===3?5:S.T===4?4:3;
   h+=TEAMS().map(t=>{const[ox,oy]=pawnOff2D(t);return `<g id="pawn${t}" class="pawn" style="transform:translate(${PTS[0][0]+ox}px,${PTS[0][1]+oy}px)"><circle class="halo t${t}" r="${pr}"/><circle class="dot t${t}" r="${pr}"/></g>`}).join("");
   $("board").innerHTML=h;
   const xs=SPI.path.map(p=>p[0]),ys=SPI.path.map(p=>p[1]),M=24*CS;
@@ -3680,13 +3698,13 @@ function pawnMesh(col){
 }
 /* emplacement de chaque pion sur sa case, selon le nombre d'équipes */
 const TEAMS=()=>[...Array(S.T).keys()];
-function pawnOff2D(t){return[(S.T<=2?[-7,7]:S.T===3?[-9,0,9]:[-10.5,-3.5,3.5,10.5])[t],11]}
-function pawnOff3D(t){return(S.T<=2?[[-6.8,3],[6.8,3]]:S.T===3?[[-8,-2],[8,-2],[0,8]]:[[-6,-3],[6,-3],[-6,7],[6,7]])[t]}
+function pawnOff2D(t){if(S.T>4){const c=Math.ceil(S.T/2),r=Math.floor(t/c),i=t%c;return[(i-(c-1)/2)*6.4,7+r*7]}return[(S.T<=2?[-7,7]:S.T===3?[-9,0,9]:[-10.5,-3.5,3.5,10.5])[t],11]}
+function pawnOff3D(t){if(S.T>4){const c=Math.ceil(S.T/2),r=Math.floor(t/c),i=t%c;return[(i-(c-1)/2)*5,r?6:-3]}return(S.T<=2?[[-6.8,3],[6.8,3]]:S.T===3?[[-8,-2],[8,-2],[0,8]]:[[-6,-3],[6,-3],[-6,7],[6,7]])[t]}
 function target3(t){const p=S.pos[t],[x,y]=PTS[p],[ox,oz]=pawnOff3D(t);return new THREE.Vector3(x-200+ox,G3.top[p],y-200+oz)}
 /* (re)crée les pions 3D pour le nombre d'équipes de la partie */
 function build3DPawns(){
   G3.pawns.forEach(P=>{G3.scene.remove(P.g);P.g.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material)o.material.dispose()})});
-  G3.pawns=TEAMS().map(t=>{const g=pawnMesh(cssVar("--t"+t));if(S.T>2)g.scale.setScalar(.8);G3.scene.add(g);return{g,from:new THREE.Vector3(),to:new THREE.Vector3(),t0:0,dur:0,hop:0}});
+  G3.pawns=TEAMS().map(t=>{const g=pawnMesh(cssVar("--t"+t));if(S.T>2)g.scale.setScalar(S.T>4?.6:.8);G3.scene.add(g);return{g,from:new THREE.Vector3(),to:new THREE.Vector3(),t0:0,dur:0,hop:0}});
 }
 /* le dessus du plateau et les cases dépendent de la longueur choisie : on les reconstruit à chaque partie */
 function build3DBoard(){
@@ -4397,7 +4415,7 @@ function blindBuzz(){
     <div class="bar" aria-hidden="true"><i id="prog"></i></div>
     <p class="note" id="audMsg">Extrait officiel de 30 s, via iTunes${chrono?" · le chrono démarre avec la musique et s’arrête pendant les réponses":""}</p>
     ${chrono?'<div id="timer" class="timer" aria-live="off">25</div>':""}
-    <div class="buzzers" id="buzz">${TEAMS().map(t=>`<button class="buzzer" data-t="${t}" style="background:var(--t${t})"><b>🔔 ${esc(S.names[t])}</b><small>ou touche ${t+1}</small></button>`).join("")}</div>
+    <div class="buzzers${S.T>4?" many":""}" id="buzz">${TEAMS().map(t=>`<button class="buzzer" data-t="${t}" style="background:var(--t${t})"><b>🔔 ${esc(S.names[t])}</b><small>ou touche ${t+1}</small></button>`).join("")}</div>
     <div id="dAns"></div><div id="out"></div>`);
   let timer=null,left=25,over=false,cur=-1;const out=new Set();
   const pauseTimer=()=>{clearInterval(timer);timer=null};
@@ -4448,7 +4466,7 @@ function blindBuzz(){
       $("bOk").onclick=()=>verdict(t,true);$("bKo").onclick=()=>verdict(t,false);
     }
   };
-  const kb=e=>{if(my!==BUZZ_ID){removeEventListener("keydown",kb);return}const m=/^(?:Digit|Numpad)([1-4])$/.exec(e.code||"");if(m&&!e.repeat&&$("modal")&&!$("modal").classList.contains("hide"))buzz(+m[1]-1)};
+  const kb=e=>{if(my!==BUZZ_ID){removeEventListener("keydown",kb);return}const m=/^(?:Digit|Numpad)([1-8])$/.exec(e.code||"");if(m&&!e.repeat&&$("modal")&&!$("modal").classList.contains("hide"))buzz(+m[1]-1)};
   addEventListener("keydown",kb);
   document.querySelectorAll("#buzz .buzzer").forEach(x=>x.onclick=()=>buzz(+x.dataset.t));
   setupAudio([ti,ar],runTimer);
@@ -4459,7 +4477,7 @@ function init(){
   const z=v=>Array(S.T).fill(v);
   S.pos=z(0);S.pts=z(0);S.skip=z(0);S.played=z(0);S.songs=0;S.why=z(null);S.turn=0;S.busy=false;
   S.st=TEAMS().map(()=>({ok:{q:0,b:0,e:0,d:0},ko:{q:0,b:0,e:0,d:0},cur:0,best:0,rolls:0,sixes:0,rerolls:0,pont:0,back:0,traps:0,spent:0,surp:0,swaps:0,stolen:0,duels:0}));S.turns=0;S.t0=Date.now();
-  $("score").style.setProperty("--nt",S.T===4?2:S.T);
+  $("score").style.setProperty("--nt",S.T<=3?S.T:S.T===4?2:Math.ceil(S.T/2));
   $("score").innerHTML=TEAMS().map(t=>`<div class="team t${t}" id="team${t}">
     <div class="team-top"><b>${esc(S.names[t])}</b><span class="pts"><span id="pts${t}">0</span><small> pt</small></span></div>
     <div class="team-pos"><span id="cell${t}"></span><span id="pct${t}"></span></div>
@@ -4486,7 +4504,7 @@ if(saved){
   const lvr=document.querySelector(`input[name=lv][value="${saved.level}"]`);if(lvr)lvr.checked=true;
 }
 /* affiche autant de cases de noms que d'équipes choisies */
-function syncTeams(){const n=+document.querySelector("input[name=nt]:checked").value;for(let i=0;i<4;i++)$("box"+i).classList.toggle("hide",i>=n)}
+function syncTeams(){const n=+document.querySelector("input[name=nt]:checked").value;for(let i=0;i<8;i++)$("box"+i).classList.toggle("hide",i>=n)}
 document.querySelectorAll("input[name=nt]").forEach(r=>r.onchange=syncTeams);syncTeams();
 /* type de partie : jeu de l'oie complet, ou blind test seul (sans plateau) */
 function syncMode(){const b=document.querySelector("input[name=mode]:checked").value==="blind",bz=$("optBuzz").checked;
@@ -4507,7 +4525,7 @@ $("start").onclick=async()=>{
   document.body.classList.toggle("blind",blind);
   document.body.classList.toggle("lite",S.opts.lite);if(G3.quality)G3.quality();
   for(const k of CATS)deck[k]=null;
-  store.set("oie-reglages",{names:[0,1,2,3].map(i=>$("n"+i).value.trim()),nt:S.T,len,...S.opts,host:$("optHost").checked});
+  store.set("oie-reglages",{names:[0,1,2,3,4,5,6,7].map(i=>$("n"+i).value.trim()),nt:S.T,len,...S.opts,host:$("optHost").checked});
   document.body.classList.toggle("tv",tv);
   /* mode TV : le bloc des scores passe dans le cadre du plateau ; sinon il reste juste au-dessus */
   if(tv)$("frame").prepend($("score"));else $("frame").before($("score"));

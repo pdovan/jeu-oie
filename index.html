@@ -181,6 +181,7 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 .big{font-size:1.35rem;font-weight:700}
 .memimg{display:flex;justify-content:center;margin:6px 0 0}
 .memimg img{display:block;max-height:min(52vh,460px);max-width:100%;width:auto;border-radius:12px;box-shadow:0 6px 24px rgba(0,0,0,.35)}
+#memAgain img{max-height:min(38vh,340px)}
 body.tv .memimg img{max-height:min(58vh,640px)}
 .poster{display:flex;justify-content:center;margin:6px 0 0;overflow:hidden;border-radius:12px}
 .poster img{display:block;height:min(42vh,340px);width:auto;max-width:100%;border-radius:12px;box-shadow:0 6px 24px rgba(0,0,0,.35);filter:blur(16px) saturate(1.1);transform:scale(1.04);animation:unblur 12s ease-out forwards}
@@ -4656,12 +4657,14 @@ function ask(ty){
   };
   const pick=i=>{
     if(done)return;stopTimer();
-    document.querySelectorAll(".choice").forEach((b,j)=>{b.disabled=true;if(j===good)b.classList.add("right");else if(j===i)b.classList.add("wrong")});posterClear();
+    document.querySelectorAll(".choice").forEach((b,j)=>{b.disabled=true;if(j===good)b.classList.add("right");else if(j===i)b.classList.add("wrong")});posterClear();memAgain();
     $("out").innerHTML=i===good?`<div class="ans">✅ Bonne réponse !</div>`:`<div class="ans">${i<0?"⏰ Temps écoulé. ":"❌ "}Réponse : ${esc(reveal)}</div>`;
     (i===good?sfxGood:sfxBad)();
-    setTimeout(()=>{done=false;finishQ(i===good)},1600);
+    setTimeout(()=>{done=false;finishQ(i===good)},ty==="m"?5000:1600);
   };
   const finishQ=ok=>{done=false;finish(ok)};
+  /* mémoire : l’image revient avec la réponse */
+  function memAgain(){if(ty!=="m"||$("memAgain"))return;const z=$("memQ");if(z)z.insertAdjacentHTML("beforeend",`<div class="memimg" id="memAgain"><img src="${esc(MEMURL[MEMIMG[qText]]||"")}" alt="L’image à mémoriser" referrerpolicy="no-referrer"></div>`)}
   function memPhase(){
     const hideAns=on=>{document.querySelectorAll("#card .qcm,#rev,#timer").forEach(x=>x.classList.toggle("hide",on))};
     hideAns(true);let left=25,t=null,shown=false;const my=$("memImg");
@@ -4682,7 +4685,7 @@ function ask(ty){
   else if(ty==="d")$("go").onclick=()=>{$("go").classList.add("hide");goDefi()};
   else if(ty==="m")memPhase();
   else if(song)setupAudio(song,startTimer);else startTimer();
-  if($("rev"))$("rev").onclick=()=>{posterClear();$("out").innerHTML=`<div class="ans">${esc(reveal)}</div>`;$("verdict").classList.remove("hide");$("rev").classList.add("hide")};
+  if($("rev"))$("rev").onclick=()=>{posterClear();memAgain();$("out").innerHTML=`<div class="ans">${esc(reveal)}</div>`;$("verdict").classList.remove("hide");$("rev").classList.add("hide")};
   $("yes").onclick=()=>finish(true);
   $("no").onclick=()=>finish(false);
 }

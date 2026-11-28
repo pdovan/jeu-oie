@@ -179,6 +179,9 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 .seg.small span{padding:6px 10px;font-size:.9rem}
 .rank{margin:0;padding-left:22px;display:grid;gap:4px}
 .big{font-size:1.35rem;font-weight:700}
+.memimg{display:flex;justify-content:center;margin:6px 0 0}
+.memimg img{display:block;max-height:min(52vh,460px);max-width:100%;width:auto;border-radius:12px;box-shadow:0 6px 24px rgba(0,0,0,.35)}
+body.tv .memimg img{max-height:min(58vh,640px)}
 .poster{display:flex;justify-content:center;margin:6px 0 0;overflow:hidden;border-radius:12px}
 .poster img{display:block;height:min(42vh,340px);width:auto;max-width:100%;border-radius:12px;box-shadow:0 6px 24px rgba(0,0,0,.35);filter:blur(16px) saturate(1.1);transform:scale(1.04);animation:unblur 12s ease-out forwards}
 .poster img.clear{animation:none;filter:none;transform:none;transition:filter .6s,transform .6s}
@@ -502,9 +505,9 @@ body.remote-mode>header,body.remote-mode>main{display:none!important}
 </div>
 
 <script>
-const ICON={depart:"🚩",q:"❓",b:"🎵",e:"🎬",d:"🎭",c:"🎯",s:"🎁",pont:"🌉",auberge:"🏨",puits:"🪣",lab:"🌀",prison:"⛓️",mort:"💀",jardin:"🌸"};
-const FILL={depart:"#fffaf0",q:"#f0d28a",b:"#d7c0dc",e:"#c4dcae",d:"#f2c39a",c:"#8fe0cc",s:"#f7a8e0",pont:"#a9cdea",auberge:"#eeb1a8",puits:"#8fb4c4",lab:"#c9c4b8",prison:"#9b9a96",mort:"#3a3430",jardin:"#f6b6c8"};
-const cycle=["q","b","e"];
+const ICON={depart:"🚩",q:"❓",b:"🎵",e:"🎬",d:"🎭",m:"🧠",c:"🎯",s:"🎁",pont:"🌉",auberge:"🏨",puits:"🪣",lab:"🌀",prison:"⛓️",mort:"💀",jardin:"🌸"};
+const FILL={depart:"#fffaf0",q:"#f0d28a",b:"#d7c0dc",e:"#c4dcae",d:"#f2c39a",m:"#a9d8ef",c:"#8fe0cc",s:"#f7a8e0",pont:"#a9cdea",auberge:"#eeb1a8",puits:"#8fb4c4",lab:"#c9c4b8",prison:"#9b9a96",mort:"#3a3430",jardin:"#f6b6c8"};
+const cycle=["q","b","e","m"];
 const $=id=>document.getElementById(id);
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -537,7 +540,7 @@ function setLength(n){
   N=n;SPC=SPEC[n];CS=SPC.cs;
   const at={};for(const p of SPC.choix||[])at[p]="c";for(const p of SPC.surp||[])at[p]="s";for(const k in SPDESC){const v=SPC[k];if(v!=null)at[Array.isArray(v)?v[0]:v]=k}
   at[N]="jardin";
-  types=["depart"];for(let i=1;i<=N;i++)types.push(at[i]||cycle[i%3]);
+  types=["depart"];for(let i=1;i<=N;i++)types.push(at[i]||cycle[i%4]);
   SPI=spiralPoints(SPC.turns);PTS=SPI.cells;
 }
 function specialList(){const a=[];if(SPC.choix&&SPC.choix.length)a.push(`🎯 Au choix (cases ${SPC.choix.join(", ")}) : l’équipe choisit la catégorie de son épreuve`);if(SPC.surp&&SPC.surp.length)a.push(`🎁 Surprise (cases ${SPC.surp.join(", ")}) : échangez vos places, volez 1 point, rejouez ou duel`);for(const k in SPDESC)if(SPC[k]!=null)a.push(SPDESC[k](SPC[k]));a.push(`🌸 Jardin (case ${N}) : il faut y tomber pile`);return a}
@@ -3796,18 +3799,84 @@ const BASE={
   ["🚴‍♂️🏔️🇫🇷💉","The Program"],
   ["⛳🏌️‍♂️😂🐿️","Le Golf en folie"]
  ],
- d:[]
+ d:[],
+ m:[
+  ["Combien de chaises y avait-il dans la chambre ?","2"],
+  ["De quelle couleur était la couverture sur le lit ?","Rouge"],
+  ["Qu’est-ce qui était posé au milieu de la table, entre les deux joueurs ?","Une bouteille"],
+  ["Que fumait l’homme de gauche ?","Une pipe"],
+  ["Quel animal, tenu en laisse, était près de la dame à l’ombrelle noire, à droite ?","Un singe"],
+  ["Combien de femmes étaient penchées dans le champ, au premier plan ?","3"],
+  ["De quelle couleur était le bonnet de la femme de gauche ?","Bleu"],
+  ["Quel motif avait la robe de la jeune femme assise au premier plan ?","Des rayures"],
+  ["Que versait la jeune femme ?","Du lait"],
+  ["De quelle couleur était son tablier ?","Bleu"],
+  ["Combien de barques étaient prises dans les vagues ?","3"],
+  ["Quelle montagne enneigée apparaissait au loin, sous la vague ?","Le mont Fuji"],
+  ["Combien de chasseurs rentraient avec leurs chiens ?","3"],
+  ["Que faisaient les petits personnages sur les étangs gelés, en contrebas ?","Du patin à glace"],
+  ["De quelle couleur était l’auvent de la terrasse du café ?","Jaune"],
+  ["Quel objet vert se dressait au milieu du trottoir ?","Un lampadaire"],
+  ["Que tenait le couple au premier plan ?","Un parapluie"],
+  ["Quel animal se trouvait entre les hommes qui se saluaient ?","Un chien"],
+  ["Combien d’hommes se saluaient sur le chemin ?","3"],
+  ["De quelle couleur était le soleil au-dessus du port ?","Orange"],
+  ["Quelle forme avait la lune dans le ciel ?","Un croissant"],
+  ["Quel grand arbre sombre se dressait au premier plan, à gauche ?","Un cyprès"],
+  ["Que tenait le garçon à droite, dans chaque main ?","Un pistolet"],
+  ["Quel drapeau brandissait la femme au centre ?","Le drapeau bleu, blanc, rouge"],
+  ["Que contenait le panier renversé au premier plan ?","Des fruits"],
+  ["Combien d’hommes étaient assis dans l’herbe ?","2"],
+  ["Quel animal la jeune femme de gauche tenait-elle contre elle ?","Un petit chien"],
+  ["De quelles couleurs était rayé l’auvent ?","Rouge et blanc"],
+  ["Qu’agitait l’homme tout en haut, à droite du radeau ?","Un morceau de tissu"],
+  ["Quel animal était allongé au premier plan, à droite ?","Un chien"],
+  ["Que tenait le peintre debout à gauche ?","Un pinceau et une palette"],
+  ["De quelle couleur était le visage de la femme au premier plan, à droite ?","Vert"],
+  ["Combien de fenêtres y avait-il au fond de la salle, derrière la table ?","3"],
+  ["De quel instrument jouait l’homme en veste rouge, à gauche ?","De la cornemuse"],
+  ["Que portaient deux hommes sur une planche, au premier plan ?","Des assiettes"],
+  ["Combien d’épées le père tenait-il dans ses mains ?","3"],
+  ["Qu’est-ce qui s’envolait du pied de la jeune femme sur la balançoire ?","Sa chaussure"],
+  ["De quelle couleur était la robe de la jeune femme ?","Rose"],
+  ["De quelle couleur était le chapeau du garçon dans l’eau, à droite ?","Rouge"],
+  ["Quel animal était couché dans l’herbe au premier plan ?","Un chien"],
+  ["Que tenait Napoléon levé à deux mains ?","Une couronne"],
+  ["Quelles étaient les deux couleurs principales de la tour ?","Blanc et rouge"],
+  ["Quel personnage volait au-dessus des autres, avec un arc ?","Un angelot (Cupidon)"],
+  ["Que faisaient les personnages assis au premier plan, au centre ?","Ils jouaient de la musique"],
+  ["De quelle couleur étaient la plupart des dés ?","Bleu"],
+  ["Combien de pions y avait-il sur l’échiquier ?","6"],
+  ["Combien de pions noirs y avait-il ?","1"],
+  ["Quel pion flottait dans les airs, au-dessus des autres ?","L’orange"],
+  ["Quelle était la couleur du pion tout à gauche ?","Noir"],
+  ["Quel motif avait la chemise du marchand ?","Des rayures"],
+  ["Combien de lampes étaient allumées au plafond ?","2"],
+  ["Quel grand objet rond se trouvait derrière le pêcheur ?","Un filet de pêche"],
+  ["Que portait le pêcheur sur la tête ?","Un chapeau de paille"],
+  ["Que trouvait-on posé sur le plan de travail, à gauche ?","Des œufs"],
+  ["Quelles chaussures étaient posées par terre, à droite ?","Des claquettes"],
+  ["Quel animal portait un gros chargement d’herbe ?","Un âne"],
+  ["Quel appareil blanc se trouvait au milieu de l’atelier ?","Un ventilateur"],
+  ["De quelle couleur était la voiture qu’on lavait ?","Bleue"],
+  ["Que portait l’homme sur la tête ?","Une casquette"],
+  ["Comment le pêcheur se tenait-il sur sa barque ?","Debout sur une jambe"],
+  ["De quelle couleur était le casque de l’ouvrier au premier plan ?","Bleu"],
+  ["De quelles couleurs étaient les deux chevaux qui tiraient la charrue ?","Un marron et un blanc"],
+  ["Quel nom était écrit en grand sur l’enseigne ?","ROY’S"],
+  ["À quel moment de la journée la photo avait-elle été prise ?","Au coucher du soleil"]
+ ]
 };
-const CATS=["q","b","e"];
+const CATS=["q","b","e","m"];
 /* niveau de chaque élément d'origine (1 facile, 2 moyen, 3 difficile), dans l'ordre de BASE ; les défis conviennent à tous les niveaux */
-const LEVELS={"q":"1111212122221222222122233122323121223311321332312231212323112322322113321132222213333333333333333333333333333333333333333333333333222222222233333333333333333222222223222233333332333332211332222222221122313233222232212211221211111231222132111122222233332211223233222222213222122231321221121121211111122122323222222322223322222333332323333323333222131332212212222221112212232232323322333122332222333","b":"112111122221111222112312123222132122233223222232121132222223212333212333332212121121212212212222232112331211211111222222223333122233333333333333333333333333333333333333333333333333333333333333333333333333332232222121222222223122113313232312122331123222312212233113232223213332223322122321111221211111211122122221222121222221212122212322222112321223212222222222212233213221232132232322323222323112332322112313233323223333232223322333233223222313232332222221222221122221222122222212221222333333333333333333333332222333221233122333232323333333332232223323333332232333323233323233223233323322333333233333333123123233323223323333332333322223332233333233223323321333233332122332222333123333322223322223323222333223222223232223321233232333232233323233222333333332333332332323233332233333333333333333333333333332333333333333333322333333322333233333332333333233333323323323333333333333333222333332333323233333322333323233323322333333333333333232333333233332333333333333333333312233333232323333333332333233333233323333332333223333333333333332233333333323333333333232232333333333333333233333332323332333333333333233333333122133233333333333333333333222233333333333333333232333333332233333223333332222322322333333233333333323333323333333323333323332323333222223333233333333333333333333333333333333333333322233333333233332333323333332332233323323333331333333333233333333323223333333322332222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222122222222222222233333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333","e":"11111212212221112122211122322122112212221122222232122112221333333223233232232322232322233213222323333233321233233332212222333322221333333333333333333333333333333333333333333333333333333333333333111111111111111111111111111111111111111122222222222222222222222222222222222222222222223333333333333333333333333333333333333333333222111111111111111121112111111222112122222211112221212221212112222333333323331121222222222221122212212233332222222222223312223222332333332322333222333333222223223232222233333333222223222122112222222322222222223322322232212223333222223332323333333332233232233333323333333333333333333333323332332333333333333223233232233322233322223223233233232232323222233223233322322232333321222232121221212233333233222221122122122322333222322331232333332322332222333332232222222333333222122122222222222222322322221223333223323333322322233332333333333333323233233333333323323223322222232232232222232222332233232223332331223332332333222333233323332322222323233333333323233233333332332333312312333133223232323333233233333"};
+const LEVELS={"m":"2222313212322212112123212222212223222121122212112232133131221222","q":"1111212122221222222122233122323121223311321332312231212323112322322113321132222213333333333333333333333333333333333333333333333333222222222233333333333333333222222223222233333332333332211332222222221122313233222232212211221211111231222132111122222233332211223233222222213222122231321221121121211111122122323222222322223322222333332323333323333222131332212212222221112212232232323322333122332222333","b":"112111122221111222112312123222132122233223222232121132222223212333212333332212121121212212212222232112331211211111222222223333122233333333333333333333333333333333333333333333333333333333333333333333333333332232222121222222223122113313232312122331123222312212233113232223213332223322122321111221211111211122122221222121222221212122212322222112321223212222222222212233213221232132232322323222323112332322112313233323223333232223322333233223222313232332222221222221122221222122222212221222333333333333333333333332222333221233122333232323333333332232223323333332232333323233323233223233323322333333233333333123123233323223323333332333322223332233333233223323321333233332122332222333123333322223322223323222333223222223232223321233232333232233323233222333333332333332332323233332233333333333333333333333333332333333333333333322333333322333233333332333333233333323323323333333333333333222333332333323233333322333323233323322333333333333333232333333233332333333333333333333312233333232323333333332333233333233323333332333223333333333333332233333333323333333333232232333333333333333233333332323332333333333333233333333122133233333333333333333333222233333333333333333232333333332233333223333332222322322333333233333333323333323333333323333323332323333222223333233333333333333333333333333333333333333322233333333233332333323333332332233323323333331333333333233333333323223333333322332222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222122222222222222233333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333333","e":"11111212212221112122211122322122112212221122222232122112221333333223233232232322232322233213222323333233321233233332212222333322221333333333333333333333333333333333333333333333333333333333333333111111111111111111111111111111111111111122222222222222222222222222222222222222222222223333333333333333333333333333333333333333333222111111111111111121112111111222112122222211112221212221212112222333333323331121222222222221122212212233332222222222223312223222332333332322333222333333222223223232222233333333222223222122112222222322222222223322322232212223333222223332323333333332233232233333323333333333333333333333323332332333333333333223233232233322233322223223233233232232323222233223233322322232333321222232121221212233333233222221122122122322333222322331232333332322332222333332232222222333333222122122222222222222322322221223333223323333322322233332333333333333323233233333333323323223322222232232232222232222332233232223332331223332332333222333233323332322222323233333333323233233333332332333312312333133223232323333233233333"};
 const LVLNAME={1:"Facile",2:"Moyen",3:"Difficile"};
 const CATMETA={q:{label:"Quiz",icon:"❓",f:["Question","Réponse"]},b:{label:"Blind test",icon:"🎵",f:["Titre","Artiste"]},e:{label:"Emojis",icon:"🎬",f:["Emojis","Film"]},d:{label:"Défis",icon:"🎭",f:["Défi"]}};
 const deck={},BANK={};
 let CUSTOM=store.get("oie-questions");
 if(!CUSTOM||!CUSTOM.added||!CUSTOM.removed)CUSTOM={added:{q:[],b:[],e:[],d:[]},removed:{q:[],b:[],e:[],d:[]}};
 const ikey=x=>JSON.stringify(x);
-const BASEIDX={};for(const k of ["q","b","e"]){BASEIDX[k]=new Map(BASE[k].map((x,i)=>[ikey(x),i]))}
+const BASEIDX={};for(const k of ["q","b","e","m"]){BASEIDX[k]=new Map(BASE[k].map((x,i)=>[ikey(x),i]))}
 function lvlOf(k,x){
   if(k==="d")return 0;
   const c=CUSTOM.lvl&&CUSTOM.lvl[k]&&CUSTOM.lvl[k][ikey(x)];if(c)return c;
@@ -4129,6 +4198,10 @@ function eHtml(q,a){
 }
 const posterClear=()=>document.querySelectorAll("#card .poster img").forEach(i=>i.classList.add("clear"));
 const posterPause=on=>document.querySelectorAll("#card .poster img").forEach(i=>i.style.animationPlayState=on?"paused":"");
+/* catégorie Mémoire : image affichée 25 s, puis cachée, puis question (images Wikimedia Commons) */
+const MEMIMG={"Combien de chaises y avait-il dans la chambre ?":"chambre","De quelle couleur était la couverture sur le lit ?":"chambre","Qu’est-ce qui était posé au milieu de la table, entre les deux joueurs ?":"joueurs","Que fumait l’homme de gauche ?":"joueurs","Quel animal, tenu en laisse, était près de la dame à l’ombrelle noire, à droite ?":"jatte","Combien de femmes étaient penchées dans le champ, au premier plan ?":"glaneuses","De quelle couleur était le bonnet de la femme de gauche ?":"glaneuses","Quel motif avait la robe de la jeune femme assise au premier plan ?":"galette","Que versait la jeune femme ?":"laitiere","De quelle couleur était son tablier ?":"laitiere","Combien de barques étaient prises dans les vagues ?":"vague","Quelle montagne enneigée apparaissait au loin, sous la vague ?":"vague","Combien de chasseurs rentraient avec leurs chiens ?":"chasseurs","Que faisaient les petits personnages sur les étangs gelés, en contrebas ?":"chasseurs","De quelle couleur était l’auvent de la terrasse du café ?":"terrasse","Quel objet vert se dressait au milieu du trottoir ?":"pluie","Que tenait le couple au premier plan ?":"pluie","Quel animal se trouvait entre les hommes qui se saluaient ?":"courbet","Combien d’hommes se saluaient sur le chemin ?":"courbet","De quelle couleur était le soleil au-dessus du port ?":"impression","Quelle forme avait la lune dans le ciel ?":"nuit","Quel grand arbre sombre se dressait au premier plan, à gauche ?":"nuit","Que tenait le garçon à droite, dans chaque main ?":"liberte","Quel drapeau brandissait la femme au centre ?":"liberte","Que contenait le panier renversé au premier plan ?":"dejeuner","Combien d’hommes étaient assis dans l’herbe ?":"dejeuner","Quel animal la jeune femme de gauche tenait-elle contre elle ?":"canotiers","De quelles couleurs était rayé l’auvent ?":"canotiers","Qu’agitait l’homme tout en haut, à droite du radeau ?":"radeau","Quel animal était allongé au premier plan, à droite ?":"menines","Que tenait le peintre debout à gauche ?":"menines","De quelle couleur était le visage de la femme au premier plan, à droite ?":"moulinrouge","Combien de fenêtres y avait-il au fond de la salle, derrière la table ?":"cene","De quel instrument jouait l’homme en veste rouge, à gauche ?":"noce","Que portaient deux hommes sur une planche, au premier plan ?":"noce","Combien d’épées le père tenait-il dans ses mains ?":"serment","Qu’est-ce qui s’envolait du pied de la jeune femme sur la balançoire ?":"balancoire","De quelle couleur était la robe de la jeune femme ?":"balancoire","De quelle couleur était le chapeau du garçon dans l’eau, à droite ?":"baigneuses","Quel animal était couché dans l’herbe au premier plan ?":"baigneuses","Que tenait Napoléon levé à deux mains ?":"sacre","Quelles étaient les deux couleurs principales de la tour ?":"tour","Quel personnage volait au-dessus des autres, avec un arc ?":"printemps","Que faisaient les personnages assis au premier plan, au centre ?":"noces","De quelle couleur étaient la plupart des dés ?":"c4","Combien de pions y avait-il sur l’échiquier ?":"c7","Combien de pions noirs y avait-il ?":"c7","Quel pion flottait dans les airs, au-dessus des autres ?":"c5","Quelle était la couleur du pion tout à gauche ?":"c5","Quel motif avait la chemise du marchand ?":"c112","Combien de lampes étaient allumées au plafond ?":"c112","Quel grand objet rond se trouvait derrière le pêcheur ?":"c117","Que portait le pêcheur sur la tête ?":"c117","Que trouvait-on posé sur le plan de travail, à gauche ?":"c120","Quelles chaussures étaient posées par terre, à droite ?":"c128","Quel animal portait un gros chargement d’herbe ?":"c129","Quel appareil blanc se trouvait au milieu de l’atelier ?":"c125","De quelle couleur était la voiture qu’on lavait ?":"c110","Que portait l’homme sur la tête ?":"c110","Comment le pêcheur se tenait-il sur sa barque ?":"c118","De quelle couleur était le casque de l’ouvrier au premier plan ?":"c113","De quelles couleurs étaient les deux chevaux qui tiraient la charrue ?":"c103","Quel nom était écrit en grand sur l’enseigne ?":"c28","À quel moment de la journée la photo avait-elle été prise ?":"c44"};
+const MEMURL={"chambre":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/Vincent_van_Gogh_-_De_slaapkamer_-_Google_Art_Project.jpg/1280px-Vincent_van_Gogh_-_De_slaapkamer_-_Google_Art_Project.jpg","joueurs":"https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Les_Joueurs_de_cartes%2C_par_Paul_C%C3%A9zanne.jpg/1280px-Les_Joueurs_de_cartes%2C_par_Paul_C%C3%A9zanne.jpg","jatte":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/A_Sunday_on_La_Grande_Jatte%2C_Georges_Seurat%2C_1884.jpg/1280px-A_Sunday_on_La_Grande_Jatte%2C_Georges_Seurat%2C_1884.jpg","glaneuses":"https://upload.wikimedia.org/wikipedia/commons/thumb/1/1f/Jean-Fran%C3%A7ois_Millet_-_Gleaners_-_Google_Art_Project_2.jpg/1280px-Jean-Fran%C3%A7ois_Millet_-_Gleaners_-_Google_Art_Project_2.jpg","galette":"https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Renoir%2C_Pierre-Auguste_-_Dance_at_Le_Moulin_de_la_Galette%2C_1876.jpg/1280px-Renoir%2C_Pierre-Auguste_-_Dance_at_Le_Moulin_de_la_Galette%2C_1876.jpg","laitiere":"https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Johannes_Vermeer_-_Het_melkmeisje_-_Google_Art_Project.png/1280px-Johannes_Vermeer_-_Het_melkmeisje_-_Google_Art_Project.png","vague":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Tsunami_by_hokusai_19th_century.jpg/1280px-Tsunami_by_hokusai_19th_century.jpg","chasseurs":"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Pieter_Bruegel_the_Elder_-_Hunters_in_the_Snow_%28Winter%29_-_Google_Art_Project.jpg/1280px-Pieter_Bruegel_the_Elder_-_Hunters_in_the_Snow_%28Winter%29_-_Google_Art_Project.jpg","terrasse":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Van_Gogh_-_Terrace_of_a_Caf%C3%A9_at_Night_%28Place_du_Forum%29_1888.jpg/1280px-Van_Gogh_-_Terrace_of_a_Caf%C3%A9_at_Night_%28Place_du_Forum%29_1888.jpg","pluie":"https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Gustave_Caillebotte_-_Paris_Street%3B_Rainy_Day_-_Google_Art_Project.jpg/1280px-Gustave_Caillebotte_-_Paris_Street%3B_Rainy_Day_-_Google_Art_Project.jpg","courbet":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Gustave_Courbet_-_Bonjour_Monsieur_Courbet_-_Mus%C3%A9e_Fabre.jpg/1280px-Gustave_Courbet_-_Bonjour_Monsieur_Courbet_-_Mus%C3%A9e_Fabre.jpg","impression":"https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Monet_-_Impression%2C_Sunrise.jpg/1280px-Monet_-_Impression%2C_Sunrise.jpg","nuit":"https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1280px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg","liberte":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/02/La_Libert%C3%A9_guidant_le_peuple_-_Eug%C3%A8ne_Delacroix_-_Mus%C3%A9e_du_Louvre_Peintures_RF_129_-_apr%C3%A8s_restauration_2024.jpg/1280px-La_Libert%C3%A9_guidant_le_peuple_-_Eug%C3%A8ne_Delacroix_-_Mus%C3%A9e_du_Louvre_Peintures_RF_129_-_apr%C3%A8s_restauration_2024.jpg","dejeuner":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Edouard_Manet_-_Luncheon_on_the_Grass_-_Google_Art_Project.jpg/1280px-Edouard_Manet_-_Luncheon_on_the_Grass_-_Google_Art_Project.jpg","canotiers":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/8d/Pierre-Auguste_Renoir_-_Luncheon_of_the_Boating_Party_-_Google_Art_Project.jpg/1280px-Pierre-Auguste_Renoir_-_Luncheon_of_the_Boating_Party_-_Google_Art_Project.jpg","radeau":"https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/JEAN_LOUIS_TH%C3%89ODORE_G%C3%89RICAULT_-_La_Balsa_de_la_Medusa_%28Museo_del_Louvre%2C_1818-19%29.jpg/1280px-JEAN_LOUIS_TH%C3%89ODORE_G%C3%89RICAULT_-_La_Balsa_de_la_Medusa_%28Museo_del_Louvre%2C_1818-19%29.jpg","menines":"https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Las_Meninas%2C_by_Diego_Vel%C3%A1zquez%2C_from_Prado_in_Google_Earth.jpg/1280px-Las_Meninas%2C_by_Diego_Vel%C3%A1zquez%2C_from_Prado_in_Google_Earth.jpg","moulinrouge":"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Henri_de_Toulouse-Lautrec%2C_At_the_Moulin_Rouge.jpg/960px-Henri_de_Toulouse-Lautrec%2C_At_the_Moulin_Rouge.jpg","cene":"https://upload.wikimedia.org/wikipedia/commons/thumb/4/48/The_Last_Supper_-_Leonardo_Da_Vinci_-_High_Resolution_32x16.jpg/1280px-The_Last_Supper_-_Leonardo_Da_Vinci_-_High_Resolution_32x16.jpg","noce":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Pieter_Bruegel_the_Elder_-_Peasant_Wedding_-_Google_Art_Project_2.jpg/1280px-Pieter_Bruegel_the_Elder_-_Peasant_Wedding_-_Google_Art_Project_2.jpg","serment":"https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Le_Serment_des_Horaces_-_Jacques-Louis_David_-_Mus%C3%A9e_du_Louvre_Peintures_INV_3692_%3B_MR_1432.jpg/1280px-Le_Serment_des_Horaces_-_Jacques-Louis_David_-_Mus%C3%A9e_du_Louvre_Peintures_INV_3692_%3B_MR_1432.jpg","balancoire":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/The_Swing_%28P430%29.jpg/960px-The_Swing_%28P430%29.jpg","baigneuses":"https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Baigneurs_a_Asnieres.jpg/1280px-Baigneurs_a_Asnieres.jpg","sacre":"https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Jacques-Louis_David_-_The_Coronation_of_Napoleon_%281805-1807%29.jpg/1280px-Jacques-Louis_David_-_The_Coronation_of_Napoleon_%281805-1807%29.jpg","tour":"https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Pieter_Bruegel_the_Elder_-_The_Tower_of_Babel_%28Vienna%29_-_Google_Art_Project_-_edited.jpg/1280px-Pieter_Bruegel_the_Elder_-_The_Tower_of_Babel_%28Vienna%29_-_Google_Art_Project_-_edited.jpg","printemps":"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3c/Botticelli-primavera.jpg/1280px-Botticelli-primavera.jpg","noces":"https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Paolo_Veronese_008.jpg/1280px-Paolo_Veronese_008.jpg","c4":"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/W%C3%BCrfel%2C_gemischt_--_2021_--_5577.jpg/1280px-W%C3%BCrfel%2C_gemischt_--_2021_--_5577.jpg","c7":"https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Schachfiguren%2C_Bauern_--_2022_--_0022_%28bw%29.jpg/1280px-Schachfiguren%2C_Bauern_--_2022_--_0022_%28bw%29.jpg","c5":"https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Spielfiguren_%28surreal%29_--_2021_--_8820.jpg/1280px-Spielfiguren_%28surreal%29_--_2021_--_8820.jpg","c112":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Comercio_en_la_plaza_del_9_de_abril_de_1947%2C_T%C3%A1nger%2C_Marruecos%2C_2015-12-11%2C_DD_77.JPG/1280px-Comercio_en_la_plaza_del_9_de_abril_de_1947%2C_T%C3%A1nger%2C_Marruecos%2C_2015-12-11%2C_DD_77.JPG","c117":"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/20160805_Inle_Lake_7434.jpg/1280px-20160805_Inle_Lake_7434.jpg","c120":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Beignet_maker.jpg/1280px-Beignet_maker.jpg","c128":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Crate_maker.jpg/1280px-Crate_maker.jpg","c129":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7d/A_man_and_his_donkey_on_the_way_back_from_the_field_in_Aswan%2C_Egypt_%28edited%29.jpg/1280px-A_man_and_his_donkey_on_the_way_back_from_the_field_in_Aswan%2C_Egypt_%28edited%29.jpg","c125":"https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Craftmen_at_work%2C_bamboo_basket_weaving_and_textile_mobile_sculptures%2C_in_Heuan_Chan_heritage_house%2C_Luang_Prabang%2C_Laos.jpg/1280px-Craftmen_at_work%2C_bamboo_basket_weaving_and_textile_mobile_sculptures%2C_in_Heuan_Chan_heritage_house%2C_Luang_Prabang%2C_Laos.jpg","c110":"https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/2015_K%C5%82odzko%2C_ul._Dusznicka%2C_myjnia_samochodowa_02.jpg/1280px-2015_K%C5%82odzko%2C_ul._Dusznicka%2C_myjnia_samochodowa_02.jpg","c118":"https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/20160805_-_Inle_Lake%2C_Myanmar_-_8453_DxO.jpg/1280px-20160805_-_Inle_Lake%2C_Myanmar_-_8453_DxO.jpg","c113":"https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Cologne_Germany_Bundle-extractor-01.jpg/1280px-Cologne_Germany_Bundle-extractor-01.jpg","c103":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/04-09-12-Schaupfl%C3%BCgen-Fahrenwalde-RalfR-IMG_1232.jpg/1280px-04-09-12-Schaupfl%C3%BCgen-Fahrenwalde-RalfR-IMG_1232.jpg","c28":"https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Amboy_%28California%2C_USA%29_--_2012_--_4.jpg/1280px-Amboy_%28California%2C_USA%29_--_2012_--_4.jpg","c44":"https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/2018_-_Nyhavn_on_sunset.jpg/1280px-2018_-_Nyhavn_on_sunset.jpg"};
+const MEMBAD={"Combien de chaises y avait-il dans la chambre ?":["1","3","4"],"De quelle couleur était la couverture sur le lit ?":["Bleue","Verte","Blanche"],"Qu’est-ce qui était posé au milieu de la table, entre les deux joueurs ?":["Une bougie","Un verre","Un chapeau"],"Que fumait l’homme de gauche ?":["Un cigare","Une cigarette","Rien"],"Quel animal, tenu en laisse, était près de la dame à l’ombrelle noire, à droite ?":["Un chien","Un chat","Un perroquet"],"Combien de femmes étaient penchées dans le champ, au premier plan ?":["2","4","5"],"De quelle couleur était le bonnet de la femme de gauche ?":["Rouge","Blanc","Jaune"],"Quel motif avait la robe de la jeune femme assise au premier plan ?":["Des pois","Des fleurs","Des carreaux"],"Que versait la jeune femme ?":["De l’eau","Du vin","De la soupe"],"De quelle couleur était son tablier ?":["Blanc","Rouge","Vert"],"Combien de barques étaient prises dans les vagues ?":["1","2","4"],"Quelle montagne enneigée apparaissait au loin, sous la vague ?":["Le mont Blanc","L’Everest","Le Kilimandjaro"],"Combien de chasseurs rentraient avec leurs chiens ?":["1","2","5"],"Que faisaient les petits personnages sur les étangs gelés, en contrebas ?":["De la pêche","Du ski","Une course de traîneaux"],"De quelle couleur était l’auvent de la terrasse du café ?":["Rouge","Vert","Bleu"],"Quel objet vert se dressait au milieu du trottoir ?":["Un arbre","Une fontaine","Une colonne Morris"],"Que tenait le couple au premier plan ?":["Un bouquet","Un journal","Une valise"],"Quel animal se trouvait entre les hommes qui se saluaient ?":["Un cheval","Un mouton","Un chat"],"Combien d’hommes se saluaient sur le chemin ?":["2","4","5"],"De quelle couleur était le soleil au-dessus du port ?":["Jaune","Blanc","Violet"],"Quelle forme avait la lune dans le ciel ?":["Pleine lune","Demi-lune","Il n’y avait pas de lune"],"Quel grand arbre sombre se dressait au premier plan, à gauche ?":["Un palmier","Un sapin de Noël","Un chêne"],"Que tenait le garçon à droite, dans chaque main ?":["Un drapeau","Une épée","Une pierre"],"Quel drapeau brandissait la femme au centre ?":["Un drapeau blanc","Un drapeau noir","Un drapeau rouge"],"Que contenait le panier renversé au premier plan ?":["Des fleurs","Des livres","Des poissons"],"Combien d’hommes étaient assis dans l’herbe ?":["1","3","4"],"Quel animal la jeune femme de gauche tenait-elle contre elle ?":["Un chat","Un lapin","Un perroquet"],"De quelles couleurs était rayé l’auvent ?":["Bleu et blanc","Vert et jaune","Noir et blanc"],"Qu’agitait l’homme tout en haut, à droite du radeau ?":["Une rame","Une lanterne","Une épée"],"Quel animal était allongé au premier plan, à droite ?":["Un chat","Un mouton","Un lion"],"Que tenait le peintre debout à gauche ?":["Un livre","Une épée","Une bougie"],"De quelle couleur était le visage de la femme au premier plan, à droite ?":["Rouge","Blanc","Bleu"],"Combien de fenêtres y avait-il au fond de la salle, derrière la table ?":["1","2","4"],"De quel instrument jouait l’homme en veste rouge, à gauche ?":["Du violon","De la flûte","Du tambour"],"Que portaient deux hommes sur une planche, au premier plan ?":["Des bouteilles","Un cochon","Des fleurs"],"Combien d’épées le père tenait-il dans ses mains ?":["1","2","4"],"Qu’est-ce qui s’envolait du pied de la jeune femme sur la balançoire ?":["Son chapeau","Une fleur","Un oiseau"],"De quelle couleur était la robe de la jeune femme ?":["Bleue","Blanche","Jaune"],"De quelle couleur était le chapeau du garçon dans l’eau, à droite ?":["Bleu","Jaune","Blanc"],"Quel animal était couché dans l’herbe au premier plan ?":["Un chat","Un canard","Un mouton"],"Que tenait Napoléon levé à deux mains ?":["Une épée","Un sceptre","Une croix"],"Quelles étaient les deux couleurs principales de la tour ?":["Bleu et or","Vert et blanc","Gris et noir"],"Quel personnage volait au-dessus des autres, avec un arc ?":["Un aigle","Un papillon","Un dragon"],"Que faisaient les personnages assis au premier plan, au centre ?":["Ils dansaient","Ils dormaient","Ils se battaient"],"De quelle couleur étaient la plupart des dés ?":["Rouge","Vert","Blanc"],"Combien de pions y avait-il sur l’échiquier ?":["4","5","8"],"Combien de pions noirs y avait-il ?":["0","2","3"],"Quel pion flottait dans les airs, au-dessus des autres ?":["Le rouge","Le violet","Le vert"],"Quelle était la couleur du pion tout à gauche ?":["Rouge","Jaune","Bleu"],"Quel motif avait la chemise du marchand ?":["Des carreaux","Des fleurs","Des pois"],"Combien de lampes étaient allumées au plafond ?":["1","3","4"],"Quel grand objet rond se trouvait derrière le pêcheur ?":["Une roue","Une voile","Un parasol"],"Que portait le pêcheur sur la tête ?":["Une casquette","Un bonnet","Rien"],"Que trouvait-on posé sur le plan de travail, à gauche ?":["Des citrons","Des pains","Des tomates"],"Quelles chaussures étaient posées par terre, à droite ?":["Des bottes","Des baskets","Des sabots"],"Quel animal portait un gros chargement d’herbe ?":["Un cheval","Un chameau","Une vache"],"Quel appareil blanc se trouvait au milieu de l’atelier ?":["Une télévision","Un réfrigérateur","Une horloge"],"De quelle couleur était la voiture qu’on lavait ?":["Rouge","Blanche","Noire"],"Que portait l’homme sur la tête ?":["Un chapeau de paille","Un bonnet","Rien"],"Comment le pêcheur se tenait-il sur sa barque ?":["Assis","À genoux","Allongé"],"De quelle couleur était le casque de l’ouvrier au premier plan ?":["Jaune","Blanc","Rouge"],"De quelles couleurs étaient les deux chevaux qui tiraient la charrue ?":["Deux blancs","Deux noirs","Un noir et un blanc"],"Quel nom était écrit en grand sur l’enseigne ?":["JOE’S","BOB’S","RAY’S"],"À quel moment de la journée la photo avait-elle été prise ?":["En pleine nuit","À midi","Sous la neige"]};
 function showCard(h){$("card").innerHTML=h;$("modal").classList.remove("hide")}
 
 /* ===== Blind test : extraits officiels de 30 s (iTunes) ===== */
@@ -4246,7 +4319,7 @@ async function next(){
   announce();
 }
 /* ===== Victoire : confettis, podium et statistiques ===== */
-const CATNAME={q:["❓","Quiz"],b:["🎵","Blind test"],e:["🎬","Films"],d:["🎭","Défis"]};
+const CATNAME={q:["❓","Quiz"],b:["🎵","Blind test"],e:["🎬","Films"],d:["🎭","Défis"],m:["🧠","Mémoire"]};
 function sfxFanfare(){const c=fxCtx();if(!c)return;const t=c.currentTime;
   [[523,0,.14],[523,.15,.14],[523,.3,.14],[659,.45,.35],[587,.82,.14],[659,.97,.14],[784,1.12,.7]].forEach(([f,d,l])=>{tone(f,t+d,l,"triangle",.26);tone(f/2,t+d,l,"square",.06)});
   [1047,1319,1568].forEach(f=>tone(f,t+1.12,.9,"sine",.08))}
@@ -4509,13 +4582,14 @@ function qHtml(q){
   return`<div class="flag" role="img" aria-label="Drapeau mystère">${fl}</div><div class="big" style="text-align:center">${esc(q.slice(fl.length).trim())}</div>`;
 }
 function choices(k,ans,q){
+  if(k==="m"&&MEMBAD[q])return shuffle([ans,...MEMBAD[q]]);
   const isNum=s=>/^\d/.test(String(s).trim()),seen=new Set([norm(ans)]),pool=[],flag=k==="q"&&isFlagQ(q),post=k==="e"&&isPosterQ(q,ans);
   for(const x of shuffle(BANK[k].slice())){const a=x[1],n=norm(a);if(seen.has(n))continue;if(k==="q"&&isNum(a)!==isNum(ans))continue;if(flag&&!isFlagQ(x[0]))continue;if(post&&!isPosterQ(x[0],x[1]))continue;seen.add(n);pool.push(a);if(pool.length===3)break}
   return shuffle([ans,...pool]);
 }
 /* case « Au choix » : l'équipe choisit la catégorie de son épreuve */
 function choose(){
-  const L={q:["❓","Quiz","Une question de culture générale"],b:["🎵","Blind test","Trouvez l’artiste"],e:["🎬","Film","Emojis ou affiche floutée"],d:["🎭","Défi","Mime, dessin, rapidité…"]};
+  const L={q:["❓","Quiz","Une question de culture générale"],b:["🎵","Blind test","Trouvez l’artiste"],e:["🎬","Film","Emojis ou affiche floutée"],m:["🧠","Mémoire","Observez une image, puis répondez"],d:["🎭","Défi","Mime, dessin, rapidité…"]};
   showCard(`<h2>🎯 Au choix !</h2><div class="who"><b>${name()}</b>, choisissez votre épreuve.</div>
     <div class="picks">${CATS.map(k=>`<button class="pick" data-k="${k}"${BANK[k].length?"":" disabled"}><span aria-hidden="true">${L[k][0]}</span><b>${L[k][1]}</b><small>${L[k][2]}</small></button>`).join("")}</div>`);
   sfxGood();
@@ -4540,6 +4614,11 @@ function ask(ty){
   else if(ty==="q"){const it=draw("q"),[q,a]=it;qText=q;REMOTE.secret="Réponse : "+a;
     head=(isFlagQ(q)?"❓ Quiz · 🏳️ Drapeau":"❓ Quiz")+badge(it);body=qHtml(q);reveal=a}
   else if(ty==="e"){const it=draw("e"),[q,a]=it;REMOTE.secret="Réponse : "+a;head=(isPosterQ(q,a)?"🎬 Devinez le film · 🖼️ Affiche":"🎬 Devinez le film")+badge(it);body=eHtml(q,a);qText=q;reveal=a}
+  else if(ty==="m"){const it=draw("m"),[q,a]=it;qText=q;REMOTE.secret="Question : "+q+" · Réponse : "+a;head="🧠 Mémoire"+badge(it);reveal=a;
+    body=`<div id="memPh"><div class="memimg"><img id="memImg" src="${esc(MEMURL[MEMIMG[q]]||"")}" alt="Image à mémoriser" referrerpolicy="no-referrer"></div>
+      <p class="note" style="text-align:center;margin:6px 0 0" id="memMsg">⏳ Chargement de l’image…</p>
+      <button id="memGo" style="background:var(--t${S.turn})" class="hide">👀 C’est bon, cachez l’image</button></div>
+      <div id="memQ" class="hide">${qHtml(q)}</div>`}
   else{const it=draw("b"),[ti,ar]=it;REMOTE.secret="🎵 « "+ti+" » de "+ar;song=[ti,ar];head="🎵 Blind test"+badge(it);
     body=`<p style="margin:0">Écoutez l’extrait et trouvez l’artiste.</p>
       <button id="play" style="background:var(--t${S.turn})" disabled>⏳ Chargement de l’extrait…</button>
@@ -4583,6 +4662,14 @@ function ask(ty){
     setTimeout(()=>{done=false;finishQ(i===good)},1600);
   };
   const finishQ=ok=>{done=false;finish(ok)};
+  function memPhase(){
+    const hideAns=on=>{document.querySelectorAll("#card .qcm,#rev,#timer").forEach(x=>x.classList.toggle("hide",on))};
+    hideAns(true);let left=25,t=null,shown=false;const my=$("memImg");
+    const reveal2=()=>{if(shown)return;shown=true;clearInterval(t);if(CARD_TIMER===t)CARD_TIMER=null;const ph=$("memPh");if(ph)ph.remove();$("memQ").classList.remove("hide");hideAns(false);sfxTick();startTimer()};
+    const go=()=>{$("memMsg").innerHTML=`Observez bien : l’image disparaît dans <b id="memT">${left}</b> s`;$("memGo").classList.remove("hide");$("memGo").onclick=reveal2;
+      clearInterval(CARD_TIMER);t=CARD_TIMER=setInterval(()=>{if(!$("memT")){clearInterval(t);return}left--;$("memT").textContent=left;if(left<=5&&left>0)sfxTick();if(left<=0)reveal2()},1000)};
+    if(my.complete&&my.naturalWidth)go();else{my.onload=go;my.onerror=()=>{const n=(ask.memFail=(ask.memFail||0)+1);if(n<4){hideCard();ask("m")}else{$("memMsg").textContent="Image indisponible (connexion ?). Passez à la question.";$("memGo").classList.remove("hide");$("memGo").onclick=reveal2}}}
+  }
   if($("host"))$("host").onclick=()=>$("hostInfo").classList.toggle("hide");
   document.querySelectorAll(".choice").forEach(b=>b.onclick=()=>pick(+b.dataset.i));
   /* défi : l'équipe lit la consigne, se prépare, puis lance elle-même le chrono */
@@ -4593,6 +4680,7 @@ function ask(ty){
     $("miHide").onclick=()=>{$("miCard").remove();goDefi()};
   }
   else if(ty==="d")$("go").onclick=()=>{$("go").classList.add("hide");goDefi()};
+  else if(ty==="m")memPhase();
   else if(song)setupAudio(song,startTimer);else startTimer();
   if($("rev"))$("rev").onclick=()=>{posterClear();$("out").innerHTML=`<div class="ans">${esc(reveal)}</div>`;$("verdict").classList.remove("hide");$("rev").classList.add("hide")};
   $("yes").onclick=()=>finish(true);
@@ -4675,7 +4763,7 @@ function blindBuzz(){
 function init(){
   const z=v=>Array(S.T).fill(v);
   S.pos=z(0);S.pts=z(0);S.skip=z(0);S.played=z(0);S.songs=0;S.why=z(null);S.turn=0;S.busy=false;
-  S.st=TEAMS().map(()=>({ok:{q:0,b:0,e:0,d:0},ko:{q:0,b:0,e:0,d:0},cur:0,best:0,rolls:0,sixes:0,rerolls:0,pont:0,back:0,traps:0,spent:0,surp:0,swaps:0,stolen:0,duels:0}));S.turns=0;S.t0=Date.now();
+  S.st=TEAMS().map(()=>({ok:{q:0,b:0,e:0,d:0,m:0},ko:{q:0,b:0,e:0,d:0,m:0},cur:0,best:0,rolls:0,sixes:0,rerolls:0,pont:0,back:0,traps:0,spent:0,surp:0,swaps:0,stolen:0,duels:0}));S.turns=0;S.t0=Date.now();
   $("score").style.setProperty("--nt",S.T<=3?S.T:S.T===4?2:Math.ceil(S.T/2));
   $("score").innerHTML=TEAMS().map(t=>`<div class="team t${t}" id="team${t}">
     <div class="team-top"><b>${esc(S.names[t])}</b><span class="pts"><span id="pts${t}">0</span><small> pt</small></span></div>
@@ -4756,7 +4844,7 @@ $("openRules").onclick=()=>{
     <h3>À chaque tour</h3>
     <ul><li>L’équipe lance le dé et avance d’autant de cases.</li>
     <li>Si le dé fait dépasser le jardin, le pion recule des cases en trop.</li>
-    <li>La case d’arrivée propose une épreuve : ❓ quiz, 🎵 blind test (trouvez l’artiste) ou 🎬 film (emojis ou affiche floutée).</li>
+    <li>La case d’arrivée propose une épreuve : ❓ quiz, 🎵 blind test (trouvez l’artiste), 🎬 film (emojis ou affiche floutée) ou 🧠 mémoire (une image s’affiche 25 secondes, puis une question est posée dessus).</li>
     <li>Épreuve réussie : <b>+1 point et +2 cases</b>. Épreuve ratée : la main passe à l’équipe suivante.</li></ul>
     <h3>Cases spéciales</h3>
     <ul>${specialList().map(s=>`<li>${s}</li>`).join("")}</ul>
@@ -4780,7 +4868,7 @@ let QK="q";
 function itemText(k,x){return k==="d"?{main:x,sub:""}:{main:x[0],sub:x[1]}}
 function renderQm(){
   const meta=CATMETA[QK];
-  $("qmTabs").innerHTML=CATS.map(k=>`<button type="button" role="tab" data-k="${k}" aria-selected="${k===QK}">${CATMETA[k].icon} ${CATMETA[k].label} (${BANK[k].length})</button>`).join("");
+  $("qmTabs").innerHTML=CATS.filter(k=>k!=="m").map(k=>`<button type="button" role="tab" data-k="${k}" aria-selected="${k===QK}">${CATMETA[k].icon} ${CATMETA[k].label} (${BANK[k].length})</button>`).join("");
   $("qmTabs").querySelectorAll("button").forEach(b=>b.onclick=()=>{QK=b.dataset.k;$("qmSearch").value="";renderQm()});
   $("qmForm").className="addform"+(meta.f.length===1?" one":"");
   $("qmForm").innerHTML=meta.f.map((f,i)=>`<label>${f}<input name="f${i}" required maxlength="${QK==="d"?220:140}"></label>`).join("")
